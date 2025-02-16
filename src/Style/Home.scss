@@ -112,7 +112,7 @@
         aspect-ratio: 16/9;
         overflow: hidden;
         cursor: pointer;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
         position: relative;
 
         &:hover {
@@ -142,7 +142,7 @@
           background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
           padding: 2rem 1.5rem 1.5rem;
           opacity: 0;
-          transition: opacity 0.3s ease;
+          transition: opacity 0.25s ease-in-out;
 
           .tags {
             display: flex;
@@ -162,85 +162,4 @@
     }
   }
 
-  .full-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: #000;
-    z-index: 999;
-
-    .close-button {
-      position: absolute;
-      top: 2rem;
-      right: 2rem;
-      background: none;
-      border: none;
-      color: white;
-      font-size: 2rem;
-      cursor: pointer;
-      z-index: 1000;
-    }
-
-    .full-content {
-      padding: 4rem;
-      height: 100%;
-      overflow-y: auto;
-    }
-  }
-
-  .new-sidebar {
-    position: fixed;
-    right: 0;
-    top: 0;
-    height: 100vh;
-    background: #111;
-    display: flex;
-    z-index: 1001;
-
-    .sidebar-toggle {
-      background: #222;
-      border: none;
-      color: white;
-      padding: 1rem;
-      cursor: pointer;
-      height: 100%;
-    }
-
-    .sidebar-content {
-      width: 300px;
-      padding: 2rem;
-      background: #1a1a1a;
-
-      .meta-info {
-        margin: 2rem 0;
-        p {
-          margin: 0.5rem 0;
-          opacity: 0.8;
-        }
-      }
-
-      .action-buttons {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-
-        button {
-          flex: 1;
-          padding: 1rem;
-          border: none;
-          border-radius: 8px;
-          background: #333;
-          color: white;
-          cursor: pointer;
-          transition: background 0.3s ease;
-
-          &:hover {
-            background: #444;
-          }
-        }
-      }
-    }
-  }
 }

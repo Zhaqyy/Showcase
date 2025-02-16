@@ -14,77 +14,6 @@ function Home() {
   const showcaseRefs = useRef([]);
   const newSidebarRef = useRef();
 
-  const handleShowcaseClick = async (index, e) => {
-    const item = showcaseRefs.current[index];
-    const state = Flip.getState(item);
-
-    item.style.position = "fixed";
-    item.style.zIndex = 1000;
-
-    const tl = gsap.timeline();
-
-    // Animate sidebar out
-    tl.to(overviewRef.current, {
-      x: "-100%",
-      duration: 0.5,
-      ease: "power2.inOut",
-    });
-
-    // FLIP animation to full screen
-    tl.add(
-      Flip.from(state, {
-        duration: 1.2,
-        ease: "power4.inOut",
-        absolute: true,
-        onComplete: () => setActiveShowcase(index),
-      }),
-      "-=0.3"
-    );
-
-    // Animate in new sidebar
-    tl.fromTo(newSidebarRef.current, { x: "100%" }, { x: "0%", duration: 0.5, ease: "power2.out" }, "-=0.5");
-  };
-
-  const handleClose = () => {
-    const item = showcaseRefs.current[activeShowcase];
-    const state = Flip.getState(item);
-
-    const tl = gsap.timeline();
-
-    // Animate new sidebar out
-    tl.to(newSidebarRef.current, {
-      x: "100%",
-      duration: 0.3,
-      ease: "power2.in",
-    });
-
-    // Return main sidebar
-    tl.to(
-      overviewRef.current,
-      {
-        x: "0%",
-        duration: 0.5,
-        ease: "power2.out",
-      },
-      "-=0.2"
-    );
-
-    // FLIP animation back to grid
-    tl.add(
-      Flip.from(state, {
-        duration: 1,
-        ease: "power4.inOut",
-        absolute: true,
-        onComplete: () => {
-          item.style.position = "absolute";
-          item.style.zIndex = "auto";
-          setActiveShowcase(null);
-        },
-      }),
-      "-=0.5"
-    );
-  };
-
   return (
     <section className='hero'>
       {/* Left Sidebar */}
@@ -138,7 +67,7 @@ function Home() {
               key={item.id}
               className={`showcaseItem`}
               ref={el => (showcaseRefs.current[index] = el)}
-              onClick={e => handleShowcaseClick(index, e)}
+              // onClick={e => handleShowcaseClick(index, e)}
             >
               <div className='item-content'>
                 <h3>{item.title}</h3>
@@ -156,40 +85,6 @@ function Home() {
         </div>
       </div>
 
-      {/* Active Showcase Overlay */}
-      {activeShowcase !== null && (
-        <div className='full-overlay'>
-          <button className='close-button' onClick={handleClose}>
-            &times;
-          </button>
-          <div className='full-content'>{showcaseData[activeShowcase].content}</div>
-        </div>
-      )}
-
-      {/* Right Sidebar */}
-      <div className='new-sidebar' ref={newSidebarRef}>
-        <button className='sidebar-toggle' onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}>
-          {isSidebarExpanded ? "◀" : "▶"}
-        </button>
-
-        {isSidebarExpanded && activeShowcase !== null && (
-          <div className='sidebar-content'>
-            <h3>{showcaseData[activeShowcase].title}</h3>
-            <div className='meta-info'>
-              <p>
-                <strong>Tech Stack:</strong> {showcaseData[activeShowcase].tech.join(", ")}
-              </p>
-              <p>
-                <strong>Created:</strong> {new Date(showcaseData[activeShowcase].date).toLocaleDateString()}
-              </p>
-            </div>
-            <div className='action-buttons'>
-              <button>View Demo</button>
-              <button>View Code</button>
-            </div>
-          </div>
-        )}
-      </div>
     </section>
   );
 }
