@@ -6,6 +6,30 @@
   display: flex;
   position: relative;
 
+  .dynamic-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    
+    .bg-item {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      
+      &.active {
+        opacity: 0.2;
+      }
+    }
+  }
+  
+
   .overview {
     width: 100%;
     height: 100vh;
@@ -16,11 +40,14 @@
     position: -webkit-sticky;
     position: sticky;
     top: 0;
+    // background: rgba(255, 255, 255, 0.9);
+    transition: all 0.5s ease-in-out;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     gap: 2rem;
-    transition: transform 0.5s ease;
+    // transition: transform 0.5s ease;
 
     .filter {
       .filter-buttons {
@@ -40,6 +67,15 @@
 
           &:hover {
             background: #333;
+          }
+          &.active {
+            background: #000;
+            color: white;
+          }
+          
+          .tag-count {
+            opacity: 0.6;
+            font-size: 0.8em;
           }
         }
       }
@@ -68,6 +104,7 @@
   .main {
     width: 100%;
     height: 100%;
+    min-height: 150vh;
     padding: 2.5vw;
     display: flex;
     flex-direction: column;
@@ -162,4 +199,34 @@
     }
   }
 
+  .fullscreen-showcase {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.5s ease;
+    
+    .showcase-content {
+      max-width: 800px;
+      color: white;
+      padding: 2rem;
+    }
+  }
+  
+  @-webkit-keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 }
