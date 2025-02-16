@@ -7,7 +7,7 @@ export const Icon = ({ name, color, size }) => {
       }
     return (
       <svg width={size} viewBox="0 0 1000 500" fill={color}>
-        <use href={`/Font/contSprite.svg#${name}`} />
+        <use href={`/Icon/social.svg#${name}`} />
       </svg>
     )
    }
