@@ -257,6 +257,19 @@ function Home() {
   //   }
   // }, [isMobile]);
 
+  useEffect(() => {
+   if (sidebarRef.current) {
+     const sections = sidebarRef.current.querySelectorAll('details');
+     sections.forEach(section => {
+       section.addEventListener('toggle', (e) => {
+         if (e.target.open) {
+           sections.forEach(s => s !== e.target && (s.open = false));
+         }
+       });
+     });
+   }
+  }, [selectedShowcase]);
+  
   return (
     <section className='hero'>
       {/* Dynamic Background */}
@@ -355,17 +368,101 @@ function Home() {
           </button>
 
           <div className='scSidebar' ref={sidebarRef}>
-            <div className='item-content'>
+            {/* Header Section */}
+            <div className='sidebar-header'>
               <h3>{selectedShowcase.title}</h3>
-              <div className='hover-details'>
-                <p>{selectedShowcase.description}</p>
-                <div className='tags'>
-                  {selectedShowcase.tags.map(tag => (
-                    <span key={tag}>{tag}</span>
-                  ))}
-                </div>
+              <p className='description'>{selectedShowcase.description}</p>
+              <div className='tags'>
+                {selectedShowcase.tags.map(tag => (
+                  <span key={tag} className='tag'>
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
+
+            {/* Quick Stats (Always Visible) */}
+            <div className='quick-stats'>
+              <div className='stat'>
+                <span className='label'>Mood</span>
+                <span className='value'>{selectedShowcase.mood}</span>
+              </div>
+              <div className='stat'>
+                <span className='label'>Interaction Type</span>
+                <span className='value'>⌨️ {selectedShowcase.interactionType}</span>
+              </div>
+              <div className='stat'>
+                <span className='label'>Personal Rating</span>
+                <span className='value'>⭐ {selectedShowcase.personalRating}/5</span>
+              </div>
+              <div className='stat'>
+                <span className='label'>Likes</span>
+                <span className='value'>♥ {selectedShowcase.likes}</span>
+              </div>
+            </div>
+
+            {/* Collapsible: Extra Information */}
+            <details className='collapsible-section' open>
+              <summary className='section-title'>Extra Useless Info</summary>
+              <div className='section-content'>
+                <div className='detail'>
+                  <p>{selectedShowcase.content}</p>
+                </div>
+              </div>
+            </details>
+
+            {/* Collapsible: How to Use */}
+            <details className='collapsible-section'>
+              <summary className='section-title'>How to Use</summary>
+              <div className='section-content'>
+                <div className='detail'>
+                  <span className='detail-label'>Soundtrack</span>
+                  <span>{selectedShowcase.soundtrack}</span>
+                </div>
+                <div className='detail'>
+                  <span className='detail-label'>Best Viewed With</span>
+                  <span>{selectedShowcase.bestViewedWith}</span>
+                </div>
+                <div className='detail'>
+                  <span className='detail-label'>Secret</span>
+                  <span className='easter-egg'>{selectedShowcase.secretInteraction}</span>
+                </div>
+              </div>
+            </details>
+
+            {/* Collapsible: Behind the Scenes */}
+            <details className='collapsible-section'>
+              <summary className='section-title'>Behind the Scenes</summary>
+              <div className='section-content'>
+                <div className='detail'>
+                  <span className='detail-label'>Build Time</span>
+                  <span>{selectedShowcase.timeToBuild}</span>
+                </div>
+                <div className='detail'>
+                  <span className='detail-label'>Difficulty</span>
+                  <span>{selectedShowcase.difficulty}</span>
+                </div>
+                <div className='detail'>
+                  <span className='detail-label'>Inspiration</span>
+                  <span>{selectedShowcase.inspiration}</span>
+                </div>
+              </div>
+            </details>
+
+            {/* Collapsible: Technical */}
+            <details className='collapsible-section'>
+              <summary className='section-title'>Technical</summary>
+              <div className='section-content'>
+                <div className='detail'>
+                  <span className='detail-label'>Tech</span>
+                  <span>{selectedShowcase.tech.join(", ")}</span>
+                </div>
+                <div className='detail'>
+                  <span className='detail-label'>Warning</span>
+                  <span className='warning'>{selectedShowcase.warning}</span>
+                </div>
+              </div>
+            </details>
           </div>
         </div>
       )}
