@@ -3,6 +3,7 @@ import { showcaseData } from "../Data/showcaseData";
 import "../Style/Home.scss";
 import gsap from "gsap";
 import useIsMobile from "../Util/isMobile.jsx";
+import FilterAnimation from "../Component/Filter";
 function Home() {
   const [activeShowcase, setActiveShowcase] = useState(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -41,6 +42,7 @@ function Home() {
     }));
   };
 
+  const tags = getFilterTags();
   const filteredShowcases = showcaseData.filter(item => (selectedFilter === "All" ? true : item.tags.includes(selectedFilter)));
 
   // Animation functions
@@ -175,6 +177,7 @@ function Home() {
     }
   }, [isMenuOpen]);
 
+  // sidebar display animation
   useEffect(() => {
     if (sidebarRef.current) {
       const menu = sidebarRef.current;
@@ -183,7 +186,7 @@ function Home() {
       if (isMenuOpen) {
         gsap.set(menu, {
           display: "block",
-          delay:0.25,
+          delay: 0.25,
           onComplete: () => {
             gsap.to(menu, {
               duration: 0.1,
@@ -259,7 +262,7 @@ function Home() {
 
         <div className='filter'>
           <h3>Filter Experiments</h3>
-          <div className='filter-buttons'>
+          {/* <div className='filter-buttons'>
             {getFilterTags().map(({ name, count }) => (
               <button
                 key={name}
@@ -269,7 +272,8 @@ function Home() {
                 {name} <span className='tag-count'>({count})</span>
               </button>
             ))}
-          </div>
+          </div> */}
+          <FilterAnimation tags={tags} selectedFilter={selectedFilter} setSelectedFilter={setSelectedFilter} />
         </div>
 
         <div className='currentInfo'>
