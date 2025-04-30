@@ -3,11 +3,12 @@ import { showcaseData } from "../Data/showcaseData";
 import "../Style/Home.scss";
 import gsap from "gsap";
 import useIsMobile from "../Util/isMobile.jsx";
-import FilterAnimation from "../Component/Filter";
+import Filter from "../Component/Filter";
+// import Filter from "../Component/Filter";
 function Home() {
   const [activeShowcase, setActiveShowcase] = useState(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
-  const [selectedFilter, setSelectedFilter] = useState("All");
+  const [selectedFilters, setSelectedFilters] = useState(["All"]);
   const [selectedShowcase, setSelectedShowcase] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [backgroundIndex, setBackgroundIndex] = useState(0);
@@ -42,8 +43,24 @@ function Home() {
     }));
   };
 
-  const tags = getFilterTags();
-  const filteredShowcases = showcaseData.filter(item => (selectedFilter === "All" ? true : item.tags.includes(selectedFilter)));
+  const filteredShowcases = showcaseData.filter(
+    item => selectedFilters.includes("All") || selectedFilters.some(filter => item.tags.includes(filter))
+  );
+
+  const handleFilterChange = () => {
+    // Play the showcase animation when filters change
+    gsap.set(".showcaseItem", {
+      opacity: 0,
+      onComplete: () => {
+        gsap.to(".showcaseItem", {
+          opacity: 1,
+          duration: 1,
+          stagger: 0.1,
+          ease: "power1.out",
+        });
+      },
+    });
+  };
 
   // Animation functions
   const animateSidebarCollapse = () => {
@@ -262,18 +279,12 @@ function Home() {
 
         <div className='filter'>
           <h3>Filter Experiments</h3>
-          {/* <div className='filter-buttons'>
-            {getFilterTags().map(({ name, count }) => (
-              <button
-                key={name}
-                onClick={() => setSelectedFilter(name === "All" ? "All" : name)}
-                className={selectedFilter === name ? "active" : ""}
-              >
-                {name} <span className='tag-count'>({count})</span>
-              </button>
-            ))}
-          </div> */}
-          <FilterAnimation tags={tags} selectedFilter={selectedFilter} setSelectedFilter={setSelectedFilter} />
+          <Filter
+            tags={getFilterTags()}
+            selectedFilters={selectedFilters}
+            setSelectedFilters={setSelectedFilters}
+            onFilterChange={handleFilterChange}
+          />
         </div>
 
         <div className='currentInfo'>
