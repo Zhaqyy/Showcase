@@ -1,11 +1,13 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
+import gsap from "gsap";
+
 import { showcaseData } from "../Data/showcaseData";
 import { overviewData } from "../Data/overviewData";
 import "../Style/Home.scss";
 
-import gsap from "gsap";
 import useIsMobile from "../Util/isMobile.jsx";
 import Filter from "../Component/Filter";
+import useDebounce from "../Util/debounce";
 
 function Home() {
   const [activeShowcase, setActiveShowcase] = useState(null);
@@ -159,8 +161,45 @@ function Home() {
 
   const hamburgerRef = useRef(null);
 
+  // Create debounced toggle function
+  const debouncedToggle = useDebounce((shouldOpen) => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    const menu = sidebarRef.current;
+
+    if (shouldOpen) {
+      gsap.fromTo(menu,
+        { x: 20, autoAlpha: 0 },
+        {
+          x: 0,
+          autoAlpha: 1,
+          duration: 0.3,
+          ease: "power2.out",
+          onComplete: () => {
+            setIsMenuOpen(true);
+            setIsAnimating(false);
+          }
+        }
+      );
+    } else {
+      gsap.to(menu,
+        {
+          x: 20,
+          autoAlpha: 0,
+          duration: 0.2,
+          ease: "power2.in",
+          onComplete: () => {
+            setIsMenuOpen(false);
+            setIsAnimating(false);
+          }
+        }
+      );
+    }
+  }, 300);
+
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    debouncedToggle(!isMenuOpen);
   };
 
   // sidebar fade-in animation
