@@ -189,8 +189,11 @@
       height: 25px;
       background: transparent;
       border: 0;
+      scale: 1;
+      margin: 1.25rem;
       cursor: pointer;
-      z-index: 100;
+      z-index: 1000;
+      transition: scale 0.25s ease;
 
       &-line {
         position: absolute;
@@ -220,6 +223,8 @@
       }
 
       &.active {
+        scale: 0.5;
+
         .hamburger-line {
           &:first-child {
             transform: rotate(45deg);
@@ -269,6 +274,7 @@
       justify-content: space-evenly;
       gap: 2rem;
       overflow-y: auto;
+      scrollbar-width: none;
 
       // Header
       .sidebar-header {

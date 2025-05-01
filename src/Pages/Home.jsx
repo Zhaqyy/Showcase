@@ -96,6 +96,7 @@ function Home() {
 
     const tl = gsap.timeline();
     // tl.add(animateSidebarCollapse())
+    tl.set(".hero .main", { overflowY: "hidden", height: "100vh", minHeight: 0 });
     tl.add(animateMainContentExit(), "-=0.2").to(
       clone,
       {
@@ -124,8 +125,7 @@ function Home() {
     //   duration: 0.5,
     //   ease: 'power2.inOut'
     // });
-    // gsap.to('.filter, .currentInfo, .contact', { opacity: 1, duration: 0.3 });
-    // gsap.to('.name', { fontSize: '2rem', duration: 0.3 });
+    gsap.set(".hero .main", { overflowY: "auto", height: "100%", minHeight: '150vh' });
     gsap.to(".showcaseItem", { opacity: 1, y: 0, duration: 1, ease: "power1.Out", stagger: 0.1 });
     setSelectedShowcase(null);
   };
@@ -257,19 +257,20 @@ function Home() {
   //   }
   // }, [isMobile]);
 
+  // disable multiple active collapsible
   useEffect(() => {
-   if (sidebarRef.current) {
-     const sections = sidebarRef.current.querySelectorAll('details');
-     sections.forEach(section => {
-       section.addEventListener('toggle', (e) => {
-         if (e.target.open) {
-           sections.forEach(s => s !== e.target && (s.open = false));
-         }
-       });
-     });
-   }
+    if (sidebarRef.current) {
+      const sections = sidebarRef.current.querySelectorAll("details");
+      sections.forEach(section => {
+        section.addEventListener("toggle", e => {
+          if (e.target.open) {
+            sections.forEach(s => s !== e.target && (s.open = false));
+          }
+        });
+      });
+    }
   }, [selectedShowcase]);
-  
+
   return (
     <section className='hero'>
       {/* Dynamic Background */}
