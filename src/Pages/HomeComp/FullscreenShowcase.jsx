@@ -3,168 +3,255 @@ import gsap from "gsap";
 import "../../Style/Home.scss";
 import ShowcaseSidebar from "./ShowcaseSidebar";
 import useDebounce from "../../Util/debounce.jsx";
+import ErrorBoundary from "../../Util/ErrorBoundary";
+import QuickNav from "../../Component/QuickNav";
 
-const FullscreenShowcase = ({ showcase, onClose, isMobile }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const sidebarRef = useRef();
-  const hamburgerRef = useRef();
+const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, currentIndex, onNavigate }) => {
+  // State management
+  const [uiState, setUiState] = useState({
+    isMenuOpen: false,
+    isAnimating: false,
+    isLoading: true,
+    showQuickNav: false,
+    dimensions: { width: 0, height: 0 },
+  });
 
-  // Animation logic
+  // Refs
+  const refs = {
+    sidebar: useRef(),
+    hamburger: useRef(),
+    contentContainer: useRef(),
+    initialScrollY: useRef(0),
+  };
+
+  // Dynamic component handling
+  const [ActiveComponent, setActiveComponent] = useState(null);
+
+  // Load component
+  useEffect(() => {
+    const loadComponent = async () => {
+      try {
+        setUiState(prev => ({ ...prev, isLoading: true }));
+
+        const component =
+          typeof showcase.component === "string" ? (await import(`../../scenes/${showcase.component}`)).default : showcase.component;
+
+        setActiveComponent(() => component);
+      } catch (error) {
+        console.error("Component load failed:", error);
+      } finally {
+        setUiState(prev => ({ ...prev, isLoading: false }));
+      }
+    };
+
+    loadComponent();
+
+    // Track container dimensions
+    const updateDimensions = () => {
+      if (refs.contentContainer.current) {
+        setUiState(prev => ({
+          ...prev,
+          dimensions: {
+            width: refs.contentContainer.current.offsetWidth,
+            height: refs.contentContainer.current.offsetHeight,
+          },
+        }));
+      }
+    };
+
+    updateDimensions();
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    if (refs.contentContainer.current) {
+      resizeObserver.observe(refs.contentContainer.current);
+    }
+
+    return () => resizeObserver.disconnect();
+  }, [showcase]);
+
+  // Navigation handlers
+  const handleNext = () => {
+    if (!allShowcases) return;
+    if (currentIndex < allShowcases.length - 1) {
+      onNavigate(currentIndex + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (!allShowcases) return;
+    if (currentIndex > 0) {
+      onNavigate(currentIndex - 1);
+    }
+  };
+
+  const toggleQuickNav = () => {
+    setUiState(prev => ({ ...prev, showQuickNav: !prev.showQuickNav }));
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (e.key === "ArrowRight") handleNext();
+      if (e.key === "ArrowLeft") handlePrev();
+      if (e.key === "Escape") onClose();
+      if (e.key === "q") toggleQuickNav();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentIndex]);
+
+  // Animation logic with enhanced safety
   const debouncedToggle = useDebounce(shouldOpen => {
-    if (isAnimating) return;
+    if (uiState.isAnimating || !refs.sidebar.current) return;
 
-    setIsAnimating(true);
-    const menu = sidebarRef.current;
+    setUiState(prev => ({ ...prev, isAnimating: true }));
 
-    if (shouldOpen) {
-      gsap.fromTo(
-        menu,
-        { x: 20, autoAlpha: 0 },
-        {
-          x: 0,
-          autoAlpha: 1,
-          duration: 0.3,
+    const animation = shouldOpen
+      ? gsap.fromTo(
+          refs.sidebar.current,
+          { x: 20, autoAlpha: 0 },
+          {
+            x: 0,
+            autoAlpha: 1,
+            duration: 0.3,
+            ease: "expo.in",
+            onComplete: () => {
+              setUiState(prev => ({ ...prev, isMenuOpen: true, isAnimating: false }));
+            },
+          }
+        )
+      : gsap.to(refs.sidebar.current, {
+          x: 20,
+          autoAlpha: 0,
+          duration: 0.2,
           ease: "expo.in",
           onComplete: () => {
-            setIsMenuOpen(true);
-            setIsAnimating(false);
+            setUiState(prev => ({ ...prev, isMenuOpen: false, isAnimating: false }));
+            gsap.set(refs.sidebar.current, { display: "none" });
           },
-        }
-      );
-    } else {
-      gsap.to(menu, {
-        x: 20,
-        autoAlpha: 0,
-        duration: 0.2,
-        ease: "expo.in",
-        onComplete: () => {
-          setIsMenuOpen(false);
-          setIsAnimating(false);
-        },
-      });
-    }
+        });
+
+    return () => animation.kill();
   }, 300);
 
   const toggleMenu = () => {
-    debouncedToggle(!isMenuOpen);
+    debouncedToggle(!uiState.isMenuOpen);
   };
 
-  // sidebar display animation
-  useEffect(() => {
-    if (sidebarRef.current) {
-      const menu = sidebarRef.current;
-      // const items = menuItems.current;
-
-      if (isMenuOpen) {
-        gsap.set(menu, {
-          display: "block",
-          delay: 0.25,
-          onComplete: () => {
-            gsap.to(menu, {
-              duration: 0.1,
-              autoAlpha: 1,
-              x: 0,
-              ease: "expo.in",
-            });
-          },
-        });
-
-        // gsap.to(items, {
-        //   duration: 0.6,
-        //   autoAlpha: 1,
-        //   y: 0,
-        //   stagger: 0.1,
-        //   ease: "expo.out",
-        //   delay: 0.2,
-        // });
-      } else {
-        // gsap.to(items, {
-        //   duration: 0.4,
-        //   autoAlpha: 0,
-        //   y: 20,
-        //   stagger: 0.05,
-        //   ease: "expo.in",
-        // });
-
-        gsap.to(menu, {
-          duration: 0.25,
-          autoAlpha: 0,
-          x: 20,
-          ease: "sine.in",
-          delay: 0.1,
-          onComplete: () => {
-            gsap.set(menu, {
-              display: "none",
-              delay: 0.25,
-            });
-          },
-        });
-      }
-    }
-  }, [isMenuOpen]);
-  
-  // Click outside and scroll handlers
-
-  const initialScrollY = useRef(0);
-
-  // close on Click outside handler
+  // Event handlers with cleanup
   useEffect(() => {
     const handleClickOutside = e => {
-      if (isMenuOpen && !sidebarRef.current.contains(e.target) && !hamburgerRef.current.contains(e.target)) {
-        setIsMenuOpen(false);
+      if (
+        uiState.isMenuOpen &&
+        refs.sidebar.current &&
+        !refs.sidebar.current.contains(e.target) &&
+        !refs.hamburger.current.contains(e.target)
+      ) {
+        setUiState(prev => ({ ...prev, isMenuOpen: false }));
+      }
+    };
+
+    const handleScroll = () => {
+      if (!uiState.isMenuOpen) return;
+
+      const scrollDelta = Math.abs(window.scrollY - refs.initialScrollY.current);
+      if (scrollDelta > 150) {
+        setUiState(prev => ({ ...prev, isMenuOpen: false }));
       }
     };
 
     window.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("scroll", handleScroll);
+
     return () => {
       window.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
     };
-  }, [isMenuOpen]);
-
-  // Scroll handling - close on scroll
-  useEffect(() => {
-    if (isMenuOpen) {
-      initialScrollY.current = window.scrollY;
-      let lastScrollY = window.scrollY;
-      let ticking = false;
-
-      const handleScroll = () => {
-        lastScrollY = window.scrollY;
-        if (!ticking) {
-          window.requestAnimationFrame(() => {
-            const scrollDelta = Math.abs(lastScrollY - initialScrollY.current);
-            if (scrollDelta > 150) {
-              // 50px threshold
-              setIsMenuOpen(false);
-            }
-            ticking = false;
-          });
-          ticking = true;
-        }
-      };
-
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
-    }
-  }, [isMenuOpen]);
+  }, [uiState.isMenuOpen]);
 
   return (
     <div className='fullscreen-showcase'>
-      <div className='scContent'>
-        <h2>{showcase.title}</h2>
-        <p>{showcase.description}</p>
-        <button onClick={onClose}>Back to Experiments</button>
+      {/* Main Content Area */}
+      <div className='scContent' ref={refs.contentContainer}>
+        <ErrorBoundary onRetry={() => setActiveComponent(null)} onClose={onClose}>
+          {uiState.isLoading ? (
+            <div className='showcase-loading'>Loading creative magic...</div>
+          ) : ActiveComponent ? (
+            <div style={{ width: "100%", height: "100%", touchAction: "none" }}>
+              <ActiveComponent
+                isActive={true}
+                {...uiState.dimensions}
+                pixelRatio={window.devicePixelRatio}
+                onReady={() => setUiState(prev => ({ ...prev, isLoading: false }))}
+              />
+            </div>
+          ) : (
+            <div className='showcase-error'>Component not available</div>
+          )}
+        </ErrorBoundary>
+
+        <button onClick={onClose} className='close-button' aria-label='Close showcase'>
+          {/* Back to Experiments */}
+        </button>
       </div>
 
-      {/* Hamburger icon */}
-      <button className={`hamburger ${isMenuOpen ? "active" : ""}`} ref={hamburgerRef} onClick={toggleMenu} aria-label='Menu'>
+      {/* Navigation Controls */}
+      <div className='navigation-controls'>
+        <button
+          className='nav-button prev'
+          onClick={handlePrev}
+          disabled={!allShowcases || currentIndex === 0}
+          aria-label='Previous showcase'
+        >
+          ←
+        </button>
+
+        <button className='quick-nav-button' onClick={toggleQuickNav} aria-label='Show all showcases'>
+          ○○○
+        </button>
+
+        <button
+          className='nav-button next'
+          onClick={handleNext}
+          disabled={!allShowcases || currentIndex === allShowcases.length - 1}
+          aria-label='Next showcase'
+        >
+          →
+        </button>
+      </div>
+
+      <button onClick={onClose} className='close-button' aria-label='Close showcase'>
+        ✕
+      </button>
+
+      {/* Quick Nav Modal */}
+      {uiState.showQuickNav && allShowcases && (
+        <QuickNav
+          showcases={allShowcases}
+          currentIndex={currentIndex}
+          onSelect={index => {
+            onNavigate(index);
+            setUiState(prev => ({ ...prev, showQuickNav: false }));
+          }}
+          onClose={() => setUiState(prev => ({ ...prev, showQuickNav: false }))}
+        />
+      )}
+
+      {/* Hamburger Menu */}
+      <button
+        className={`hamburger ${uiState.isMenuOpen ? "active" : ""}`}
+        ref={refs.hamburger}
+        onClick={toggleMenu}
+        aria-label='Menu'
+        aria-expanded={uiState.isMenuOpen}
+      >
         <span className='hamburger-line'></span>
         <span className='hamburger-line'></span>
         <span className='hamburger-line'></span>
       </button>
 
-      <ShowcaseSidebar ref={sidebarRef} showcase={showcase} isOpen={isMenuOpen} />
+      {/* Sidebar */}
+      <ShowcaseSidebar ref={refs.sidebar} showcase={showcase} isOpen={uiState.isMenuOpen} />
     </div>
   );
 };
