@@ -1,10 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
 import { showcaseData } from "../Data/showcaseData";
+import { overviewData } from "../Data/overviewData";
 import "../Style/Home.scss";
+
 import gsap from "gsap";
 import useIsMobile from "../Util/isMobile.jsx";
 import Filter from "../Component/Filter";
-// import Filter from "../Component/Filter";
+
 function Home() {
   const [activeShowcase, setActiveShowcase] = useState(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -125,12 +127,34 @@ function Home() {
     //   duration: 0.5,
     //   ease: 'power2.inOut'
     // });
-    gsap.set(".hero .main", { overflowY: "auto", height: "100%", minHeight: '150vh' });
+    gsap.set(".hero .main", { overflowY: "auto", height: "100%", minHeight: "150vh" });
     gsap.to(".showcaseItem", { opacity: 1, y: 0, duration: 1, ease: "power1.Out", stagger: 0.1 });
     setSelectedShowcase(null);
   };
 
-  // showcase sidebar stuff
+  // overview sidebar stuff entry animation
+  useEffect(() => {
+    const overview = overviewRef.current;
+    const sections = gsap.utils.toArray(".overview > *");
+
+    const tl = gsap.timeline({
+      defaults: { ease: "power1.out" },
+    });
+
+    tl.fromTo(
+      sections,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        // y: 0,
+        duration: 0.5,
+        stagger: 0.15,
+      }
+    );
+
+  }, []);
+
+  // fullscreen showcase sidebar stuff
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const hamburgerRef = useRef(null);
@@ -286,9 +310,9 @@ function Home() {
 
       {/* Left Sidebar */}
       <div className='overview' ref={overviewRef}>
-        <div>
-          <h1 className='name'>Shuaib Abdulrazaq</h1>
-          <h4 className='name'>Creative Developer</h4>
+        <div className='identity-section'>
+          <h1 className='name'>{overviewData.identity.name}</h1>
+          <h4 className='title'>{overviewData.identity.title}</h4>
         </div>
 
         <div className='filter'>
@@ -301,17 +325,14 @@ function Home() {
           />
         </div>
 
-        <div className='currentInfo'>
-          <h3>Hover to see brief Details</h3>
-        </div>
-
-        <div className='contact'>
+        <div className='contact-section'>
+          <h3>Summoning Circle</h3>
           <ul>
-            {["GitHub", "LinkedIn", "Twitter", "Email"].map(platform => (
+            {["GitHub", "LinkedIn", "Twitter"].map(platform => (
               <li key={platform}>{platform}</li>
             ))}
           </ul>
-          <h6>AVAILABLE FOR HIRE</h6>
+          <div className='availability'>{overviewData.interaction.collaborationStatus}</div>
         </div>
       </div>
 
