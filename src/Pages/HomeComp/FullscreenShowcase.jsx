@@ -5,7 +5,8 @@ import ShowcaseSidebar from "./ShowcaseSidebar";
 import useDebounce from "../../Util/debounce.jsx";
 import ErrorBoundary from "../../Util/ErrorBoundary";
 import QuickNav from "../../Component/QuickNav";
-
+// import componentRegistry from './componentRegistry';
+import Pool from "../../Showcase/Pool";
 const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, currentIndex, onNavigate }) => {
   // State management
   const [uiState, setUiState] = useState({
@@ -25,48 +26,69 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
   };
 
   // Dynamic component handling
-  const [ActiveComponent, setActiveComponent] = useState(null);
+  // const [ActiveComponent, setActiveComponent] = useState(null);
 
   // Load component
-  useEffect(() => {
-    const loadComponent = async () => {
-      try {
-        setUiState(prev => ({ ...prev, isLoading: true }));
+  // useEffect(() => {
+  //   const loadComponent = async () => {
+  //     try {
+  //       setUiState(prev => ({ ...prev, isLoading: true }));
+        
+  //       // Handle string references only
+  //       if (typeof showcase.component !== 'string') {
+  //         throw new Error('Component must be referenced by string');
+  //       }
+  
+  //       // First try the registry
+  //       let Component = componentRegistry[showcase.component];
+        
+  //       // If not in registry, try dynamic import
+  //       if (!Component) {
+  //         try {
+  //           const module = await import(`../../Showcase/${showcase.component}.jsx`);
+  //           Component = module.default;
+  //         } catch (importError) {
+  //           console.error(`Failed to dynamically import ${showcase.component}:`, importError);
+  //           throw new Error(`Component ${showcase.component} not found`);
+  //         }
+  //       }
+  
+  //       if (!Component) {
+  //         throw new Error('Component loaded but is undefined');
+  //       }
+  
+  //       setActiveComponent(() => Component);
+  //     } catch (error) {
+  //       console.error("Component load failed:", error);
+  //       setUiState(prev => ({ ...prev, hasError: true }));
+  //     } finally {
+  //       setUiState(prev => ({ ...prev, isLoading: false }));
+  //     }
+  //   };
+  
+  //   loadComponent();
+  
+  //   // Track container dimensions
+  //   const updateDimensions = () => {
+  //     if (refs.contentContainer.current) {
+  //       setUiState(prev => ({
+  //         ...prev,
+  //         dimensions: {
+  //           width: refs.contentContainer.current.offsetWidth,
+  //           height: refs.contentContainer.current.offsetHeight,
+  //         },
+  //       }));
+  //     }
+  //   };
 
-        const component =
-          typeof showcase.component === "string" ? (await import(`../../scenes/${showcase.component}`)).default : showcase.component;
+  //   updateDimensions();
+  //   const resizeObserver = new ResizeObserver(updateDimensions);
+  //   if (refs.contentContainer.current) {
+  //     resizeObserver.observe(refs.contentContainer.current);
+  //   }
 
-        setActiveComponent(() => component);
-      } catch (error) {
-        console.error("Component load failed:", error);
-      } finally {
-        setUiState(prev => ({ ...prev, isLoading: false }));
-      }
-    };
-
-    loadComponent();
-
-    // Track container dimensions
-    const updateDimensions = () => {
-      if (refs.contentContainer.current) {
-        setUiState(prev => ({
-          ...prev,
-          dimensions: {
-            width: refs.contentContainer.current.offsetWidth,
-            height: refs.contentContainer.current.offsetHeight,
-          },
-        }));
-      }
-    };
-
-    updateDimensions();
-    const resizeObserver = new ResizeObserver(updateDimensions);
-    if (refs.contentContainer.current) {
-      resizeObserver.observe(refs.contentContainer.current);
-    }
-
-    return () => resizeObserver.disconnect();
-  }, [showcase]);
+  //   return () => resizeObserver.disconnect();
+  // }, [showcase]);
 
   // Navigation handlers
   const handleNext = () => {
@@ -173,22 +195,16 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
     <div className='fullscreen-showcase'>
       {/* Main Content Area */}
       <div className='scContent' ref={refs.contentContainer}>
-        <ErrorBoundary onRetry={() => setActiveComponent(null)} onClose={onClose}>
-          {uiState.isLoading ? (
-            <div className='showcase-loading'>Loading creative magic...</div>
-          ) : ActiveComponent ? (
-            <div style={{ width: "100%", height: "100%", touchAction: "none" }}>
-              <ActiveComponent
-                isActive={true}
-                {...uiState.dimensions}
-                pixelRatio={window.devicePixelRatio}
-                onReady={() => setUiState(prev => ({ ...prev, isLoading: false }))}
-              />
-            </div>
-          ) : (
-            <div className='showcase-error'>Component not available</div>
-          )}
-        </ErrorBoundary>
+      <ErrorBoundary onRetry={() => window.location.reload()} onClose={onClose}>
+        <div style={{ width: "100%", height: "100%", touchAction: "none" }}>
+          <ShowcaseLoader 
+            name={showcase.component}
+            isActive={true}
+            {...uiState.dimensions}
+            pixelRatio={window.devicePixelRatio}
+          />
+        </div>
+      </ErrorBoundary>
 
         <button onClick={onClose} className='close-button' aria-label='Close showcase'>
           {/* Back to Experiments */}
@@ -257,3 +273,8 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
 };
 
 export default FullscreenShowcase;
+
+
+const componentRegistry = {
+  Pool,
+};

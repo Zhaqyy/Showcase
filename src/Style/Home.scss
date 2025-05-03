@@ -12,8 +12,8 @@
   $section-padding: 1rem;
 
   // Contrast-safe text variants
-  $text-on-deep: mix($text, $deep-green, 90%);
-  $text-on-light: mix($text, $light-green, 15%);
+  // $text-on-deep: color.mix($text, $deep-green, 90%);
+  // $text-on-light: color.mix($text, $light-green, 15%);
 
   height: 100%;
   min-height: 100vh;
