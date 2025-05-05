@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
-import { showcaseData } from "../Data/showcaseData";
+import showcaseData from "../Data/showcaseData";
 import OverviewSidebar from "./HomeComp/OverviewSidebar";
 import MainContent from "./HomeComp/MainContent";
 import FullscreenShowcase from "./HomeComp/FullscreenShowcase";

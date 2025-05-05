@@ -1,19 +1,54 @@
-// src/components/ShowcaseLoader.jsx
-import React from 'react';
-import Pool from './Pool';
-// Import all other showcase components here
+import React, { Suspense } from 'react';
+import ErrorBoundary from '../../Util/ErrorBoundary';
 
-const components = {
-  Pool,
-  // Add other components here as needed
+// Create a lazy-loaded component map
+const componentMap = {
+  Pool: React.lazy(() => import('../../Showcase/Pool')),
+  // Add other showcase components here
 };
 
+// Fallback component for loading state
+const Loader = () => (
+  <div style={{
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    background: '#f0f0f0',
+    color: '#333'
+  }}>
+    Loading showcase...
+  </div>
+);
+
+// Error fallback component
+const ErrorFallback = ({ error, onRetry }) => (
+  <div className="showcase-error">
+    <h3>Failed to load showcase</h3>
+    <p>{error?.message || 'Unknown error'}</p>
+    <button onClick={onRetry}>Retry</button>
+  </div>
+);
+
 export default function ShowcaseLoader({ name, ...props }) {
-  const Component = components[name];
+  const Component = componentMap[name];
   
   if (!Component) {
-    return <div className="showcase-error">Showcase "{name}" not found</div>;
+    return <ErrorFallback error={{ message: `Showcase "${name}" not found` }} />;
   }
 
-  return <Component {...props} />;
+  return (
+    <ErrorBoundary 
+      onRetry={() => window.location.reload()} 
+      onClose={props.onClose}
+      fallback={(error, retry) => (
+        <ErrorFallback error={error} onRetry={retry} />
+      )}
+    >
+      <Suspense fallback={<Loader />}>
+        <Component {...props} />
+      </Suspense>
+    </ErrorBoundary>
+  );
 }

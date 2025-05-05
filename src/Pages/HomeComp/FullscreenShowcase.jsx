@@ -6,7 +6,9 @@ import useDebounce from "../../Util/debounce.jsx";
 import ErrorBoundary from "../../Util/ErrorBoundary";
 import QuickNav from "../../Component/QuickNav";
 // import componentRegistry from './componentRegistry';
-import Pool from "../../Showcase/Pool";
+// import Pool from "../../Showcase/Pool";
+import ShowcaseLoader from "./componentRegistry";
+
 const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, currentIndex, onNavigate }) => {
   // State management
   const [uiState, setUiState] = useState({
@@ -195,16 +197,16 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
     <div className='fullscreen-showcase'>
       {/* Main Content Area */}
       <div className='scContent' ref={refs.contentContainer}>
-      <ErrorBoundary onRetry={() => window.location.reload()} onClose={onClose}>
-        <div style={{ width: "100%", height: "100%", touchAction: "none" }}>
-          <ShowcaseLoader 
-            name={showcase.component}
-            isActive={true}
-            {...uiState.dimensions}
-            pixelRatio={window.devicePixelRatio}
-          />
-        </div>
-      </ErrorBoundary>
+      {/* <ErrorBoundary onRetry={() => window.location.reload()} onClose={onClose}> */}
+      <div style={{ width: "100%", height: "100%", touchAction: "none" }}>
+        <ShowcaseLoader 
+          name={showcase.component}
+          isActive={true}
+          // {...uiState.dimensions}
+          // pixelRatio={window.devicePixelRatio}
+        />
+      </div>
+      {/* </ErrorBoundary> */}
 
         <button onClick={onClose} className='close-button' aria-label='Close showcase'>
           {/* Back to Experiments */}
@@ -273,8 +275,3 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
 };
 
 export default FullscreenShowcase;
-
-
-const componentRegistry = {
-  Pool,
-};

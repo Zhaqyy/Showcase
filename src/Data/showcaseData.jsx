@@ -1,4 +1,4 @@
-export const showcaseData = [
+const showcaseData = [
     // {
     //   id: 1,
     //   title: "BallPress",
@@ -145,7 +145,7 @@ export const showcaseData = [
       tags: ["Meta", "Placeholder"],
       thumbnail: "/nothing.webp",
       commentary: "This started as a test component but stayed because it perfectly represents my creative process: void of meaning yet somehow still present. The tranquility is fake - the code behind this is screaming internally.",
-      component: 'Pool',
+      component: "Pool",
       tech: ["React", "Void.js"],
       date: "2023-10-10",
       mood: "🕳️ Existential Void",
@@ -272,3 +272,4 @@ export const showcaseData = [
     //   warning: "Neighbors may complain"
     // }
 ];
+export default showcaseData;

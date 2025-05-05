@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { overviewData } from "../../Data/overviewData";
-import { showcaseData } from "../../Data/showcaseData";
+import showcaseData from "../../Data/showcaseData";
 import Filter from "../../Component/Filter";
 import "../../Style/Home.scss";
 
