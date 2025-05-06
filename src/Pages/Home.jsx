@@ -21,12 +21,12 @@ function Home() {
   );
 
   // Background cycling
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setBackgroundIndex(prev => (prev + 1) % showcaseData.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setBackgroundIndex(prev => (prev + 1) % showcaseData.length);
+  //   }, 5000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   // Showcase click handler
   const handleShowcaseClick = async index => {
@@ -70,7 +70,7 @@ function Home() {
   return (
     <section className='hero'>
       {/* Dynamic Background */}
-      <div className='dynamic-background'>
+      {/* <div className='dynamic-background'>
         {showcaseData.map((item, index) => (
           <div
             key={item.id}
@@ -78,7 +78,7 @@ function Home() {
             style={{ backgroundImage: `url(${item.image})` }}
           />
         ))}
-      </div>
+      </div> */}
       {/* Overview Sidebar */}
       <OverviewSidebar selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
 
