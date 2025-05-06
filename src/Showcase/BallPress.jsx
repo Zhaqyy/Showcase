@@ -68,7 +68,7 @@ function DynamicGrid() {
 
     // Attach color attribute to geometry
     mesh.geometry.setAttribute("color", colorAttribute);
-  }, [cubesX, cubesY]);
+  }, [cubesX, cubesY, tagCol]);
 
   // Update cube positions, colors, and sphere position
   useFrame((state, delta) => {
@@ -144,14 +144,14 @@ const BallPress = () => {
       <Canvas>
         <color attach='background' args={["#606060"]} />
         <OrthographicCamera makeDefault zoom={40} position={[10, 90, 20]} />
-        <Environment resolution={32}>
+        {/* <Environment resolution={32}>
           <group rotation={[-Math.PI / 4, -0.3, 0]}>
             <Lightformer intensity={1} rotation-x={Math.PI / 2} position={[0, 1, -5]} scale={[10, 10, 1]} color={randomizeColor()} />
             <Lightformer intensity={1} rotation-y={Math.PI / 2} position={[-5, -1, -1]} scale={[20, 2, 1]} color={randomizeColor()} />
             <Lightformer intensity={1} rotation-y={-Math.PI / 2} position={[5, 1, 0]} scale={[20, 2, 1]} color={randomizeColor()} />
             <Lightformer type='ring' intensity={2} color={randomizeColor()} rotation-y={Math.PI / 2} position={[-0.1, -1, -5]} scale={20} />
           </group>
-        </Environment>
+        </Environment> */}
         <ambientLight intensity={1} />
         <pointLight intensity={10} position={[0, 5, 0]} />
         <DynamicGrid />

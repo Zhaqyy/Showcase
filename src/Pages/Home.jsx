@@ -4,8 +4,8 @@ import showcaseData from "../Data/showcaseData";
 import OverviewSidebar from "./HomeComp/OverviewSidebar";
 import MainContent from "./HomeComp/MainContent";
 import FullscreenShowcase from "./HomeComp/FullscreenShowcase";
-import useIsMobile from "../Util/isMobile";
 import "../Style/Home.scss";
+import useIsMobile from "../util/isMobile";
 
 function Home() {
   const [selectedFilters, setSelectedFilters] = useState(["All"]);
@@ -86,9 +86,10 @@ function Home() {
       <MainContent ref={mainBodyRef} showcases={filteredShowcases} onShowcaseClick={handleShowcaseClick} showcaseRefs={showcaseRefs} />
 
       {/* Fullscreen Showcase */}
-      {selectedShowcase && <FullscreenShowcase showcase={selectedShowcase} onClose={handleCloseShowcase} isMobile={isMobile} />}
+      {selectedShowcase && <FullscreenShowcase showcase={selectedShowcase} allShowcases={showcaseData} onClose={handleCloseShowcase} isMobile={isMobile} />}
     </section>
   );
 }
-
+// 2. what if I want to make each showcase have a unique URL, so that way I can send them directly to people just by using the URL, 
+// do you get, that way I can reference it easily
 export default Home;

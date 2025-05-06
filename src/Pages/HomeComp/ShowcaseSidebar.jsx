@@ -53,10 +53,10 @@ const ShowcaseSidebar = forwardRef(({ showcase, isOpen }, ref) => {
 
       {/* Collapsible: Extra Information */}
       <details className='collapsible-section' open>
-        <summary className='section-title'>Extra Useless Info</summary>
+        <summary className='section-title'>Side Commentary</summary>
         <div className='section-content'>
           <div className='detail'>
-            <p>{showcase.content}</p>
+            <p>{showcase.commentary}</p>
           </div>
         </div>
       </details>
