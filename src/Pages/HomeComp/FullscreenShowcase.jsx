@@ -3,91 +3,27 @@ import gsap from "gsap";
 import "../../Style/Home.scss";
 import ShowcaseSidebar from "./ShowcaseSidebar";
 import useDebounce from "../../Util/debounce.jsx";
-import ErrorBoundary from "../../Util/ErrorBoundary";
 import QuickNav from "../../Component/QuickNav";
-// import componentRegistry from './componentRegistry';
-// import Pool from "../../Showcase/Pool";
-// import ShowcaseLoader from "./ShowcaseWrapper";
 import ShowcaseWrapper from "./ShowcaseWrapper";
 
 const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, currentIndex, onNavigate }) => {
-  // State management
-  const [uiState, setUiState] = useState({
-    isMenuOpen: false,
-    isAnimating: false,
-    isLoading: true,
-    showQuickNav: false,
-    dimensions: { width: 0, height: 0 },
-  });
+  // Individual state declarations
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [showQuickNav, setShowQuickNav] = useState(false);
 
-  // Refs
-  const refs = {
-    sidebar: useRef(),
-    hamburger: useRef(),
-    contentContainer: useRef(),
-    initialScrollY: useRef(0),
-  };
+  // Individual ref declarations
+  const sidebarRef = useRef();
+  const hamburgerRef = useRef();
+  const contentContainerRef = useRef();
+  const initialScrollY = useRef(0);
 
-   // This will store the actual component class/function
-  //  const [ComponentClass, setComponentClass] = useState(null);
-
-   // Load component
-  //  useEffect(() => {
-  //    const loadComponent = async () => {
-  //      try {
-  //        setUiState(prev => ({ ...prev, isLoading: true }));
-         
-  //        // If it's already a component (direct reference)
-  //        if (typeof showcase.component !== 'string') {
-  //          setComponentClass(() => showcase.component);
-  //          return;
-  //        }
- 
-  //        // Handle dynamic import
-  //        try {
-  //          const module = await import(`../../Showcase/${showcase.component}.jsx`);
-  //          setComponentClass(() => module.default);
-  //        } catch (error) {
-  //          console.error(`Dynamic import ${showcase.title} failed:`, error);
-  //          throw error;
-  //        }
-  //      } catch (error) {
-  //        console.error(`Component ${showcase.title} load failed:`, error);
-  //        setUiState(prev => ({ ...prev, hasError: true }));
-  //      } finally {
-  //        setUiState(prev => ({ ...prev, isLoading: false }));
-  //      }
-  //    };
- 
-  //    loadComponent();
- 
-  //    // Track container dimensions
-  //    const updateDimensions = () => {
-  //      if (refs.contentContainer.current) {
-  //        setUiState(prev => ({
-  //          ...prev,
-  //          dimensions: {
-  //            width: refs.contentContainer.current.offsetWidth,
-  //            height: refs.contentContainer.current.offsetHeight
-  //          }
-  //        }));
-  //      }
-  //    };
- 
-  //    updateDimensions();
-  //    const resizeObserver = new ResizeObserver(updateDimensions);
-  //    if (refs.contentContainer.current) {
-  //      resizeObserver.observe(refs.contentContainer.current);
-  //    }
- 
-  //    return () => resizeObserver.disconnect();
-  //  }, [showcase]);
-
+  // Showcase component state
   const [Component, setComponent] = useState(null);
 
   useEffect(() => {
     // For direct component references
-    if (typeof showcase.component !== 'string') {
+    if (typeof showcase.component !== "string") {
       setComponent(() => showcase.component);
       return;
     }
@@ -100,79 +36,16 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
           `../../Showcase/${showcase.component}.jsx`
         );
         setComponent(() => module.default);
+        setIsLoading(false);
       } catch (err) {
         console.error(`Failed to load ${showcase.component}:`, err);
         setComponent(() => () => <FallbackComponent name={showcase.title} />);
+        setIsLoading(false);
       }
     };
 
     loadComponent();
   }, [showcase]);
-
-  // Dynamic component handling
-  // const [ActiveComponent, setActiveComponent] = useState(null);
-
-  // Load component
-  // useEffect(() => {
-  //   const loadComponent = async () => {
-  //     try {
-  //       setUiState(prev => ({ ...prev, isLoading: true }));
-
-  //       // Handle string references only
-  //       if (typeof showcase.component !== 'string') {
-  //         throw new Error('Component must be referenced by string');
-  //       }
-
-  //       // First try the registry
-  //       let Component = componentRegistry[showcase.component];
-
-  //       // If not in registry, try dynamic import
-  //       if (!Component) {
-  //         try {
-  //           const module = await import(`../../Showcase/${showcase.component}.jsx`);
-  //           Component = module.default;
-  //         } catch (importError) {
-  //           console.error(`Failed to dynamically import ${showcase.component}:`, importError);
-  //           throw new Error(`Component ${showcase.component} not found`);
-  //         }
-  //       }
-
-  //       if (!Component) {
-  //         throw new Error('Component loaded but is undefined');
-  //       }
-
-  //       setActiveComponent(() => Component);
-  //     } catch (error) {
-  //       console.error("Component load failed:", error);
-  //       setUiState(prev => ({ ...prev, hasError: true }));
-  //     } finally {
-  //       setUiState(prev => ({ ...prev, isLoading: false }));
-  //     }
-  //   };
-
-  //   loadComponent();
-
-  //   // Track container dimensions
-  //   const updateDimensions = () => {
-  //     if (refs.contentContainer.current) {
-  //       setUiState(prev => ({
-  //         ...prev,
-  //         dimensions: {
-  //           width: refs.contentContainer.current.offsetWidth,
-  //           height: refs.contentContainer.current.offsetHeight,
-  //         },
-  //       }));
-  //     }
-  //   };
-
-  //   updateDimensions();
-  //   const resizeObserver = new ResizeObserver(updateDimensions);
-  //   if (refs.contentContainer.current) {
-  //     resizeObserver.observe(refs.contentContainer.current);
-  //   }
-
-  //   return () => resizeObserver.disconnect();
-  // }, [showcase]);
 
   // Navigation handlers
   const handleNext = () => {
@@ -190,7 +63,7 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
   };
 
   const toggleQuickNav = () => {
-    setUiState(prev => ({ ...prev, showQuickNav: !prev.showQuickNav }));
+    setShowQuickNav(prev => !prev);
   };
 
   // Keyboard navigation
@@ -206,121 +79,136 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentIndex]);
 
-  // Animation logic with enhanced safety
-  const debouncedToggle = useDebounce(shouldOpen => {
-    if (uiState.isAnimating || !refs.sidebar.current) return;
+ // Animation logic
+ const debouncedToggle = useDebounce(shouldOpen => {
+  if (isAnimating) return;
 
-    setUiState(prev => ({ ...prev, isAnimating: true }));
+  setIsAnimating(true);
+  const menu = sidebarRef.current;
 
-    const animation = shouldOpen
-      ? gsap.fromTo(
-          refs.sidebar.current,
-          { x: 20, autoAlpha: 0 },
-          {
-            x: 0,
+  if (shouldOpen) {
+    gsap.fromTo(
+      menu,
+      { x: 20, autoAlpha: 0 },
+      {
+        x: 0,
+        autoAlpha: 1,
+        duration: 0.3,
+        ease: "expo.in",
+        onComplete: () => {
+          setIsMenuOpen(true);
+          setIsAnimating(false);
+        },
+      }
+    );
+  } else {
+    gsap.to(menu, {
+      x: 20,
+      autoAlpha: 0,
+      duration: 0.2,
+      ease: "expo.in",
+      onComplete: () => {
+        setIsMenuOpen(false);
+        setIsAnimating(false);
+      },
+    });
+  }
+}, 300);
+
+const toggleMenu = () => {
+  debouncedToggle(!isMenuOpen);
+};
+
+// sidebar display animation
+useEffect(() => {
+  if (sidebarRef.current) {
+    const menu = sidebarRef.current;
+    // const items = menuItems.current;
+
+    if (isMenuOpen) {
+      gsap.set(menu, {
+        display: "block",
+        delay: 0.25,
+        onComplete: () => {
+          gsap.to(menu, {
+            duration: 0.1,
             autoAlpha: 1,
-            duration: 0.3,
+            x: 0,
             ease: "expo.in",
-            onComplete: () => {
-              setUiState(prev => ({ ...prev, isMenuOpen: true, isAnimating: false }));
-            },
-          }
-        )
-      : gsap.to(refs.sidebar.current, {
-          x: 20,
-          autoAlpha: 0,
-          duration: 0.2,
-          ease: "expo.in",
-          onComplete: () => {
-            setUiState(prev => ({ ...prev, isMenuOpen: false, isAnimating: false }));
-            gsap.set(refs.sidebar.current, { display: "none" });
-          },
-        });
+          });
+        },
+      });
 
-    return () => animation.kill();
-  }, 300);
+    } else {
+  
+      gsap.to(menu, {
+        duration: 0.25,
+        autoAlpha: 0,
+        x: 20,
+        ease: "sine.in",
+        delay: 0.1,
+        onComplete: () => {
+          gsap.set(menu, {
+            display: "none",
+            delay: 0.25,
+          });
+        },
+      });
+    }
+  }
+}, [isMenuOpen]);
 
-  const toggleMenu = () => {
-    debouncedToggle(!uiState.isMenuOpen);
+
+// Click outside and scroll handlers
+
+// close on Click outside handler
+useEffect(() => {
+  const handleClickOutside = e => {
+    if (isMenuOpen && !sidebarRef.current.contains(e.target) && !hamburgerRef.current.contains(e.target)) {
+      setIsMenuOpen(false);
+    }
   };
 
-  // Event handlers with cleanup
-  useEffect(() => {
-    const handleClickOutside = e => {
-      if (
-        uiState.isMenuOpen &&
-        refs.sidebar.current &&
-        !refs.sidebar.current.contains(e.target) &&
-        !refs.hamburger.current.contains(e.target)
-      ) {
-        setUiState(prev => ({ ...prev, isMenuOpen: false }));
-      }
-    };
+  window.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    window.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [isMenuOpen]);
+
+// Scroll handling - close on scroll
+useEffect(() => {
+  if (isMenuOpen) {
+    initialScrollY.current = window.scrollY;
+    let lastScrollY = window.scrollY;
+    let ticking = false;
 
     const handleScroll = () => {
-      if (!uiState.isMenuOpen) return;
-
-      const scrollDelta = Math.abs(window.scrollY - refs.initialScrollY.current);
-      if (scrollDelta > 150) {
-        setUiState(prev => ({ ...prev, isMenuOpen: false }));
+      lastScrollY = window.scrollY;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollDelta = Math.abs(lastScrollY - initialScrollY.current);
+          if (scrollDelta > 150) {
+            // 50px threshold
+            setIsMenuOpen(false);
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener("mousedown", handleClickOutside);
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("mousedown", handleClickOutside);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [uiState.isMenuOpen]);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }
+}, [isMenuOpen]);
 
   return (
     <div className='fullscreen-showcase'>
       {/* Main Content Area */}
-      <div className='scContent' ref={refs.contentContainer}>
-        {/* <ErrorBoundary onRetry={() => window.location.reload()} onClose={onClose}>
-      <div style={{ width: "100%", height: "100%", touchAction: "none" }}>
-        <ShowcaseLoader 
-          name={showcase.component}
-          isActive={true}
-          // {...uiState.dimensions}
-          // pixelRatio={window.devicePixelRatio}
-        />
-      </div>
-      </ErrorBoundary> */}
-
-        {/* <ErrorBoundary> */}
-          {/* {uiState.isLoading ? (
-            <div className='showcase-loading'>Loading creative magic...</div>
-          ) : ComponentClass ? (
-            <div style={{ width: "100%", height: "100%", touchAction: "none" }}>
-              {React.createElement(ComponentClass, {
-                isActive: true,
-                width: uiState.dimensions.width,
-                height: uiState.dimensions.height,
-                pixelRatio: window.devicePixelRatio,
-                ...showcase.props, // Pass any custom props from your showcase data
-              })}
-            </div>
-          ) : (
-            <div className='showcase-error'>
-              Component could not be loaded
-              <button onClick={() => window.location.reload()}>Retry</button>
-            </div>
-          )} */}
-        {/* </ErrorBoundary> */}
-
-        <div style={{ width: '100%', height: '100%', touchAction: 'none' }}>
-        {Component && (
-          <ShowcaseWrapper 
-            component={Component}
-            {...showcase.props} 
-            width="100%"
-            height="100%"
-          />
-        )}
-      </div>
+      <div className='scContent' ref={contentContainerRef}>
+        <div style={{ width: "100%", height: "100%", touchAction: "none" }}>
+          {Component && <ShowcaseWrapper component={Component} {...showcase.props} />}
+        </div>
         <button onClick={onClose} className='close-button' aria-label='Close showcase'>
           {/* Back to Experiments */}
         </button>
@@ -356,25 +244,25 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
       </button>
 
       {/* Quick Nav Modal */}
-      {uiState.showQuickNav && allShowcases && (
+      {showQuickNav && allShowcases && (
         <QuickNav
           showcases={allShowcases}
           currentIndex={currentIndex}
           onSelect={index => {
             onNavigate(index);
-            setUiState(prev => ({ ...prev, showQuickNav: false }));
+            setShowQuickNav(false);
           }}
-          onClose={() => setUiState(prev => ({ ...prev, showQuickNav: false }))}
+          onClose={() => setShowQuickNav(false)}
         />
       )}
 
       {/* Hamburger Menu */}
       <button
-        className={`hamburger ${uiState.isMenuOpen ? "active" : ""}`}
-        ref={refs.hamburger}
+        className={`hamburger ${isMenuOpen ? "active" : ""}`}
+        ref={hamburgerRef}
         onClick={toggleMenu}
         aria-label='Menu'
-        aria-expanded={uiState.isMenuOpen}
+        aria-expanded={isMenuOpen}
       >
         <span className='hamburger-line'></span>
         <span className='hamburger-line'></span>
@@ -382,7 +270,7 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
       </button>
 
       {/* Sidebar */}
-      <ShowcaseSidebar ref={refs.sidebar} showcase={showcase} isOpen={uiState.isMenuOpen} />
+      <ShowcaseSidebar ref={sidebarRef} showcase={showcase} isOpen={isMenuOpen} />
     </div>
   );
 };
