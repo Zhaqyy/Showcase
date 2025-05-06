@@ -13,6 +13,13 @@ export default defineConfig({
       "@src": resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: [
+      '@react-three/fiber',
+      '@react-three/drei',
+      'three'
+    ]
+  },
   plugins: [react()],
   css: {
     preprocessorOptions: {

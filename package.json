@@ -5,17 +5,16 @@
   "type": "module",
   "dependencies": {
     "@gsap/react": "^2.1.1",
-    "@react-three/drei": "^10.0.7",
-    "@react-three/fiber": "^9.1.2",
+    "@react-three/drei": "9.122.0",
+    "@react-three/fiber": "8.18.0",
     "gsap": "^3.12.5",
-    "lamina": "^1.1.23",
     "lenis": "^1.1.13",
     "r3f-perf": "^7.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-router-dom": "^6.26.2",
     "react-transition-group": "^4.4.5",
-    "three": "^0.176.0",
+    "three": "0.176.0",
     "wiggle": "^0.0.17"
   },
   "devDependencies": {
