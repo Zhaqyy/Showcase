@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useMemo } from "react";
 import gsap from "gsap";
 import { overviewData } from "../../Data/overviewData";
 import showcaseData from "../../Data/showcaseData";
@@ -15,7 +15,7 @@ const OverviewSidebar = ({ selectedFilters, setSelectedFilters }) => {
   }, []);
 
   // Filter functions
-  const getFilterTags = () => {
+  const getFilterTags = useMemo(() => {
     const allTags = showcaseData.flatMap(item => item.tags);
     const tagCounts = allTags.reduce((acc, tag) => {
       acc[tag] = (acc[tag] || 0) + 1;
@@ -27,7 +27,7 @@ const OverviewSidebar = ({ selectedFilters, setSelectedFilters }) => {
       name: tag,
       count: tag === "All" ? showcaseData.length : tagCounts[tag],
     }));
-  };
+  }, [showcaseData]);
 
   const handleFilterChange = () => {
     // Play the showcase animation when filters change
@@ -54,7 +54,7 @@ const OverviewSidebar = ({ selectedFilters, setSelectedFilters }) => {
       <div className='filter'>
         <h3>Filter Experiments</h3>
         <Filter
-          tags={getFilterTags()}
+          tags={getFilterTags}
           selectedFilters={selectedFilters}
           setSelectedFilters={setSelectedFilters}
           onFilterChange={handleFilterChange}
@@ -62,14 +62,29 @@ const OverviewSidebar = ({ selectedFilters, setSelectedFilters }) => {
       </div>
 
       <div className='contact-section'>
-        <h3>Summoning Circle</h3>
-        <ul>
-          {["GitHub", "LinkedIn", "Twitter"].map(platform => (
-            <li key={platform}>{platform}</li>
-          ))}
-        </ul>
-        <div className='availability'>{overviewData.interaction.collaborationStatus}</div>
-      </div>
+  <h3 id="contact-heading">Summoning Circle</h3>
+  <ul role="list" aria-labelledby="contact-heading">
+    {overviewData.contact.map(contact => (
+      <li key={contact.platform}>
+        <a 
+          href={contact.url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          aria-label={`${contact.platform} (opens in new tab)`}
+        >
+          {contact.platform}
+        </a>
+      </li>
+    ))}
+  </ul>
+  <div 
+    className='availability' 
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    {overviewData.interaction.collaborationStatus}
+  </div>
+</div>
     </div>
   );
 };

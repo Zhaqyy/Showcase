@@ -13,7 +13,7 @@ function Home() {
   const [backgroundIndex, setBackgroundIndex] = useState(0);
   const showcaseRefs = useRef([]);
   const mainBodyRef = useRef([]);
-  const isMobile = useIsMobile(800);
+  const isMobile = useIsMobile(700);
 
   // Filter showcases
   const filteredShowcases = showcaseData.filter(
@@ -64,11 +64,12 @@ function Home() {
       ease: "power1.Out",
       stagger: 0.1,
     });
+    window.scrollTo(0, 0);
     setSelectedShowcase(null);
   };
 
   return (
-    <section className='hero'>
+    <section className='hero' role="region" aria-label="Portfolio showcase">
       {/* Dynamic Background */}
       {/* <div className='dynamic-background'>
         {showcaseData.map((item, index) => (

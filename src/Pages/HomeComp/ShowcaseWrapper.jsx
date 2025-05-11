@@ -11,6 +11,7 @@ const ShowcaseWrapper = ({ component: Component, fallback = null, ...props }) =>
   );
 };
 
+// turn this loading into that duck running around
 const DefaultLoading = () => (
   <div style={{
     position: 'absolute',

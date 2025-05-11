@@ -3,7 +3,7 @@ import "../../Style/Home.scss";
 
 const MainContent = forwardRef(({ showcases, onShowcaseClick, showcaseRefs }, ref) => {
   return (
-    <div className='main' ref={ref}>
+    <div className='main' ref={ref} role='main'>
       <div className='mainhead'>
         <div className='headTitle'>
           <h6>LOOK THROUGH MY</h6>
@@ -17,28 +17,35 @@ const MainContent = forwardRef(({ showcases, onShowcaseClick, showcaseRefs }, re
         </div>
       </div>
 
-      <div className='mainBody'>
-          {showcases.map((item, index) => (
-            <div
-              key={item.id}
-              className={`showcaseItem`}
-              ref={el => (showcaseRefs.current[index] = el)}
-              onClick={e => onShowcaseClick(index, e)}
-            >
-              <div className='item-content'>
-                <h3>{item.title}</h3>
-                <div className='hover-details'>
-                  <p>{item.description}</p>
-                  <div className='tags'>
-                    {item.tags.map(tag => (
-                      <span key={tag}>{tag}</span>
-                    ))}
-                  </div>
+      <div className='mainBody' role='grid' aria-label='Showcase items'>
+        {showcases.map((item, index) => (
+          <div
+            key={item.id}
+            className={`showcaseItem`}
+            ref={el => (showcaseRefs.current[index] = el)}
+            onClick={() => onShowcaseClick(index)}
+            onKeyDown={e => handleKeyDown(e, index)}
+            tabIndex={0}
+            role='gridcell'
+            aria-labelledby={`showcase-${item.id}-title`}
+            aria-describedby={`showcase-${item.id}-desc`}
+          >
+            <div className='item-content'>
+              <h3 id={`showcase-${item.id}-title`}>{item.title}</h3>
+              <div className='hover-details'>
+                <p id={`showcase-${item.id}-desc`}>{item.description}</p>
+                <div className='tags' role='list'>
+                  {item.tags.map(tag => (
+                    <span key={tag} role='listitem'>
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 });
