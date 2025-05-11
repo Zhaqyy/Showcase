@@ -69,7 +69,7 @@ function Home() {
   };
 
   return (
-    <section className='hero' role="region" aria-label="Portfolio showcase">
+    <section className='hero' role='region' aria-label='Portfolio showcase'>
       {/* Dynamic Background */}
       {/* <div className='dynamic-background'>
         {showcaseData.map((item, index) => (
@@ -81,16 +81,18 @@ function Home() {
         ))}
       </div> */}
       {/* Overview Sidebar */}
-      <OverviewSidebar selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
+      <OverviewSidebar selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} isMobile={isMobile} />
 
       {/* Main Content */}
       <MainContent ref={mainBodyRef} showcases={filteredShowcases} onShowcaseClick={handleShowcaseClick} showcaseRefs={showcaseRefs} />
 
       {/* Fullscreen Showcase */}
-      {selectedShowcase && <FullscreenShowcase showcase={selectedShowcase} allShowcases={showcaseData} onClose={handleCloseShowcase} isMobile={isMobile} />}
+      {selectedShowcase && (
+        <FullscreenShowcase showcase={selectedShowcase} allShowcases={showcaseData} onClose={handleCloseShowcase} isMobile={isMobile} />
+      )}
     </section>
   );
 }
-// 2. what if I want to make each showcase have a unique URL, so that way I can send them directly to people just by using the URL, 
+// 2. what if I want to make each showcase have a unique URL, so that way I can send them directly to people just by using the URL,
 // do you get, that way I can reference it easily
 export default Home;

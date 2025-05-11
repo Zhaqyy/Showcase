@@ -11,10 +11,6 @@
   $border-radius: 10px;
   $section-padding: 1rem;
 
-  // Contrast-safe text variants
-  // $text-on-deep: color.mix($text, $deep-green, 90%);
-  // $text-on-light: color.mix($text, $light-green, 15%);
-
   height: 100%;
   min-height: 100vh;
   width: 100%;
@@ -64,6 +60,62 @@
     // background: $deep-green;
     color: $text;
     padding: 1.25rem;
+
+    &.mobile {
+      // background: #fff; 
+      max-width: unset;
+      min-height: unset;
+      top: unset;
+      gap: 2rem;
+      overflow-y: auto;
+      -ms-scroll-chaining: none;
+          overscroll-behavior: contain;
+      
+      .drawer-header {
+        width: 100%;
+        padding: 10px 0;
+        display: flex;
+        justify-content: center;
+        cursor: pointer;
+        
+        .drag-handle {
+          width: 50px;
+          height: 4px;
+          background: rgba(255, 255, 255, 0.75);
+          border-radius: 2px;
+        }
+      }
+      
+      // Adjust other elements for mobile
+      // .filter, .contact-section {
+      //   padding: 0 20px;
+      // }
+      
+      .identity-section {
+        // padding: 0 20px;
+
+        .title {
+          margin-bottom: 1rem;
+        }
+      }
+    }
+    // .drawerUnderlay {
+    //   position: fixed;
+    //   top: 0;
+    //   left: 0;
+    //   right: 0;
+    //   bottom: 0;
+    //   background: rgba(0,0,0,0.5);
+    //   z-index: 99;
+    //   opacity: 0;
+    //   pointer-events: none;
+    //   transition: opacity 0.3s ease;
+      
+    //   &.active {
+    //     opacity: 1;
+    //     pointer-events: all;
+    //   }
+    // }
 
     .title {
       // font-size: 1.2rem;
@@ -529,8 +581,13 @@
   }
 }
 @media (width <= 700px) {
-  .hero .overview {
-    display: none;
+  .hero {
+    // .overview {
+    //   display: none;
+    // }
+    .main {
+      min-width: unset;
+    }
   }
 }
 @media (width <= 500px) {
