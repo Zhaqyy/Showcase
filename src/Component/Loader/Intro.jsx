@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import "../../Style/Component.css";
 import gsap from "gsap";
 import Logo from "../Logo";
-import useIsMobile from "../../Util/isMobile";
+import useIsMobile from "../../util/isMobile";
 
 const Intro = ({ timeline, onComplete }) => {
   const loaderRef = useRef(null);
