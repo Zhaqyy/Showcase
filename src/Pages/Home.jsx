@@ -93,6 +93,5 @@ function Home() {
     </section>
   );
 }
-// 2. what if I want to make each showcase have a unique URL, so that way I can send them directly to people just by using the URL,
-// do you get, that way I can reference it easily
+
 export default Home;

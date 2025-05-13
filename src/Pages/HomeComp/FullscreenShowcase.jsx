@@ -47,6 +47,131 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
     loadComponent();
   }, [showcase]);
 
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const drawerRef = useRef();
+  const drawerTriggerRef = useRef();
+  
+  // Add this effect for mobile drawer setup
+  useEffect(() => {
+    if (!isMobile) return;
+  
+  
+    // Create mobile trigger button
+    const trigger = document.createElement("div");
+    trigger.className = "drawer-trigger";
+    trigger.innerHTML = "☰ Info";
+    trigger.style.position = "fixed";
+    trigger.style.bottom = "20px";
+    trigger.style.right = "20px";
+    trigger.style.zIndex = "1001";
+    trigger.style.padding = "10px 20px";
+    trigger.style.background = "#294122";
+    trigger.style.color = "#f1ccba";
+    trigger.style.borderRadius = "50px";
+    trigger.style.cursor = "pointer";
+    trigger.addEventListener("click", toggleDrawer);
+  
+    document.body.appendChild(trigger);
+    drawerTriggerRef.current = trigger;
+  
+    return () => {
+      if (drawerTriggerRef.current) {
+        document.body.removeChild(drawerTriggerRef.current);
+      }
+    };
+  }, [isMobile, drawerOpen]);
+  
+  // Modified toggle function
+  const toggleDrawer = useDebounce(() => {
+    if (isMobile) {
+      if (drawerOpen) {
+        gsap.to(drawerRef.current, {
+          y: "100%",
+          duration: 0.3,
+          ease: "power2.inOut",
+          onComplete: () => setDrawerOpen(false)
+        });
+      } else {
+        setDrawerOpen(true);
+        gsap.to(drawerRef.current, {
+          y: 0,
+          duration: 0.3,
+          ease: "power2.inOut"
+        });
+      }
+    } else {
+      setIsMenuOpen(!isMenuOpen);
+    }
+  }, 100);
+  
+  
+  // swipe detection for drawer
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const drawer = drawerRef.current;
+    let startY, moveY;
+
+    const handleTouchStart = e => {
+      startY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = e => {
+      moveY = e.touches[0].clientY;
+      const diff = moveY - startY;
+
+      if (diff > 0 && drawerOpen) {
+        gsap.to(drawer, {
+          y: "100%",
+          duration: 0.25,
+          ease: "expo.in",
+          onComplete: () => {
+            gsap.set(drawer, {
+              opacity: 0,
+              delay: 0.35,
+            });
+          },
+        });
+      } else if (diff < 0 && !drawerOpen) {
+        gsap.to(drawer, {
+          y: "0%",
+          duration: 0.25,
+          ease: "expo.in",
+        });
+      }
+    };
+
+    const handleTouchEnd = () => {
+      const diff = moveY - startY;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0 && drawerOpen) {
+          toggleDrawer();
+        } else if (diff < 0 && !drawerOpen) {
+          toggleDrawer();
+        }
+      }
+      // Snap back if not enough movement
+      gsap.to(drawer, {
+        y: drawerOpen ? 0 : "100%",
+        duration: 0.25,
+        ease: "expo.in",
+      });
+    };
+
+    drawer.addEventListener("touchstart", handleTouchStart);
+    drawer.addEventListener("touchmove", handleTouchMove);
+    drawer.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      drawer.removeEventListener("touchstart", handleTouchStart);
+      drawer.removeEventListener("touchmove", handleTouchMove);
+      drawer.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [isMobile, drawerOpen]);
+
+
+
   // Navigation handlers
   const handleNext = useCallback(() => {
     if (!allShowcases || currentIndex >= allShowcases.length - 1) return;
@@ -59,7 +184,7 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
     currentIndex - 1;
     setShowQuickNav(false); // Close QuickNav when navigating
   }, [allShowcases, currentIndex, onNavigate]);
-  
+
   const toggleQuickNav = () => {
     setShowQuickNav(prev => !prev);
   };
@@ -210,7 +335,7 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
       </div>
 
       {/* Navigation Controls */}
-      <div className='navigation-controls'>
+      {/* <div className='navigation-controls'>
         <button
           className='nav-button prev'
           onClick={handlePrev}
@@ -232,14 +357,10 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
         >
           →
         </button>
-      </div>
-
-      <button onClick={onClose} className='close-button' aria-label='Close showcase'>
-        ✕
-      </button>
+      </div> */}
 
       {/* Quick Nav Modal */}
-      {showQuickNav && allShowcases && (
+      {/* {showQuickNav && allShowcases && (
         <QuickNav
           showcases={allShowcases}
           currentIndex={currentIndex}
@@ -252,7 +373,12 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
           onClose={() => setShowQuickNav(false)}
           isMobile={isMobile}
         />
-      )}
+      )} */}
+
+      {/* Close Button */}
+      <button onClick={onClose} className='close-button' aria-label='Close showcase'>
+        ✕
+      </button>
 
       {/* Hamburger Menu */}
       <button
@@ -268,7 +394,21 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
       </button>
 
       {/* Sidebar */}
-      <ShowcaseSidebar ref={sidebarRef} showcase={showcase} isOpen={isMenuOpen} />
+      {/* <ShowcaseSidebar ref={sidebarRef} showcase={showcase} isOpen={isMenuOpen} /> */}
+      {isMobile ? (
+      <ShowcaseSidebar 
+        ref={drawerRef} 
+        showcase={showcase} 
+        isOpen={drawerOpen}
+        isMobile={isMobile}
+      />
+    ) : (
+      <ShowcaseSidebar 
+        ref={sidebarRef} 
+        showcase={showcase} 
+        isOpen={isMenuOpen}
+      />
+    )}
     </div>
   );
 };
