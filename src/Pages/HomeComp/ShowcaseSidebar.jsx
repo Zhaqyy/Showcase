@@ -28,7 +28,7 @@ const ShowcaseSidebar = forwardRef(({ showcase, isOpen, isMobile }, ref) => {
   }, [ref, isMobile]);
 
   return (
-    <div className="drawerWrapper">
+    // <div className="drawerWrapper">
       <div className={`scSidebar ${isMobile ? "mobile" : ""}`} ref={ref}>
         {/* Header Section */}
         <div className='sidebar-header'>
@@ -126,7 +126,7 @@ const ShowcaseSidebar = forwardRef(({ showcase, isOpen, isMobile }, ref) => {
           </div>
         </details>
       </div>
-    </div>
+    // </div>
   );
 });
 

@@ -47,70 +47,114 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
     loadComponent();
   }, [showcase]);
 
-
   const [drawerOpen, setDrawerOpen] = useState(false);
   const drawerRef = useRef();
   const drawerTriggerRef = useRef();
-  
+
   // Add this effect for mobile drawer setup
   useEffect(() => {
     if (!isMobile) return;
-  
-  
+
+    const displayElement = document.querySelector(".fullscreen-showcase");
+
+    if (!displayElement) return;
+
     // Create mobile trigger button
     const trigger = document.createElement("div");
-    trigger.className = "drawer-trigger";
-    trigger.innerHTML = "☰ Info";
-    trigger.style.position = "fixed";
-    trigger.style.bottom = "20px";
-    trigger.style.right = "20px";
-    trigger.style.zIndex = "1001";
-    trigger.style.padding = "10px 20px";
-    trigger.style.background = "#294122";
-    trigger.style.color = "#f1ccba";
-    trigger.style.borderRadius = "50px";
-    trigger.style.cursor = "pointer";
+    trigger.className = "FS-drawer-trigger";
+
+    const tagsHTML = showcase.tags.map(tag => `<span class="tag">${tag}</span>`).join("");
+
+    trigger.innerHTML = `
+      <div class="sidebar-header">
+        <h3>${showcase.title}</h3>
+        <div class="tags">${tagsHTML}</div>
+      </div>
+    `;
+
     trigger.addEventListener("click", toggleDrawer);
-  
-    document.body.appendChild(trigger);
+
+    const dispRef = displayElement;
+    dispRef.appendChild(trigger);
+
     drawerTriggerRef.current = trigger;
-  
+
+
     return () => {
-      if (drawerTriggerRef.current) {
-        document.body.removeChild(drawerTriggerRef.current);
+      if (drawerTriggerRef.current && dispRef.contains(drawerTriggerRef.current)) {
+        drawerTriggerRef.current.removeEventListener("click", toggleDrawer);
+        dispRef.removeChild(drawerTriggerRef.current);
       }
     };
+  }, [isMobile, showcase]);
+
+  useEffect(() => {
+    if (!isMobile || !drawerTriggerRef.current) return;
+  
+    const trigger = drawerTriggerRef.current;
+    const isVisible = gsap.getProperty(trigger, "autoAlpha") === 1;
+  
+    if (!drawerOpen && !isVisible) {
+      gsap.to(trigger, {
+        autoAlpha: 1,
+        duration: 0.3,
+        delay: 0.2,
+        ease: "power2.out"
+      });
+    }
   }, [isMobile, drawerOpen]);
   
   // Modified toggle function
-  const toggleDrawer = useDebounce(() => {
-    if (isMobile) {
-      if (drawerOpen) {
-        gsap.to(drawerRef.current, {
-          y: "100%",
-          duration: 0.3,
-          ease: "power2.inOut",
-          onComplete: () => setDrawerOpen(false)
-        });
-      } else {
-        setDrawerOpen(true);
-        gsap.to(drawerRef.current, {
-          y: 0,
-          duration: 0.3,
-          ease: "power2.inOut"
-        });
-      }
+const toggleDrawer = useDebounce(() => {
+  if (isMobile) {
+    if (drawerOpen) {
+      if (!drawerTriggerRef.current) return;
+
+      // Animate out trigger first
+      gsap.to(drawerTriggerRef.current, {
+        autoAlpha: 0,
+        duration: 0.2,
+        ease: "power2.in",
+        onComplete: () => {
+          // Then animate drawer
+          gsap.to(drawerRef.current, {
+            y: "100%",
+            duration: 0.3,
+            ease: "power2.out",
+            onComplete: () => {
+              setDrawerOpen(false);
+            }
+          });
+        }
+      });
     } else {
-      setIsMenuOpen(!isMenuOpen);
+      // Animate out trigger first
+      gsap.to(drawerTriggerRef.current, {
+        autoAlpha: 0,
+        duration: 0.2,
+        ease: "power2.in",
+        onComplete: () => {
+          setDrawerOpen(true);
+          // Then animate drawer
+          gsap.to(drawerRef.current, {
+            y: 0,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        }
+      });
     }
-  }, 100);
-  
-  
+  } else {
+    setIsMenuOpen(!isMenuOpen);
+  }
+}, 150);
+
   // swipe detection for drawer
   useEffect(() => {
     if (!isMobile) return;
 
     const drawer = drawerRef.current;
+    // drawerTriggerRef.current
     let startY, moveY;
 
     const handleTouchStart = e => {
@@ -170,20 +214,20 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
     };
   }, [isMobile, drawerOpen]);
 
-
-
   // Navigation handlers
   const handleNext = useCallback(() => {
-    if (!allShowcases || currentIndex >= allShowcases.length - 1) return;
-    currentIndex + 1;
-    setShowQuickNav(false); // Close QuickNav when navigating
-  }, [allShowcases, currentIndex, onNavigate]);
+    if (!allShowcases) return;
+    const nextIndex = (currentIndex + 1) % allShowcases.length;
+    setSelectedShowcase(allShowcases[nextIndex]);
+    setShowQuickNav(false);
+  }, [allShowcases, currentIndex]);
 
   const handlePrev = useCallback(() => {
-    if (!allShowcases || currentIndex <= 0) return;
-    currentIndex - 1;
-    setShowQuickNav(false); // Close QuickNav when navigating
-  }, [allShowcases, currentIndex, onNavigate]);
+    if (!allShowcases) return;
+    const prevIndex = (currentIndex - 1 + allShowcases.length) % allShowcases.length;
+    setSelectedShowcase(allShowcases[prevIndex]);
+    setShowQuickNav(false);
+  }, [allShowcases, currentIndex]);
 
   const toggleQuickNav = () => {
     setShowQuickNav(prev => !prev);
@@ -281,23 +325,31 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
 
   // Click outside and scroll handlers
 
-  // close on Click outside handler
+  // click outside handler - close on Click
   useEffect(() => {
     const handleClickOutside = e => {
-      if (isMenuOpen && !sidebarRef.current.contains(e.target) && !hamburgerRef.current.contains(e.target)) {
-        setIsMenuOpen(false);
+      if (isMobile) {
+        if (drawerOpen && !drawerRef.current.contains(e.target) && !drawerTriggerRef.current.contains(e.target)) {
+          toggleDrawer();
+        }
+      } else {
+        if (isMenuOpen && !sidebarRef.current.contains(e.target) && !hamburgerRef.current.contains(e.target)) {
+          setIsMenuOpen(false);
+        }
       }
     };
 
-    window.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
     return () => {
-      window.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
-  }, [isMenuOpen]);
+  }, [isMobile, drawerOpen, isMenuOpen, toggleDrawer]);
 
-  // Scroll handling - close on scroll
+  // scroll handler - close on scroll
   useEffect(() => {
-    if (isMenuOpen) {
+    if ((isMobile && drawerOpen) || (!isMobile && isMenuOpen)) {
       initialScrollY.current = window.scrollY;
       let lastScrollY = window.scrollY;
       let ticking = false;
@@ -307,9 +359,9 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
         if (!ticking) {
           window.requestAnimationFrame(() => {
             const scrollDelta = Math.abs(lastScrollY - initialScrollY.current);
-            if (scrollDelta > 150) {
-              // 50px threshold
-              setIsMenuOpen(false);
+            if (scrollDelta > 50) {
+              if (isMobile) toggleDrawer();
+              else setIsMenuOpen(false);
             }
             ticking = false;
           });
@@ -317,10 +369,10 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
         }
       };
 
-      window.addEventListener("scroll", handleScroll);
+      window.addEventListener("scroll", handleScroll, { passive: true });
       return () => window.removeEventListener("scroll", handleScroll);
     }
-  }, [isMenuOpen]);
+  }, [isMobile, drawerOpen, isMenuOpen, toggleDrawer]);
 
   return (
     <div className='fullscreen-showcase'>
@@ -335,7 +387,7 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
       </div>
 
       {/* Navigation Controls */}
-      {/* <div className='navigation-controls'>
+      <div className='navigation-controls'>
         <button
           className='nav-button prev'
           onClick={handlePrev}
@@ -357,10 +409,10 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
         >
           →
         </button>
-      </div> */}
+      </div>
 
       {/* Quick Nav Modal */}
-      {/* {showQuickNav && allShowcases && (
+      {showQuickNav && allShowcases && (
         <QuickNav
           showcases={allShowcases}
           currentIndex={currentIndex}
@@ -373,7 +425,7 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
           onClose={() => setShowQuickNav(false)}
           isMobile={isMobile}
         />
-      )} */}
+      )}
 
       {/* Close Button */}
       <button onClick={onClose} className='close-button' aria-label='Close showcase'>
@@ -396,19 +448,10 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
       {/* Sidebar */}
       {/* <ShowcaseSidebar ref={sidebarRef} showcase={showcase} isOpen={isMenuOpen} /> */}
       {isMobile ? (
-      <ShowcaseSidebar 
-        ref={drawerRef} 
-        showcase={showcase} 
-        isOpen={drawerOpen}
-        isMobile={isMobile}
-      />
-    ) : (
-      <ShowcaseSidebar 
-        ref={sidebarRef} 
-        showcase={showcase} 
-        isOpen={isMenuOpen}
-      />
-    )}
+        <ShowcaseSidebar ref={drawerRef} showcase={showcase} isOpen={drawerOpen} isMobile={isMobile} />
+      ) : (
+        <ShowcaseSidebar ref={sidebarRef} showcase={showcase} isOpen={isMenuOpen} />
+      )}
     </div>
   );
 };

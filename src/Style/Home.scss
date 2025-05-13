@@ -41,6 +41,7 @@
     }
   }
 
+  /* Drawer trigger button */
   .drawer-trigger {
     min-width: 60px;
     position: fixed;
@@ -370,6 +371,7 @@
       padding: 0.5rem;
       border-radius: 10px;
       z-index: 1001;
+      visibility: visible;
 
       .nav-button,
       .quick-nav-button {
@@ -433,10 +435,50 @@
       width: 100%;
     }
 
-    // .drawerWrapper{
-    //   height: 95dvh;
-    // }
-    
+    /* Drawer trigger for showcase display */
+    .FS-drawer-trigger {
+      position: fixed;
+      bottom: 20px;
+      right: 50%;
+      translate: 50% 0;
+      z-index: 1001;
+      padding: 10px 20px;
+      background: rgb(41, 65, 34);
+      color: rgb(241, 204, 186);
+      border-radius: 1rem;
+      cursor: pointer;
+      width: calc(100% - 1.25rem);
+      opacity: 0;
+      visibility: hidden;
+      align-content: center;
+      text-align: left;
+      transition: all 0.2s ease;
+
+      h3 {
+        margin: 0;
+        font-size: 1.8rem;
+        color: $accent-color;
+      }
+      // .description {
+      //   font-style: italic;
+      //   opacity: 0.8;
+      //   margin: 0.5rem 0;
+      // }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.8rem;
+        .tag {
+          background: rgba($accent-color, 0.2);
+          padding: 0.3rem 0.6rem;
+          border-radius: 20px;
+          font-size: 0.8rem;
+        }
+      }
+
+    }
+
     .scSidebar {
       width: 100%;
       height: 100vh;
@@ -585,15 +627,6 @@
       // }
     }
 
-    /* Drawer trigger button */
-    .drawer-trigger {
-      transition: transform 0.2s ease;
-
-      &:active {
-        transform: scale(0.95);
-      }
-    }
-
     // Mobile Responsiveness
     @media (max-width: 768px) {
       .sc-sidebar {
@@ -674,6 +707,10 @@
       min-width: unset;
     }
     .fullscreen-showcase {
+      .navigation-controls {
+        visibility: hidden;
+        display: none;
+      }
       .scSidebar {
         opacity: 0;
         display: none;
@@ -694,7 +731,7 @@
         }
       }
 
-      .hamburger{
+      .hamburger {
         display: none;
       }
     }

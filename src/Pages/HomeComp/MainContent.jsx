@@ -24,7 +24,6 @@ const MainContent = forwardRef(({ showcases, onShowcaseClick, showcaseRefs }, re
             className={`showcaseItem`}
             ref={el => (showcaseRefs.current[index] = el)}
             onClick={() => onShowcaseClick(index)}
-            onKeyDown={e => handleKeyDown(e, index)}
             tabIndex={0}
             role='gridcell'
             aria-labelledby={`showcase-${item.id}-title`}
