@@ -67,7 +67,14 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
 
     trigger.innerHTML = `
       <div class="sidebar-header">
+     
+          <div class='drawer-header'>
+            <div class='drag-handle'></div>
+          </div>
+       
+      <span class='label'>TITLE</span>
         <h3>${showcase.title}</h3>
+        <span class='label'>TAGS</span>
         <div class="tags">${tagsHTML}</div>
       </div>
     `;
@@ -79,7 +86,6 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
 
     drawerTriggerRef.current = trigger;
 
-
     return () => {
       if (drawerTriggerRef.current && dispRef.contains(drawerTriggerRef.current)) {
         drawerTriggerRef.current.removeEventListener("click", toggleDrawer);
@@ -88,73 +94,84 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
     };
   }, [isMobile, showcase]);
 
+  // animate drawer trigger out if drawer is out
   useEffect(() => {
     if (!isMobile || !drawerTriggerRef.current) return;
-  
+
     const trigger = drawerTriggerRef.current;
     const isVisible = gsap.getProperty(trigger, "autoAlpha") === 1;
-  
+
     if (!drawerOpen && !isVisible) {
       gsap.to(trigger, {
         autoAlpha: 1,
-        duration: 0.3,
+        duration: 0.25,
         delay: 0.2,
-        ease: "power2.out"
+        ease: "power2.out",
       });
     }
   }, [isMobile, drawerOpen]);
-  
-  // Modified toggle function
-const toggleDrawer = useDebounce(() => {
-  if (isMobile) {
-    if (drawerOpen) {
-      if (!drawerTriggerRef.current) return;
 
-      // Animate out trigger first
-      gsap.to(drawerTriggerRef.current, {
-        autoAlpha: 0,
-        duration: 0.2,
-        ease: "power2.in",
-        onComplete: () => {
-          // Then animate drawer
-          gsap.to(drawerRef.current, {
-            y: "100%",
-            duration: 0.3,
-            ease: "power2.out",
-            onComplete: () => {
-              setDrawerOpen(false);
+  // toggle function
+  const toggleDrawer = useDebounce(() => {
+    if (isMobile) {
+      if (drawerOpen) {
+        if (!drawerRef.current || !drawerTriggerRef.current) return;
+
+        // Animate out trigger first
+        gsap.to(drawerTriggerRef.current, {
+          autoAlpha: 0,
+          duration: 0.2,
+          ease: "power2.in",
+          onComplete: () => {
+            // Then animate drawer
+            gsap.to(drawerRef.current, {
+              y: "100%",
+              autoAlpha: 1,
+              duration: 0.3,
+              ease: "expo.in",
+              onComplete: () => {
+                // Only update state if components are still mounted
+                if (drawerRef.current && drawerTriggerRef.current) {
+                  setDrawerOpen(false);
+                }
+              },
+            });
+          },
+        });
+      } else {
+        // First check if refs exist
+        if (!drawerRef.current || !drawerTriggerRef.current) return;
+
+        // Animate out trigger first
+        gsap.to(drawerTriggerRef.current, {
+          autoAlpha: 0,
+          duration: 0.2,
+          ease: "power2.in",
+          onComplete: () => {
+            // Only update state if components are still mounted
+            if (drawerRef.current && drawerTriggerRef.current) {
+              setDrawerOpen(true);
+              // Then animate drawer
+              gsap.to(drawerRef.current, {
+                y: "0%",
+                duration: 0.3,
+                ease: "power2.out",
+              });
             }
-          });
-        }
-      });
+          },
+        });
+      }
     } else {
-      // Animate out trigger first
-      gsap.to(drawerTriggerRef.current, {
-        autoAlpha: 0,
-        duration: 0.2,
-        ease: "power2.in",
-        onComplete: () => {
-          setDrawerOpen(true);
-          // Then animate drawer
-          gsap.to(drawerRef.current, {
-            y: 0,
-            duration: 0.3,
-            ease: "power2.out",
-          });
-        }
-      });
+      setIsMenuOpen(!isMenuOpen);
     }
-  } else {
-    setIsMenuOpen(!isMenuOpen);
-  }
-}, 150);
+  }, 150);
 
   // swipe detection for drawer
   useEffect(() => {
     if (!isMobile) return;
 
     const drawer = drawerRef.current;
-    // drawerTriggerRef.current
+    const trigger = drawerTriggerRef.current;
     let startY, moveY;
 
     const handleTouchStart = e => {
@@ -172,7 +189,7 @@ const toggleDrawer = useDebounce(() => {
           ease: "expo.in",
           onComplete: () => {
             gsap.set(drawer, {
-              opacity: 0,
+              autoAlpha: 0,
               delay: 0.35,
             });
           },
@@ -180,6 +197,7 @@ const toggleDrawer = useDebounce(() => {
       } else if (diff < 0 && !drawerOpen) {
         gsap.to(drawer, {
           y: "0%",
+          // autoAlpha: 1,
           duration: 0.25,
           ease: "expo.in",
         });
@@ -197,20 +215,28 @@ const toggleDrawer = useDebounce(() => {
       }
       // Snap back if not enough movement
       gsap.to(drawer, {
-        y: drawerOpen ? 0 : "100%",
+        y: drawerOpen ? "0%" : "100%",
         duration: 0.25,
         ease: "expo.in",
       });
     };
 
-    drawer.addEventListener("touchstart", handleTouchStart);
-    drawer.addEventListener("touchmove", handleTouchMove);
+    drawer.addEventListener("touchstart", handleTouchStart, { passive: false });
+    drawer.addEventListener("touchmove", handleTouchMove, { passive: false });
     drawer.addEventListener("touchend", handleTouchEnd);
+
+    trigger.addEventListener("touchstart", handleTouchStart, { passive: false });
+    trigger.addEventListener("touchmove", handleTouchMove, { passive: false });
+    trigger.addEventListener("touchend", handleTouchEnd);
 
     return () => {
       drawer.removeEventListener("touchstart", handleTouchStart);
       drawer.removeEventListener("touchmove", handleTouchMove);
       drawer.removeEventListener("touchend", handleTouchEnd);
+
+      trigger.removeEventListener("touchstart", handleTouchStart);
+      trigger.removeEventListener("touchmove", handleTouchMove);
+      trigger.removeEventListener("touchend", handleTouchEnd);
     };
   }, [isMobile, drawerOpen]);
 
@@ -448,7 +474,7 @@ const toggleDrawer = useDebounce(() => {
       {/* Sidebar */}
       {/* <ShowcaseSidebar ref={sidebarRef} showcase={showcase} isOpen={isMenuOpen} /> */}
       {isMobile ? (
-        <ShowcaseSidebar ref={drawerRef} showcase={showcase} isOpen={drawerOpen} isMobile={isMobile} />
+        <ShowcaseSidebar ref={drawerRef} showcase={showcase} isOpen={drawerOpen} isMobile={isMobile} onToggle={toggleDrawer}  />
       ) : (
         <ShowcaseSidebar ref={sidebarRef} showcase={showcase} isOpen={isMenuOpen} />
       )}

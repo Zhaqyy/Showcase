@@ -281,7 +281,6 @@ const OverviewSidebar = ({ selectedFilters, setSelectedFilters, isMobile }) => {
           <div className='drawer-header' onClick={toggleDrawer}>
             <div className='drag-handle'></div>
           </div>
-          {/* <div className='drawerUnderlay'></div> */}
         </>
       )}
 
