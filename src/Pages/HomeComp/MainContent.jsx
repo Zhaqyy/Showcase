@@ -29,6 +29,23 @@ const MainContent = forwardRef(({ showcases, onShowcaseClick, showcaseRefs }, re
             aria-labelledby={`showcase-${item.id}-title`}
             aria-describedby={`showcase-${item.id}-desc`}
           >
+            {/* Add thumbnail container */}
+            <div className='thumbnail-container'>
+              {item.thumbnail ? (
+                <img 
+                  src={`${item.thumbnail}`} 
+                  alt={`Preview of ${item.title}`}
+                  className='showcase-thumbnail'
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    // Fallback to title if image fails to load
+                    e.target.parentElement.textContent = item.title;
+                  }}
+                />
+              ) : (
+                <div className='thumbnail-fallback'>{item.title}</div>
+              )}
+            </div>
             <div className='item-content'>
               <h3 id={`showcase-${item.id}-title`}>{item.title}</h3>
               <div className='hover-details'>
