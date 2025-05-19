@@ -1,9 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import {
-  Environment,
-  Lightformer,
   OrbitControls,
   OrthographicCamera,
 } from "@react-three/drei";
@@ -32,9 +30,9 @@ function DynamicGrid() {
   // Pastel color palette
   const pastelColors = [0xffd1dc, 0xffc8a2, 0xfff5ba, 0xe3ffc4, 0xc4fff9, 0xc4dfff, 0xd0bcff, 0xf4c4ff, 0xffb6c1, 0xb5eadd];
 
-  const randomizeColor = () => pastelColors[Math.floor(Math.random() * pastelColors.length)];
-  const tagCol = randomizeColor();
-
+  // const randomizeColor = () => pastelColors[Math.floor(Math.random() * pastelColors.length)];
+  // const tagCol = randomizeColor();
+  const [tagCol] = useState(() => pastelColors[Math.floor(Math.random() * pastelColors.length)]);
   // Precompute colors
   const targetColor = new THREE.Color(tagCol);
   const defaultColor = new THREE.Color(0x000000);
@@ -133,30 +131,21 @@ function DynamicGrid() {
   );
 }
 
-const BallPress = () => {
-  // Randomize Lightformer Colors
-  const randomizeColor = () => {
-    const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
-
+const BallPress = React.memo(() => {
   return (
-      <Canvas>
-        <color attach='background' args={["#606060"]} />
-        <OrthographicCamera makeDefault zoom={40} position={[10, 90, 20]} />
-        {/* <Environment resolution={32}>
-          <group rotation={[-Math.PI / 4, -0.3, 0]}>
-            <Lightformer intensity={1} rotation-x={Math.PI / 2} position={[0, 1, -5]} scale={[10, 10, 1]} color={randomizeColor()} />
-            <Lightformer intensity={1} rotation-y={Math.PI / 2} position={[-5, -1, -1]} scale={[20, 2, 1]} color={randomizeColor()} />
-            <Lightformer intensity={1} rotation-y={-Math.PI / 2} position={[5, 1, 0]} scale={[20, 2, 1]} color={randomizeColor()} />
-            <Lightformer type='ring' intensity={2} color={randomizeColor()} rotation-y={Math.PI / 2} position={[-0.1, -1, -5]} scale={20} />
-          </group>
-        </Environment> */}
-        <ambientLight intensity={1} />
-        <pointLight intensity={10} position={[0, 5, 0]} />
-        <DynamicGrid />
-        <OrbitControls enabled={false} enableZoom={false} enablePan={false} enableRotate={false} />
-      </Canvas>
+    <Canvas>
+      <color attach="background" args={["#606060"]} />
+      <OrthographicCamera makeDefault zoom={40} position={[10, 90, 20]} />
+      <ambientLight intensity={1} />
+      <pointLight intensity={10} position={[0, 5, 0]} />
+      <DynamicGrid />
+      <OrbitControls 
+        enabled={false} 
+        enableZoom={false} 
+        enablePan={false} 
+        enableRotate={false} 
+      />
+    </Canvas>
   );
-};
+});
 export default BallPress;

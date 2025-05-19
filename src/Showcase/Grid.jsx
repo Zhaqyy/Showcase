@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { Center, Environment, Lightformer, MeshTransmissionMaterial } from "@react-three/drei";
+import { Environment, Lightformer, MeshTransmissionMaterial } from "@react-three/drei";
 import { gsap } from "gsap";
-import { Perf } from "r3f-perf";
+// import { Perf } from "r3f-perf";
 import { easing } from "maath";
 
 function DynamicGrid() {
@@ -296,7 +296,7 @@ useEffect(() => {
   );
 }
 
-const Griddy = () => {
+const Griddy = React.memo(() => {
   const ringRef = useRef();
 
   // Randomize Lightformer Colors
@@ -333,5 +333,5 @@ const Griddy = () => {
       {/* <OrbitControls /> */}
     </Canvas>
   );
-};
+});
 export default Griddy;

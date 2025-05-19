@@ -105,7 +105,7 @@ const showcaseData = [
     //   description: "A contact section with more attitude than your average LinkedIn profile.",
     //   tags: ["WebGL", "Radial Menu"],
     //   thumbnail: "/Thumbnail/contactcard.webp",
-    //   commentary: "The radial menu spins with the same energy as a medieval peasant calling you 'my lord' through gritted teeth. The 3D banner exists solely to intimidate simpler contact forms into submission.",
+    //   commentary: "I absolutely hate this one, it worries me that it looks horrible and no one will love it, Now i understand how my parents felt about me. The radial menu spins with the same energy as a medieval peasant calling you 'my lord' through gritted teeth. The 3D banner exists solely to intimidate simpler contact forms into submission.",
     //   component: 'ContactCard',
     //   tech: ["Three.js", "Framer Motion"],
     //   date: "2023-12-15",
@@ -133,7 +133,7 @@ const showcaseData = [
       tech: ["Three.js", "GSAP"],
       date: "2024-03-01",
       mood: "📐 Geometry Teacher's Revenge",
-      difficulty: "Hard (Grids have feelings too)",
+      difficulty: "Like juggling 6 balls without hands, my Ex knows all about that",
       personalRating: 4.3,
       likes: 47,
       interactionType: "None (It judges you passively)",
@@ -141,8 +141,8 @@ const showcaseData = [
       bestViewedWith: "A ruler and questionable life choices",
       secretInteraction: "Resize window to trigger grid existentialism",
       timeToBuild: "10 days",
-      inspiration: "Graph paper doodles from math class",
-      warning: "May cause sudden urge to reorganize pantry"
+      inspiration: "Light/Color Refraction in a Beer bottle",
+      warning: "May cause sudden urge to down a bottle"
     },
     {
       id: 7,

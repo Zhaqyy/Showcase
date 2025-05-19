@@ -1,15 +1,15 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import { OrbitControls, PresentationControls, useMatcapTexture, useTexture } from "@react-three/drei";
+import { PresentationControls, useTexture } from "@react-three/drei";
 import { Canvas, useFrame, useGraph, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils";
 
 import { WiggleBone } from "wiggle";
 import { DoubleSide, RepeatWrapping } from "three";
-import { Perf } from "r3f-perf";
+// import { Perf } from "r3f-perf";
 import useIsMobile from "../util/isMobile";
 
-const Ribbons = () => {
+const Ribbons = React.memo(() => {
   const isMobile = useIsMobile(600);
 
   return (
@@ -32,7 +32,7 @@ const Ribbons = () => {
       </PresentationControls>
     </Canvas>
   );
-};
+});
 
 export default Ribbons;
 
