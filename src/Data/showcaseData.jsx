@@ -4,6 +4,11 @@ import InfinityWall from "../Showcase/InfinityWall";
 import Smiley from "../Showcase/Smiley";
 import Griddy from "../Showcase/Grid";
 import Pool from "../Showcase/Pool";
+import ScaredFace from "../Showcase/ScaredFace";
+import HypnoticLoader from "../Showcase/HypnoticLoader";
+import AnybodyHome from "../Showcase/AnybodyHome";
+import CanYouSeeMe from "../Showcase/CanYouSeeMe";
+import RubberStrings from "../Showcase/RubberStrings";
 
 const showcaseData = [
     {
@@ -166,6 +171,121 @@ const showcaseData = [
       timeToBuild: "The time it takes to sigh heavily",
       inspiration: "Deadlines",
       warning: "May cause profound realizations about the nature of existence"
+    },
+    {
+      id: 8,
+      title: "Scared Face",
+      category: "CSS Art",
+      description: "A frightened facial expression made and animated with pure CSS after scaring and observing my 'willing' victims through their unlocked windows under cover of darkness. With consent, of course!",
+      tags: ["CSS Art", "Horror", "Animation"],
+      thumbnail: "/Thumbnail/scared.webp",
+      commentary: "This face captures the exact moment when your CSS doesn’t work in Safari. The pupils dart around like a developer debugging `flexbox`, and the mouth’s wavy underline is the visual equivalent of a scream into the void.",
+      component: ScaredFace,
+      tech: ["Pure CSS", "React"],
+      date: "2024-04-15",
+      mood: "😱 CSS-Induced Paranoia",
+      difficulty: "Like convincing a div to center itself in IE11",
+      personalRating: 4.8,
+      likes: 92,
+      interactionType: "Stare contest (you will lose)",
+      soundtrack: "Theremin.wav (loop)",
+      bestViewedWith: "Lights off and a lingering sense of being watched",
+      secretInteraction: "Hover near the mouth to hear distant screaming (just kidding... unless?)",
+      timeToBuild: "3 hours (plus 5 more debugging `@keyframes`)",
+      inspiration: "My neighbors' faces when I explain CSS variables to them",
+      warning: "May cause involuntary checking of window locks at night"
+    },
+    {
+      id: 9,
+      title: "CSS Supremacy Loader",
+      category: "CSS Sorcery",
+      description: "A futuristic loader animation made with pure CSS for the sole purpose of hating on WebGL. Daring, right?",
+      tags: ["Pure CSS", "Anti-WebGL Propaganda", "Hypnosis"],
+      thumbnail: "/Thumbnail/hypnoloader.webp",
+      commentary: "People use WebGL for something this simple just to look cool. Meanwhile, this CSS beauty achieves the same greatness with 0% JS, 100% spite, and a sprinkle of `filter: blur()`. The GPU weeps at the efficiency.",
+      component: HypnoticLoader,
+      tech: ["CSS", "Sheer Audacity"],
+      date: "2024-04-22",
+      mood: "🌀 CSS Enlightenment",
+      difficulty: "TOOO EASYYYY",
+      personalRating: 5.0,
+      likes: 420,
+      interactionType: "Just Stare at it man",
+      soundtrack: "Anti-WebGL Propaganda",
+      bestViewedWith: "A smug grin and a JS framework uninstalled",
+      secretInteraction: "Uhmmm, I'll have to install Three.Js for that",
+      timeToBuild: "1 hour (saved 8hrs by not using Three.Js)",
+      inspiration: "People Using WebGL for something so simple",
+      warning: "May cause sudden urge to delete node_modules"
+    },
+    {
+      id: 10,
+      title: "Anybody Home?",
+      category: "CSS Art",
+      description: "Reminder to NOT always lock your window! Don't be scared, He just likes to watch.",
+      tags: ["CSS Art"],
+      thumbnail: "/Thumbnail/windowwatcher.webp",
+      commentary: "Your browser watching you open incognito mode for the 7th time today (c'mon man.. Rookie numbers).",
+      component: AnybodyHome,
+      tech: ["Pure CSS", "Paranoia"],
+      date: "2024-09-1",
+      mood: "👁️ Window Lurker Energy",
+      difficulty: "Like ignoring a noise at night (easy but stressful)",
+      personalRating: 4.7,
+      likes: 666,
+      interactionType: "Passive (He observes. Always.)",
+      soundtrack: "The sound of your curtains rustling",
+      bestViewedWith: "All lights off and a sudden draft",
+      secretInteraction: "Resize window to adjust his line of sight",
+      timeToBuild: "4 hours (spent 2 checking behind me)",
+      inspiration: "That shadow you swear moved",
+      warning: "May cause compulsive window-checking"
+    },
+    {
+      id: 11,
+      title: "CanYouSeeMe?",
+      category: "Optical Warfare",
+      description: "Stare at this long enough, and your brain might short-circuit. Or maybe it's just me. 🤷‍♂️",
+      tags: ["CSS Sorcery", "Retinal Assault"],
+      thumbnail: "/Thumbnail/eye-fuckery.webp",
+      commentary: "A trippy CSS illusion that messes with your eyes—no JavaScript, just ✨ bad decisions ✨. The kind of project that makes designers question their life choices.",
+      component: CanYouSeeMe,
+      tech: ["Pure CSS", "Regrets"],
+      date: "2025-03-25",
+      mood: "🌀 Vertigo Chic",
+      difficulty: "Easy like Sunday morning... if Sunday morning came after 3 tabs of LSD",
+      personalRating: 4.8,
+      likes: 89,
+      interactionType: "None (It interacts with your optic nerves directly)",
+      soundtrack: "The sound of neurons misfiring",
+      bestViewedWith: "Sober: 0/10, High: 11/10",
+      secretInteraction: "Stare for 30sec then look at white wall",
+      timeToBuild: "2 hours (plus 3 days of eye drops)",
+      inspiration: "That time I rubbed my eye too hard",
+      warning: "May cause existential questions about reality"
+    },
+    {
+      id: 12,
+      title: "Rubber Strings",
+      category: "SVG",
+      description: "Drag, pull, push those strings to your heart's content, same way you manipulated everyone who stayed in your life.",
+      tags: ["SVG Sorcery", "Mouse Yoga"],
+      thumbnail: "/Thumbnail/string.webp",
+      commentary: "The digital equivalent of fidgeting with rubber bands during boring meetings. Surprisingly therapeutic until you realize you've been staring at wiggly lines for 45 minutes.",
+      component: RubberStrings,
+      tech: ["React", "SVG", "GSAP"],
+      date: "2025-01-03",
+      mood: "🧶 String Puller",
+      difficulty: "Like untangling headphones... in the dark... with gloves on",
+      personalRating: 4.6,
+      likes: 112,
+      interactionType: "Drag/Hover (Choose your poison)",
+      soundtrack: "The sound of a thousand rubber bands snapping",
+      bestViewedWith: "A strong cup of coffee and questionable life choices",
+      secretInteraction: "Try dragging opposite directions rapidly",
+      timeToBuild: "2 days (plus 2 more for wrist therapy)",
+      inspiration: "Suz Sirunyan 100Days Challenge",
+      warning: "May cause compulsive line-straightening behavior"
     }
     // {
     //   id: 1,
