@@ -245,7 +245,7 @@ const OverviewSidebar = ({ selectedFilters, setSelectedFilters, isMobile }) => {
 
   // Filter functions
   const getFilterTags = useMemo(() => {
-    const allTags = showcaseData.flatMap(item => item.tags);
+    const allTags = showcaseData.flatMap(item => item.category);
     const tagCounts = allTags.reduce((acc, tag) => {
       acc[tag] = (acc[tag] || 0) + 1;
       return acc;

@@ -17,7 +17,7 @@ function Home() {
 
   // Filter showcases
   const filteredShowcases = showcaseData.filter(
-    item => selectedFilters.includes("All") || selectedFilters.some(filter => item.tags.includes(filter))
+    item => selectedFilters.includes("All") || selectedFilters.some(filter => item.category.includes(filter))
   );
 
   // Background cycling
@@ -50,7 +50,7 @@ function Home() {
       },
       "-=0.3"
     );
-    tl.set(".hero .main", { overflowY: "hidden", height: "100vh", minHeight: 0 });
+    gsap.set(".hero .main", { overflowY: "hidden", height: "100vh", minHeight: 0 });
     setSelectedShowcase(filteredShowcases[index]);
   };
 
