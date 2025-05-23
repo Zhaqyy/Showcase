@@ -992,7 +992,6 @@
       -ms-user-select: none;
       user-select: none;
       -webkit-user-drag: none;
-  
 
       label {
         display: flex;
@@ -1083,6 +1082,98 @@
           }
         }
       }
+    }
+  }
+}
+
+// Backroom
+.Backroom {
+  --color: #000000;
+  $color: #000000;
+
+  &.wrap {
+    width: 100vw;
+    height: 100vh;
+    overflow: clip;
+    justify-self: center;
+    align-self: center;
+
+    // Variant styles
+    &.variant-1 {
+      /* Default */
+    }
+
+    &.variant-0 {
+      mix-blend-mode: color;
+      .body .shadow {
+        background-color: #ff0000;
+        -webkit-filter: blur(100px) contrast(1.5) brightness(1) saturate(25);
+        filter: blur(100px) contrast(1.5) brightness(1) saturate(25);
+        mix-blend-mode: plus-lighter;
+      }
+    }
+  }
+
+  .body {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    perspective: 100px;
+    translate: 0 -15%;
+
+    .wall {
+      position: absolute;
+
+      &.w1 {
+        height: 100vh;
+        width: 450px;
+        transform: rotateX(0) rotateY(2.3deg);
+        transform-style: preserve-3d;
+        z-index: 1;
+        opacity: 1;
+        background-image: linear-gradient(var(--color) 1.5px, transparent 1px), linear-gradient(to right, var(--color) 1.5px, #ebebeb 1px);
+        background-size: 50px 50px;
+        background-size: 50px 50px;
+        box-shadow: inset -5px 40px 40px mix($color, transparent, 50%);
+        border: 1px solid var(--color);
+      }
+      &.w2 {
+        height: 100vh;
+        width: 75vw;
+        top: 0;
+        right: 0;
+        transform: rotateX(0) rotateY(-5deg);
+        transform-style: preserve-3d;
+        opacity: 1;
+        background-image: linear-gradient(var(--color) 1.5px, transparent 1px), linear-gradient(to right, var(--color) 1.5px, #ebebeb 1px);
+        background-size: 50px 50px;
+        border: 1px solid var(--color);
+      }
+      &.w3 {
+        height: 150vh;
+        width: 200vw;
+        bottom: -450px;
+        transform: rotateX(50deg) rotateY(0deg) rotateZ(0deg);
+        transform-style: preserve-3d;
+        z-index: -1;
+        background-color: #e5e5f7;
+        opacity: 1;
+        background-image: linear-gradient(var(--color) 1.5px, transparent 1px), linear-gradient(to right, var(--color) 1.5px, #ebebeb 1px);
+        background-size: 60px 36px;
+        transform: rotate(-31deg) translate(-100px, 100px) skew(42deg, 24deg);
+        border: 1px solid var(--color);
+      }
+    }
+
+    .shadow {
+      position: absolute;
+      top: 50%;
+      left: 30%;
+      width: 100px;
+      height: 300px;
+      background-color: #2b0000;
+      -webkit-filter: blur(30px) contrast(1.5) brightness(1) saturate(25);
+      filter: blur(30px) contrast(1.5) brightness(1) saturate(25);
     }
   }
 }

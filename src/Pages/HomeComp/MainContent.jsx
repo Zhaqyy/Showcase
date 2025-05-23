@@ -6,14 +6,13 @@ const MainContent = forwardRef(({ showcases, onShowcaseClick, showcaseRefs }, re
     <div className='main' ref={ref} role='main'>
       <div className='mainhead'>
         <div className='headTitle'>
-          <h6>LOOK THROUGH MY</h6>
-          <p>MIND</p>
+          {/* <h6>MY</h6> */}
+          <p>DEMO</p>
+          <p>SHOWCASES &</p>
           <p>EXPERIMENTS</p>
-          <p>INNER CHAMBER</p>
         </div>
         <div className='headInfo'>
-          They say the mind is as vast as the universe but mine is an unmanaged zoo with ideas and inspirations. A special storage for 3D
-          scenes, web experiences, web arts, designs, prototypes, concepts and many more big words that I managed to bring to life.
+          With endless ideas and inspirations, here's my special storage for 3D scenes, web experiences, web arts, designs, animation, prototypes, concepts and many more big words that I managed to bring to life.
         </div>
       </div>
 
@@ -32,12 +31,12 @@ const MainContent = forwardRef(({ showcases, onShowcaseClick, showcaseRefs }, re
             {/* Add thumbnail container */}
             <div className='thumbnail-container'>
               {item.thumbnail ? (
-                <img 
-                  src={`${item.thumbnail}`} 
+                <img
+                  src={`${item.thumbnail}`}
                   alt={`Preview of ${item.title}`}
                   className='showcase-thumbnail'
-                  onError={(e) => {
-                    e.target.style.display = 'none';
+                  onError={e => {
+                    e.target.style.display = "none";
                     // Fallback to title if image fails to load
                     e.target.parentElement.textContent = item.title;
                   }}

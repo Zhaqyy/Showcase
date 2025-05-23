@@ -9,6 +9,7 @@ import HypnoticLoader from "../Showcase/HypnoticLoader";
 import AnybodyHome from "../Showcase/AnybodyHome";
 import CanYouSeeMe from "../Showcase/CanYouSeeMe";
 import RubberStrings from "../Showcase/RubberStrings";
+import Backroom from "../Showcase/Backroom";
 
 const showcaseData = [
     {
@@ -60,7 +61,7 @@ const showcaseData = [
     {
       id: 3,
       title: "Infinity Wall",
-      category: "WebGL Experiments",
+      category: "Experiments",
       description: "An endless word vortex that laughs at your mortal concept of 'stopping points'.",
       tags: ["Typography", "Shaders"],
       thumbnail: "/Thumbnail/infinitywall.webp",
@@ -165,7 +166,7 @@ const showcaseData = [
       personalRating: 1.5,
       likes: 8,
       interactionType: "Disappointment",
-      soundtrack: "4'33\" by John Cage",
+      soundtrack: "Absolute Silence",
       bestViewedWith: "Low brightness and lower expectations",
       secretInteraction: "Wait 5 minutes for nothing to happen",
       timeToBuild: "The time it takes to sigh heavily",
@@ -181,7 +182,7 @@ const showcaseData = [
       thumbnail: "/Thumbnail/scared.webp",
       commentary: "This face captures the exact moment when your CSS doesn’t work in Safari. The pupils dart around like a developer debugging `flexbox`, and the mouth’s wavy underline is the visual equivalent of a scream into the void.",
       component: ScaredFace,
-      tech: ["Pure CSS", "React"],
+      tech: ["Pure CSS"],
       date: "2024-04-15",
       mood: "😱 CSS-Induced Paranoia",
       difficulty: "Like convincing a div to center itself in IE11",
@@ -286,6 +287,29 @@ const showcaseData = [
       timeToBuild: "2 days (plus 2 more for wrist therapy)",
       inspiration: "Suz Sirunyan 100Days Challenge",
       warning: "May cause compulsive line-straightening behavior"
+    },
+    {
+      id: 13,
+      title: "Backroom",
+      category: "CSS Art",
+      description: "That eerie feeling when you've stayed up too late coding and reality starts glitching.",
+      tags: ["CSS 3D", "Liminal Space"],
+      thumbnail: "/Thumbnail/backroom.webp",
+      commentary: "The digital equivalent of finding an empty office building at 3AM. Perfect for when you want to flex CSS transforms like a cinematic villain.",
+      component: Backroom,
+      tech: ["Pure CSS", "Insomnia"],
+      date: "2025-05-22",
+      mood: "🏢 Subpar Backroom",
+      difficulty: "Like staying overnight in an empty studio office",
+      personalRating: 4.7,
+      likes: 89,
+      interactionType: "Secret Variant Toggle (Click)",
+      soundtrack: "The hum of fluorescent lights",
+      bestViewedWith: "Sleep deprivation and caffeine shakes",
+      secretInteraction: "Click cycles through the variants",
+      timeToBuild: "6 hours (spread across 3 sleepless nights)",
+      inspiration: "That one pin on pinterest + that one weird dream",
+      warning: "May cause deja vu",
     }
     // {
     //   id: 1,

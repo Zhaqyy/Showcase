@@ -1,5 +1,6 @@
 import React from "react";
 import Pool from "../Showcase/Pool";
+import Backroom from "../Showcase/Backroom";
 // import Piano from "../Showcase/Piano";
 // import Ribbons from "../Showcase/Ribbons";
 // import ContactCard from "../Showcase/ContactCard";
@@ -17,7 +18,7 @@ import Pool from "../Showcase/Pool";
 const Screenshot = () => {
   return (
     <div id='show' style={{ width: "100%", height: "100vh", touchAction: "none", alignContent: 'center' }}>
-      <Pool/>
+      {/* <Pool/> */}
       {/* <Piano /> */}
       {/* <Ribbons/> */}
       {/* <ContactCard /> */}
@@ -31,6 +32,7 @@ const Screenshot = () => {
       {/* <CanYouSeeMe></CanYouSeeMe> */}
       {/* <HypnoticLoader/> */}
       {/* <RubberStrings></RubberStrings> */}
+      <Backroom/>
     </div>
   );
 };
