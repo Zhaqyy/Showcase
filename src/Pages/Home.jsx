@@ -11,6 +11,7 @@ function Home() {
   const [selectedFilters, setSelectedFilters] = useState(["All"]);
   const [selectedShowcase, setSelectedShowcase] = useState(null);
   const [backgroundIndex, setBackgroundIndex] = useState(0);
+  const [currentShowcaseIndex, setCurrentShowcaseIndex] = useState(null);
   const showcaseRefs = useRef([]);
   const mainBodyRef = useRef([]);
   const isMobile = useIsMobile(700);
@@ -52,6 +53,7 @@ function Home() {
     );
     gsap.set(".hero .main", { overflowY: "hidden", height: "100vh", minHeight: 0 });
     setSelectedShowcase(filteredShowcases[index]);
+    setCurrentShowcaseIndex(index);
   };
 
   // Close showcase handler
@@ -88,7 +90,15 @@ function Home() {
 
       {/* Fullscreen Showcase */}
       {selectedShowcase && (
-        <FullscreenShowcase showcase={selectedShowcase} allShowcases={showcaseData} onClose={handleCloseShowcase} isMobile={isMobile} />
+        <FullscreenShowcase
+          showcase={selectedShowcase}
+          allShowcases={showcaseData}
+          currentIndex={currentShowcaseIndex}
+          onClose={handleCloseShowcase}
+          setSelectedShowcase={setSelectedShowcase}
+          setCurrentIndex={setCurrentShowcaseIndex}
+          isMobile={isMobile}
+        />
       )}
     </section>
   );

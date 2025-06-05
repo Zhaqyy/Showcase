@@ -6,7 +6,7 @@ import useDebounce from "../../Util/debounce.jsx";
 import QuickNav from "../../Component/QuickNav";
 import ShowcaseWrapper from "./ShowcaseWrapper";
 
-const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, currentIndex, onNavigate }) => {
+const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, currentIndex, setSelectedShowcase, setCurrentIndex }) => {
   // Individual state declarations
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -240,20 +240,68 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
     };
   }, [isMobile, drawerOpen]);
 
-  // Navigation handlers
-  const handleNext = useCallback(() => {
-    if (!allShowcases) return;
-    const nextIndex = (currentIndex + 1) % allShowcases.length;
-    setSelectedShowcase(allShowcases[nextIndex]);
-    setShowQuickNav(false);
-  }, [allShowcases, currentIndex]);
+// Navigation handlers
+const handleNext = useCallback(() => {
+  if (!allShowcases) return;
+  
+  const animateTransition = () => {
+    // Animation timeline
+    const tl = gsap.timeline();
+    
+    // Fade out current showcase
+    tl.to(contentContainerRef.current, { 
+      opacity: 0, 
+      duration: 0.2, 
+      delay: 0.6, // for menu to close
+    })
+    .add(() => {
+      // Update to next showcase
+      const nextIndex = (currentIndex + 1) % allShowcases.length;
+      setSelectedShowcase(allShowcases[nextIndex]);
+      setCurrentIndex(nextIndex);
+      setShowQuickNav(false);
+    })
+    // Fade in new showcase
+    .to(contentContainerRef.current, { 
+      opacity: 1, 
+      duration: 0.2 
+    });
+  };
 
-  const handlePrev = useCallback(() => {
-    if (!allShowcases) return;
-    const prevIndex = (currentIndex - 1 + allShowcases.length) % allShowcases.length;
-    setSelectedShowcase(allShowcases[prevIndex]);
+  animateTransition();
+}, [allShowcases, currentIndex, setSelectedShowcase, setCurrentIndex, isMenuOpen]);
+
+const handlePrev = useCallback(() => {
+  if (!allShowcases) return;
+  
+  const animateTransition = () => {
+    const tl = gsap.timeline();
+    
+    tl.to(contentContainerRef.current, { 
+      opacity: 0, 
+      duration: 0.2, 
+      delay: 0.6, // for menu to close
+    })
+    .add(() => {
+      const prevIndex = (currentIndex - 1 + allShowcases.length) % allShowcases.length;
+      setSelectedShowcase(allShowcases[prevIndex]);
+      setCurrentIndex(prevIndex);
+      setShowQuickNav(false);
+    })
+    .to(contentContainerRef.current, { 
+      opacity: 1, 
+      duration: 0.2 
+    });
+  };
+
+  animateTransition();
+}, [allShowcases, currentIndex, setSelectedShowcase, setCurrentIndex, isMenuOpen]);
+
+  const handleSelectShowcase = index => {
+    setSelectedShowcase(allShowcases[index]);
+    setCurrentIndex(index);
     setShowQuickNav(false);
-  }, [allShowcases, currentIndex]);
+  };
 
   const toggleQuickNav = () => {
     setShowQuickNav(prev => !prev);
@@ -414,12 +462,7 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
 
       {/* Navigation Controls */}
       <div className='navigation-controls'>
-        <button
-          className='nav-button prev'
-          onClick={handlePrev}
-          // disabled={!allShowcases || currentIndex === 0}
-          aria-label='Previous showcase'
-        >
+        <button className='nav-button prev' onClick={handlePrev} aria-label='Previous showcase'>
           ←
         </button>
 
@@ -427,12 +470,7 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
           ○○○
         </button>
 
-        <button
-          className='nav-button next'
-          onClick={handleNext}
-          // disabled={!allShowcases || currentIndex === allShowcases.length - 1}
-          aria-label='Next showcase'
-        >
+        <button className='nav-button next' onClick={handleNext} aria-label='Next showcase'>
           →
         </button>
       </div>
@@ -442,12 +480,7 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
         <QuickNav
           showcases={allShowcases}
           currentIndex={currentIndex}
-          onSelect={index => {
-            if (index !== currentIndex) {
-              onNavigate(index);
-            }
-            setShowQuickNav(false);
-          }}
+          onSelect={handleSelectShowcase}
           onClose={() => setShowQuickNav(false)}
           isMobile={isMobile}
         />
@@ -474,7 +507,7 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
       {/* Sidebar */}
       {/* <ShowcaseSidebar ref={sidebarRef} showcase={showcase} isOpen={isMenuOpen} /> */}
       {isMobile ? (
-        <ShowcaseSidebar ref={drawerRef} showcase={showcase} isOpen={drawerOpen} isMobile={isMobile} onToggle={toggleDrawer}  />
+        <ShowcaseSidebar ref={drawerRef} showcase={showcase} isOpen={drawerOpen} isMobile={isMobile} onToggle={toggleDrawer} />
       ) : (
         <ShowcaseSidebar ref={sidebarRef} showcase={showcase} isOpen={isMenuOpen} />
       )}
