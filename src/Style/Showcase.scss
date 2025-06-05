@@ -1094,6 +1094,8 @@
   &.wrap {
     width: 100vw;
     height: 100vh;
+    max-width: 1540px;
+    max-height: 775px;
     overflow: clip;
     justify-self: center;
     align-self: center;
@@ -1104,12 +1106,15 @@
     }
 
     &.variant-0 {
-      mix-blend-mode: color;
-      .body .shadow {
-        background-color: #ff0000;
-        -webkit-filter: blur(100px) contrast(1.5) brightness(1) saturate(25);
-        filter: blur(100px) contrast(1.5) brightness(1) saturate(25);
-        mix-blend-mode: plus-lighter;
+      background-color: rgb(0, 0, 180);
+      .body {
+        mix-blend-mode: color;
+        .shadow {
+          background-color: #ff0000;
+          -webkit-filter: blur(100px) contrast(1.5) brightness(1) saturate(25);
+          filter: blur(100px) contrast(1.5) brightness(1) saturate(25);
+          mix-blend-mode: plus-lighter;
+        }
       }
     }
   }
@@ -1126,7 +1131,7 @@
 
       &.w1 {
         height: 100vh;
-        width: 450px;
+        width: min(450px, 25%);
         transform: rotateX(0) rotateY(2.3deg);
         transform-style: preserve-3d;
         z-index: 1;
@@ -1134,7 +1139,7 @@
         background-image: linear-gradient(var(--color) 1.5px, transparent 1px), linear-gradient(to right, var(--color) 1.5px, #ebebeb 1px);
         background-size: 50px 50px;
         background-size: 50px 50px;
-        box-shadow: inset -5px 40px 40px mix($color, transparent, 50%);
+        // box-shadow: inset -5px 40px 40px mix($color, transparent, 50%);
         border: 1px solid var(--color);
       }
       &.w2 {
@@ -1174,6 +1179,11 @@
       background-color: #2b0000;
       -webkit-filter: blur(30px) contrast(1.5) brightness(1) saturate(25);
       filter: blur(30px) contrast(1.5) brightness(1) saturate(25);
+    }
+  }
+  @media screen and (max-width: 900px) {
+    .body .wall.w2 {
+      transform: rotateX(0) rotateY(-5deg) translate3d(25px, 0px, -25px);
     }
   }
 }
