@@ -5,7 +5,7 @@ import OverviewSidebar from "./HomeComp/OverviewSidebar";
 import MainContent from "./HomeComp/MainContent";
 import FullscreenShowcase from "./HomeComp/FullscreenShowcase";
 import "../Style/Home.scss";
-import useIsMobile from "../util/isMobile.jsx";
+import useIsMobile from "../Util/isMobile";
 
 function Home() {
   const [selectedFilters, setSelectedFilters] = useState(["All"]);

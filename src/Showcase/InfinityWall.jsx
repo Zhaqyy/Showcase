@@ -2,7 +2,7 @@ import { OrbitControls, useTexture } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import React, { useRef } from "react";
 import * as THREE from "three";
-import useIsMobile from "../util/isMobile";
+import useIsMobile from "../Util/isMobile";
 
 const InfinityWall = () => {
   return (

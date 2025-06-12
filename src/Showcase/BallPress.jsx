@@ -5,7 +5,7 @@ import {
   OrbitControls,
   OrthographicCamera,
 } from "@react-three/drei";
-import useIsMobile from "../util/isMobile";
+import useIsMobile from "../Util/isMobile";
 
 function DynamicGrid() {
   const meshRef = useRef();

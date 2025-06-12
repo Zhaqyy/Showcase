@@ -7,7 +7,7 @@ import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils";
 import { WiggleBone } from "wiggle";
 import { DoubleSide, RepeatWrapping } from "three";
 // import { Perf } from "r3f-perf";
-import useIsMobile from "../util/isMobile";
+import useIsMobile from "../Util/isMobile";
 
 const Ribbons = React.memo(() => {
   const isMobile = useIsMobile(600);

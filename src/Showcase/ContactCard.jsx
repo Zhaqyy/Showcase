@@ -7,7 +7,7 @@
 // import "../../Style/Component.css";
 // import luxo from "../../Component/Lottie/luxo.json";
 // import { Icon } from "../../Component/icon";
-// import useIsMobile from "../util/isMobile";
+// import useIsMobile from "../Util/isMobile";
 
 // const ContactCard = () => {
 //   const lottieRef = useRef();
