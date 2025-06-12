@@ -1,6 +1,6 @@
 {
-  "name": "cool",
-  "description": "A showcase for cool",
+  "name": "showcase",
+  "description": "Showcase Website",
   "author": "Shuaib Abdulrazaq (https://github.com/Zhaqyy)",
   "type": "module",
   "dependencies": {
