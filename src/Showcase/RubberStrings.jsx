@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import "../Style/Showcase.scss";
 
-const RubberStrings = () => {
+const RubberStrings = React.memo(() => {
   const stringRef = useRef(null);
   const svgRef = useRef(null);
   const controlPointRef = useRef(null);
@@ -15,6 +15,7 @@ const RubberStrings = () => {
   });
   const gap = 10;
   const linesRef = useRef([]);
+  const gsapTimelines = useRef([]);
 
   // Generate lines on mount and resize
   const generateLines = () => {
@@ -103,8 +104,19 @@ useEffect(() => {
       height: window.innerHeight
     });
 
+    // Cleanup function
     return () => {
+      // Remove event listeners
       window.removeEventListener('resize', handleResize);
+      
+      // Kill all GSAP timelines
+      if (gsapTimelines.current && gsapTimelines.current.length) {
+        gsapTimelines.current.forEach(tl => tl && tl.kill && tl.kill());
+        gsapTimelines.current = [];
+      }
+      
+      // Clear any references
+      linesRef.current = [];
     };
   }, []);
 
@@ -314,6 +326,6 @@ const strings = stringRef.current
       </div>
     </div>
   );
-};
+});
 
 export default RubberStrings;

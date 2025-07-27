@@ -1,26 +1,27 @@
-import BallPress from "../Showcase/BallPress";
-import Ribbons from "../Showcase/Ribbons";
-import InfinityWall from "../Showcase/InfinityWall";
-import Smiley from "../Showcase/Smiley";
-import Griddy from "../Showcase/Grid";
-import Pool from "../Showcase/Pool";
-import ScaredFace from "../Showcase/ScaredFace";
-import HypnoticLoader from "../Showcase/HypnoticLoader";
-import AnybodyHome from "../Showcase/AnybodyHome";
-import CanYouSeeMe from "../Showcase/CanYouSeeMe";
-import RubberStrings from "../Showcase/RubberStrings";
-import Backroom from "../Showcase/Backroom";
+// Remove direct imports and use lazy loading instead
+// import BallPress from "../Showcase/BallPress";
+// import Ribbons from "../Showcase/Ribbons";
+// import InfinityWall from "../Showcase/InfinityWall";
+// import Smiley from "../Showcase/Smiley";
+// import Griddy from "../Showcase/Grid";
+// import Pool from "../Showcase/Pool";
+// import ScaredFace from "../Showcase/ScaredFace";
+// import HypnoticLoader from "../Showcase/HypnoticLoader";
+// import AnybodyHome from "../Showcase/AnybodyHome";
+// import CanYouSeeMe from "../Showcase/CanYouSeeMe";
+// import RubberStrings from "../Showcase/RubberStrings";
+// import Backroom from "../Showcase/Backroom";
 
 const showcaseData = [
     {
       id: 1,
       title: "BallPress",
-      category: "3D Experiences",
+      category: "WebGL",
       description: "Follow the balls with your eyes and watch the scene transform into a blurry lightshow.",
       tags: ["Optical Illusions", "Interaction"],
       thumbnail: "/Thumbnail/ballpress.webp",
       commentary: "Yes I named it BallPress. No I won't apologize again. The way these balls respond to your gaze is weirdly intimate - like eye contact with an alien species that communicates through luminance.",
-      component: BallPress,
+      component: () => import("../Showcase/BallPress"),
       tech: ["Three.js", "React"],
       date: "2024-01-10",
       mood: "🌀 Hypnotic Perversion",
@@ -38,12 +39,12 @@ const showcaseData = [
     {
       id: 2,
       title: "Ribbons",
-      category: "3D Experiences",
+      category: "WebGL",
       description: "Digital spaghetti that dances to your touch in a tapeworm rave.",
       tags: ["Touch Interaction", "Physics"],
       thumbnail: "/Thumbnail/ribbon.webp",
       commentary: "The most disgusting description for the most satisfying interaction. These ribbons have more rhythm than me at karaoke night. Warning: watching them wiggle may awaken strange desires to pet virtual parasites.",
-      component: Ribbons,
+      component: () => import("../Showcase/Ribbons"),
       tech: ["Three.js", "React Spring"],
       date: "2024-02-05",
       mood: "🎪 Carnivorous Circus",
@@ -66,7 +67,7 @@ const showcaseData = [
       tags: ["Typography", "Shaders"],
       thumbnail: "/Thumbnail/infinitywall.webp",
       commentary: "Built this to prove that infinity exists beyond math textbooks and my ex's capacity for drama. The motion blur effect is strong enough to make sober people question their vision - consider this your free eye exam.",
-      component: InfinityWall,
+      component: () => import("../Showcase/InfinityWall"),
       tech: ["Three.js", "GLSL"],
       date: "2023-11-20",
       mood: "📚 Library of Babel on Acid",
@@ -89,7 +90,7 @@ const showcaseData = [
       tags: ["Physics", "Humor"],
       thumbnail: "/Thumbnail/smiley.webp",
       commentary: "These marbles have the personality of a DMV employee. They'll tolerate your touch but judge you silently. I made them extra rigid because life is already full of disappointingly squishy things.",
-      component: Smiley,
+      component: () => import("../Showcase/Smiley"),
       tech: ["CSS", "React Spring"],
       date: "2024-01-28",
       mood: "🎱 Pool Hall Rejection",
@@ -130,12 +131,12 @@ const showcaseData = [
     {
       id: 6,
       title: "Griddy",
-      category: "3D Animations",
+      category: "WebGL",
       description: "Where straight lines and right angles have their midlife crisis.",
       tags: ["Geometry", "Motion Design"],
       thumbnail: "/Thumbnail/grid.webp",
       commentary: "This is what happens when OCD meets psychedelics. The grid starts all orderly and respectable before descending into beautifully controlled chaos - much like my sleep schedule during deadline week.",
-      component: Griddy,
+      component: () => import("../Showcase/Grid"),
       tech: ["Three.js", "GSAP"],
       date: "2024-03-01",
       mood: "📐 Geometry Teacher's Revenge",
@@ -153,12 +154,12 @@ const showcaseData = [
     {
       id: 7,
       title: "Nothing",
-      category: "Experiments",
+      category: "WebGL",
       description: "The digital equivalent of opening the fridge and closing it immediately.",
       tags: ["Meta", "Placeholder"],
       thumbnail: "/Thumbnail/nothing.webp",
       commentary: "This started as a test component but stayed because it perfectly represents my creative process: void of meaning yet somehow still present. The tranquility is fake - the code behind this is screaming internally.",
-      component: Pool,
+      component: () => import("../Showcase/Pool"),
       tech: ["React", "Void.js"],
       date: "2023-10-10",
       mood: "🕳️ Existential Void",
@@ -180,8 +181,8 @@ const showcaseData = [
       description: "A facial expression inspired by scaring and observing my 'willing' victims through their unlocked windows. With consent, of course!",
       tags: ["CSS Art", "Horror", "Animation"],
       thumbnail: "/Thumbnail/scared.webp",
-      commentary: "This face captures the exact moment when your CSS doesn’t work in Safari. The pupils dart around like a developer debugging `flexbox`, and the mouth’s wavy underline is the visual equivalent of a scream into the void.",
-      component: ScaredFace,
+      commentary: "This face captures the exact moment when your CSS doesn't work in Safari. The pupils dart around like a developer debugging `flexbox`, and the mouth's wavy underline is the visual equivalent of a scream into the void.",
+      component: () => import("../Showcase/ScaredFace"),
       tech: ["Pure CSS"],
       date: "2024-04-15",
       mood: "😱 CSS-Induced Paranoia",
@@ -204,7 +205,7 @@ const showcaseData = [
       tags: ["Pure CSS", "Anti-WebGL Propaganda"],
       thumbnail: "/Thumbnail/hypnoloader.webp",
       commentary: "People use WebGL for something this simple just to look cool. Meanwhile, this CSS beauty achieves the same greatness with 0% JS, 100% spite, and a sprinkle of `filter: blur()`. The GPU weeps at the efficiency.",
-      component: HypnoticLoader,
+      component: () => import("../Showcase/HypnoticLoader"),
       tech: ["CSS", "Sheer Audacity"],
       date: "2024-04-22",
       mood: "🌀 CSS Enlightenment",
@@ -227,7 +228,7 @@ const showcaseData = [
       tags: ["CSS Art"],
       thumbnail: "/Thumbnail/windowwatcher.webp",
       commentary: "Your browser watching you open incognito mode for the 7th time today (c'mon man.. Rookie numbers).",
-      component: AnybodyHome,
+      component: () => import("../Showcase/AnybodyHome"),
       tech: ["Pure CSS", "Paranoia"],
       date: "2024-09-1",
       mood: "👁️ Window Lurker Energy",
@@ -250,7 +251,7 @@ const showcaseData = [
       tags: ["CSS Sorcery", "Retinal Assault"],
       thumbnail: "/Thumbnail/eyefuckery.webp",
       commentary: "A trippy CSS illusion that messes with your eyes—no JavaScript, just ✨ bad decisions ✨. The kind of project that makes designers question their life choices.",
-      component: CanYouSeeMe,
+      component: () => import("../Showcase/CanYouSeeMe"),
       tech: ["Pure CSS", "Regrets"],
       date: "2025-03-25",
       mood: "🌀 Vertigo Chic",
@@ -273,7 +274,7 @@ const showcaseData = [
       tags: ["SVG Sorcery", "Mouse Yoga"],
       thumbnail: "/Thumbnail/string.webp",
       commentary: "The digital equivalent of fidgeting with rubber bands during boring meetings. Surprisingly therapeutic until you realize you've been staring at wiggly lines for 45 minutes.",
-      component: RubberStrings,
+      component: () => import("../Showcase/RubberStrings"),
       tech: ["React", "SVG", "GSAP"],
       date: "2025-01-03",
       mood: "🧶 String Puller",
@@ -296,7 +297,7 @@ const showcaseData = [
       tags: ["CSS 3D", "Liminal Space"],
       thumbnail: "/Thumbnail/backroom.webp",
       commentary: "To be honest, I just wanted to see how far I can take this CSS Art, I started messing around with CSS Filters and blend modes and I got the pulsing effect by playing with a certain range of colors.",
-      component: Backroom,
+      component: () => import("../Showcase/Backroom"),
       tech: ["Pure CSS", "Insomnia"],
       date: "2025-05-22",
       mood: "🏢 Subpar Backroom",

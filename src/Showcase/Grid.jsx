@@ -299,12 +299,36 @@ useEffect(() => {
 // Wrap Grid in React.memo for performance
 const Griddy = React.memo(function Grid(props) {
   const ringRef = useRef();
+  const gsapTimelines = useRef([]);
+  const meshRef = useRef();
 
   // Randomize Lightformer Colors
   const randomizeColor = () => {
     const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"];
     return colors[Math.floor(Math.random() * colors.length)];
   };
+
+  useEffect(() => {
+
+    return () => {
+      // Kill all GSAP timelines
+      if (gsapTimelines.current && gsapTimelines.current.length) {
+        gsapTimelines.current.forEach(tl => tl && tl.kill && tl.kill());
+        gsapTimelines.current = [];
+      }
+      // Dispose Three.js mesh geometry/material
+      if (meshRef.current) {
+        if (meshRef.current.geometry) meshRef.current.geometry.dispose();
+        if (meshRef.current.material) {
+          if (Array.isArray(meshRef.current.material)) {
+            meshRef.current.material.forEach(mat => mat.dispose && mat.dispose());
+          } else {
+            meshRef.current.material.dispose && meshRef.current.material.dispose();
+          }
+        }
+      }
+    };
+  }, []);
 
   return (
     <Canvas camera={{ position: [0, 0, 10], fov: 90 }}>

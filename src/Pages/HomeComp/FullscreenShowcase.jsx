@@ -20,26 +20,50 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
 
   // Showcase component state
   const [Component, setComponent] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
 
   useEffect(() => {
-    // For direct component references
-    if (typeof showcase.component !== "string") {
-      setComponent(() => showcase.component);
-      return;
-    }
+    setIsLoading(true);
+    setLoadError(null);
 
-    // For dynamic imports
+    // Handle dynamic imports for lazy-loaded components
     const loadComponent = async () => {
       try {
-        const module = await import(
-          /* webpackMode: "lazy" */
-          `../../Showcase/${showcase.component}.jsx`
-        );
-        setComponent(() => module.default);
+        if (typeof showcase.component === "function") {
+          // Dynamic import
+          const module = await showcase.component();
+          setComponent(() => module.default);
+        } else if (typeof showcase.component !== "string") {
+          // Direct component reference (fallback)
+          setComponent(() => showcase.component);
+        } else {
+          // String-based dynamic import (legacy)
+          const module = await import(
+            /* webpackMode: "lazy" */
+            `../../Showcase/${showcase.component}.jsx`
+          );
+          setComponent(() => module.default);
+        }
         setIsLoading(false);
       } catch (err) {
-        console.error(`Failed to load ${showcase.component}:`, err);
-        setComponent(() => () => <FallbackComponent name={showcase.title} />);
+        console.error(`Failed to load ${showcase.title}:`, err);
+        setLoadError(err);
+        setComponent(() => () => (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            color: '#f5f5f5',
+            background: '#162114'
+          }}>
+            <div>
+              <h3>Failed to load {showcase.title}</h3>
+              <p>Please try refreshing the page.</p>
+            </div>
+          </div>
+        ));
         setIsLoading(false);
       }
     };
@@ -500,8 +524,45 @@ const FullscreenShowcase = ({ showcase, onClose, isMobile, allShowcases, current
       {/* Main Content Area */}
       <div className='scContent' ref={contentContainerRef}>
         <div style={{ width: "100%", height: "100%", touchAction: "none" }}>
-          {/* ErrorBoundary is already used in ShowcaseWrapper, but ensure fallback for direct usage */}
-          {Component && <ShowcaseWrapper component={Component} {...showcase.props} />}
+          {/* Loading state */}
+          {isLoading && (
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
+              color: '#f5f5f5',
+              background: '#162114'
+            }}>
+              <div>
+                <h3>Loading {showcase.title}...</h3>
+                <p>Please wait while we prepare the magic.</p>
+              </div>
+            </div>
+          )}
+          
+          {/* Error state */}
+          {loadError && (
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
+              color: '#f5f5f5',
+              background: '#162114'
+            }}>
+              <div>
+                <h3>Failed to load {showcase.title}</h3>
+                <p>Please try refreshing the page.</p>
+                <button onClick={() => window.location.reload()}>Retry</button>
+              </div>
+            </div>
+          )}
+          
+          {/* Component rendering */}
+          {Component && !isLoading && !loadError && (
+            <ShowcaseWrapper component={Component} {...showcase.props} />
+          )}
         </div>
         <button onClick={onClose} className='close-button' aria-label='Close showcase' tabIndex={0}>
           {/* Back to Experiments */}
