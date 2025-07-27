@@ -6,24 +6,76 @@ import useDebounce from "../../Util/debounce";
 import ShowcaseSidebarContent from "./ShowcaseSidebarContent";
 
 const ShowcaseSidebar = ({ showcase }) => {
-  const { 
-    isMobile, 
-    showcaseDrawerOpen, 
-    toggleShowcaseDrawer, 
+  const {
+    isMobile,
+    showcaseDrawerOpen,
+    toggleShowcaseDrawer,
     closeShowcaseDrawer,
     isMenuOpen,
     setIsMenuOpen,
     isAnimating,
-    setIsAnimating
+    setIsAnimating,
   } = useUI();
-  
+
   const { navigateToShowcase, allShowcases, currentIndex } = useShowcase();
-  
+
   const sidebarRef = useRef();
   const hamburgerRef = useRef();
   const drawerRef = useRef();
   const drawerTriggerRef = useRef();
   const initialScrollY = useRef(0);
+
+  // Toggle drawer function
+  const toggleDrawer = useDebounce(() => {
+    if (isMobile) {
+      if (showcaseDrawerOpen) {
+        if (!drawerRef.current || !drawerTriggerRef.current) return;
+
+        // Animate out trigger first
+        gsap.to(drawerTriggerRef.current, {
+          autoAlpha: 0,
+          duration: 0.2,
+          ease: "power2.in",
+          onComplete: () => {
+            // Then animate drawer
+            gsap.to(drawerRef.current, {
+              y: "100%",
+              autoAlpha: 1,
+              duration: 0.3,
+              ease: "expo.in",
+              onComplete: () => {
+                if (drawerRef.current && drawerTriggerRef.current) {
+                  closeShowcaseDrawer();
+                }
+              },
+            });
+          },
+        });
+      } else {
+        if (!drawerRef.current || !drawerTriggerRef.current) return;
+
+        // Animate out trigger first
+        gsap.to(drawerTriggerRef.current, {
+          autoAlpha: 0,
+          duration: 0.2,
+          ease: "power2.in",
+          onComplete: () => {
+            if (drawerRef.current && drawerTriggerRef.current) {
+              toggleShowcaseDrawer();
+              // Then animate drawer
+              gsap.to(drawerRef.current, {
+                y: "0%",
+                duration: 0.3,
+                ease: "power2.out",
+              });
+            }
+          },
+        });
+      }
+    } else {
+      setIsMenuOpen(!isMenuOpen);
+    }
+  }, 150);
 
   // Mobile drawer setup
   useEffect(() => {
@@ -80,58 +132,6 @@ const ShowcaseSidebar = ({ showcase }) => {
       });
     }
   }, [isMobile, showcaseDrawerOpen]);
-
-  // Toggle drawer function
-  const toggleDrawer = useDebounce(() => {
-    if (isMobile) {
-      if (showcaseDrawerOpen) {
-        if (!drawerRef.current || !drawerTriggerRef.current) return;
-
-        // Animate out trigger first
-        gsap.to(drawerTriggerRef.current, {
-          autoAlpha: 0,
-          duration: 0.2,
-          ease: "power2.in",
-          onComplete: () => {
-            // Then animate drawer
-            gsap.to(drawerRef.current, {
-              y: "100%",
-              autoAlpha: 1,
-              duration: 0.3,
-              ease: "expo.in",
-              onComplete: () => {
-                if (drawerRef.current && drawerTriggerRef.current) {
-                  closeShowcaseDrawer();
-                }
-              },
-            });
-          },
-        });
-      } else {
-        if (!drawerRef.current || !drawerTriggerRef.current) return;
-
-        // Animate out trigger first
-        gsap.to(drawerTriggerRef.current, {
-          autoAlpha: 0,
-          duration: 0.2,
-          ease: "power2.in",
-          onComplete: () => {
-            if (drawerRef.current && drawerTriggerRef.current) {
-              toggleShowcaseDrawer();
-              // Then animate drawer
-              gsap.to(drawerRef.current, {
-                y: "0%",
-                duration: 0.3,
-                ease: "power2.out",
-              });
-            }
-          },
-        });
-      }
-    } else {
-      setIsMenuOpen(!isMenuOpen);
-    }
-  }, 150);
 
   // Swipe detection for drawer
   useEffect(() => {
@@ -207,7 +207,7 @@ const ShowcaseSidebar = ({ showcase }) => {
   }, [isMobile, showcaseDrawerOpen, toggleDrawer]);
 
   // Animation logic for menu
-  const debouncedToggle = useDebounce((shouldOpen) => {
+  const debouncedToggle = useDebounce(shouldOpen => {
     if (isAnimating) return;
 
     setIsAnimating(true);
@@ -346,22 +346,18 @@ const ShowcaseSidebar = ({ showcase }) => {
         <span className='hamburger-line'></span>
       </button>
 
-             {/* Sidebar */}
-       {isMobile ? (
-         <ShowcaseSidebarContent 
-           ref={drawerRef} 
-           showcase={showcase} 
-           isOpen={showcaseDrawerOpen} 
-           isMobile={isMobile} 
-           onToggle={toggleDrawer} 
-         />
-       ) : (
-         <ShowcaseSidebarContent 
-           ref={sidebarRef} 
-           showcase={showcase} 
-           isOpen={isMenuOpen} 
-         />
-       )}
+      {/* Sidebar */}
+      {isMobile ? (
+        <ShowcaseSidebarContent
+          ref={drawerRef}
+          showcase={showcase}
+          isOpen={showcaseDrawerOpen}
+          isMobile={isMobile}
+          onToggle={toggleDrawer}
+        />
+      ) : (
+        <ShowcaseSidebarContent ref={sidebarRef} showcase={showcase} isOpen={isMenuOpen} />
+      )}
     </>
   );
 };

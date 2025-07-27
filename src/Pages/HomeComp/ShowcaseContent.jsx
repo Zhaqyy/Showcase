@@ -19,9 +19,6 @@ const ShowcaseContent = ({ showcase, onClose }) => {
           onComponentLoaded={handleComponentLoaded}
         />
       </div>
-      <button onClick={onClose} className='close-button' aria-label='Close showcase' tabIndex={0}>
-        {/* Back to Experiments */}
-      </button>
     </div>
   );
 };

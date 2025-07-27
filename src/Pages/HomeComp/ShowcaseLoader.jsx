@@ -1,106 +1,145 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useUI } from "../../Context/UIContext";
 
 const ShowcaseLoader = ({ showcase, onComponentLoaded }) => {
-  const [Component, setComponent] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState(null);
+  const [displayState, setDisplayState] = useState({
+    status: 'loading', // 'loading', 'ready', 'error'
+    component: null,
+    error: null
+  });
+  
   const { startLoading, stopLoading } = useUI();
+  const isMounted = useRef(true);
+  const loadingStartTime = useRef(0);
+  const minDisplayTime = 0; // Minimum display time in ms
+
+  // Stable reference for the showcase to prevent effect re-triggers
+  const currentShowcase = useRef(showcase);
+  currentShowcase.current = showcase;
 
   useEffect(() => {
-    setIsLoading(true);
-    setLoadError(null);
-    startLoading(`Loading ${showcase.title}...`);
+    isMounted.current = true;
+    loadingStartTime.current = Date.now();
 
-    // Handle dynamic imports for lazy-loaded components
     const loadComponent = async () => {
       try {
-        if (typeof showcase.component === "function") {
-          // Dynamic import
-          const module = await showcase.component();
-          setComponent(() => module.default);
-        } else if (typeof showcase.component !== "string") {
-          // Direct component reference (fallback)
-          setComponent(() => showcase.component);
+        startLoading(`Loading ${currentShowcase.current.title}...`);
+        
+        let loadedComponent;
+        if (typeof currentShowcase.current.component === "function") {
+          const module = await currentShowcase.current.component();
+          loadedComponent = module.default;
         } else {
-          // String-based dynamic import (legacy)
-          const module = await import(
-            /* webpackMode: "lazy" */
-            `../../Showcase/${showcase.component}.jsx`
-          );
-          setComponent(() => module.default);
+          loadedComponent = currentShowcase.current.component;
         }
-        setIsLoading(false);
+
+        if (!isMounted.current) return;
+
+        // Calculate remaining minimum display time
+        const elapsed = Date.now() - loadingStartTime.current;
+        const remainingTime = Math.max(0, minDisplayTime - elapsed);
+
+        await new Promise(resolve => setTimeout(resolve, remainingTime));
+
+        if (!isMounted.current) return;
+
+        setDisplayState({
+          status: 'ready',
+          component: loadedComponent,
+          error: null
+        });
+        
         stopLoading();
-        onComponentLoaded(Component);
-      } catch (err) {
-        console.error(`Failed to load ${showcase.title}:`, err);
-        setLoadError(err);
-        setComponent(() => () => (
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-            color: '#f5f5f5',
-            background: '#162114'
-          }}>
-            <div>
-              <h3>Failed to load {showcase.title}</h3>
-              <p>Please try refreshing the page.</p>
-              <button onClick={() => window.location.reload()}>Retry</button>
-            </div>
-          </div>
-        ));
-        setIsLoading(false);
+        onComponentLoaded(loadedComponent);
+      } catch (error) {
+        if (!isMounted.current) return;
+
+        console.error('Loading failed:', error);
+        setDisplayState({
+          status: 'error',
+          component: null,
+          error: error.message
+        });
         stopLoading();
       }
     };
 
     loadComponent();
-  }, [showcase, startLoading, stopLoading, onComponentLoaded]);
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
-        color: '#f5f5f5',
-        background: '#162114'
-      }}>
-        <div>
-          <h3>Loading {showcase.title}...</h3>
-          <p>Please wait while we prepare the magic.</p>
+    return () => {
+      isMounted.current = false;
+      stopLoading();
+    };
+  }, [startLoading, stopLoading, onComponentLoaded]);
+
+  switch (displayState.status) {
+    case 'error':
+      return (
+        <div style={styles.container}>
+          <div style={styles.content}>
+            <h3>Failed to load {currentShowcase.current.title}</h3>
+            <p>{displayState.error || 'Unknown error occurred'}</p>
+            <button 
+              style={styles.button}
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </button>
+          </div>
         </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (loadError) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
-        color: '#f5f5f5',
-        background: '#162114'
-      }}>
-        <div>
-          <h3>Failed to load {showcase.title}</h3>
-          <p>Please try refreshing the page.</p>
-          <button onClick={() => window.location.reload()}>Retry</button>
+      );
+    
+    case 'loading':
+      return (
+        <div style={styles.container}>
+          <div style={styles.content}>
+            <h3>Loading {currentShowcase.current.title}...</h3>
+            <p>Please wait while we prepare the experience.</p>
+          </div>
         </div>
-      </div>
-    );
+      );
+    
+    case 'ready':
+      return displayState.component 
+        ? React.createElement(displayState.component) 
+        : null;
+    
+    default:
+      return null;
   }
-
-  // Component loaded successfully
-  return Component;
 };
 
-export default ShowcaseLoader; 
+const styles = {
+  container: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#162114',
+    color: '#f5f5f5',
+    zIndex: 1000
+  },
+  content: {
+    textAlign: 'center',
+    padding: '2rem',
+    maxWidth: '500px'
+  },
+  button: {
+    marginTop: '1rem',
+    padding: '0.5rem 1rem',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer'
+  }
+};
+
+export default React.memo(ShowcaseLoader, (prevProps, nextProps) => {
+  // Only re-render if showcase ID changes
+  return prevProps.showcase.id === nextProps.showcase.id;
+});
