@@ -9,7 +9,8 @@ import { DoubleSide, RepeatWrapping } from "three";
 // import { Perf } from "r3f-perf";
 import useIsMobile from "../Util/isMobile";
 
-const Ribbons = React.memo(() => {
+// Wrap Ribbons in React.memo for performance
+const Ribbons = React.memo(function Ribbons(props) {
   const isMobile = useIsMobile(600);
 
   return (

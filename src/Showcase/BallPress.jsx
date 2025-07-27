@@ -66,6 +66,24 @@ function DynamicGrid() {
 
     // Attach color attribute to geometry
     mesh.geometry.setAttribute("color", colorAttribute);
+
+    // Cleanup function to dispose geometry and attributes
+    return () => {
+      if (mesh.geometry) {
+        mesh.geometry.dispose();
+      }
+      if (mesh.material) {
+        if (Array.isArray(mesh.material)) {
+          mesh.material.forEach(mat => mat.dispose && mat.dispose());
+        } else {
+          mesh.material.dispose && mesh.material.dispose();
+        }
+      }
+      // Remove color attribute
+      if (mesh.geometry && mesh.geometry.attributes.color) {
+        mesh.geometry.deleteAttribute("color");
+      }
+    };
   }, [cubesX, cubesY, tagCol]);
 
   // Update cube positions, colors, and sphere position

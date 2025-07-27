@@ -51,4 +51,5 @@ const QuickNav = ({ showcases, currentIndex, onSelect, onClose }) => {
   );
 };
 
-export default QuickNav;
+// Memoize QuickNav for performance
+export default React.memo(QuickNav);

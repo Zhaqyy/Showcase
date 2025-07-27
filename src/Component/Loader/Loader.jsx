@@ -22,5 +22,5 @@ const Loader = ({ onComplete }) => {
   return <Intro timeline={timeline} onComplete={handleComplete} />;
 };
 
-
-export default Loader;
+// Memoize Loader for performance
+export default React.memo(Loader);

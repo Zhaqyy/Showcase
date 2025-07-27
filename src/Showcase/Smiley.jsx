@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
-const Smiley = ({ size = 150 }) => {
+// Wrap Smiley in React.memo for performance
+const Smiley = React.memo(function Smiley({ size = 150 }) {
   const [circleCount, setCircleCount] = useState([]);
   const ref = useRef();
+  const gsapTimelines = useRef([]);
   useEffect(() => {
     const updateGrid = () => {
       const width = ref.current.clientWidth;
@@ -17,7 +19,17 @@ const Smiley = ({ size = 150 }) => {
 
     updateGrid();
     window.addEventListener("resize", updateGrid);
-    return () => window.removeEventListener("resize", updateGrid);
+    return () => {
+      // Remove event listeners
+      window.removeEventListener("resize", updateGrid);
+      // Kill all GSAP timelines
+      if (gsapTimelines.current && gsapTimelines.current.length) {
+        gsapTimelines.current.forEach(tl => tl && tl.kill && tl.kill());
+        gsapTimelines.current = [];
+      }
+      // Dispose of any Three.js objects if used
+      // if (meshRef.current) { ... }
+    };
   }, [size]);
 
   const smileF = `M29.062,9.086c0-4.797,3.904-8.701,8.703-8.701c4.797,0,8.701,3.903,8.701,8.701c0,1.381-1.119,2.5-2.5,2.5 s-2.5-1.119-2.5-2.5c0-2.041-1.66-3.701-3.701-3.701c-2.042,0-3.703,1.66-3.703,3.701c0,1.381-1.119,2.5-2.5,2.5 S29.062,10.466,29.062,9.086z M1.339,9.059c0-4.797,3.904-8.701,8.703-8.701c4.797,0,8.701,3.903,8.701,8.701 c0,1.381-1.119,2.5-2.5,2.5c-1.381,0-2.5-1.119-2.5-2.5c0-2.041-1.66-3.701-3.701-3.701c-2.042,0-3.703,1.66-3.703,3.701 c0,1.381-1.119,2.5-2.5,2.5S1.339,10.44,1.339,9.059z M0.23,31.41c-0.636-1.53,0.089-3.286,1.62-3.921 c0.376-0.156,0.766-0.23,1.15-0.23c1.176,0,2.292,0.696,2.771,1.851c2.777,6.685,9.655,11.004,17.523,11.004 c7.69,0,14.528-4.321,17.421-11.011c0.658-1.521,2.424-2.223,3.943-1.563c1.521,0.658,2.221,2.423,1.563,3.944 C42.38,40.37,33.38,46.112,23.294,46.112C12.993,46.113,3.94,40.342,0.23,31.41z`;
@@ -159,6 +171,6 @@ const Smiley = ({ size = 150 }) => {
       ))}
     </section>
   );
-};
+});
 
 export default Smiley;

@@ -318,4 +318,5 @@ const OverviewSidebar = ({ selectedFilters, setSelectedFilters, isMobile }) => {
   );
 };
 
-export default OverviewSidebar;
+// Memoize OverviewSidebar for performance
+export default React.memo(OverviewSidebar);

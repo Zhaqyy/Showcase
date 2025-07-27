@@ -296,7 +296,8 @@ useEffect(() => {
   );
 }
 
-const Griddy = React.memo(() => {
+// Wrap Grid in React.memo for performance
+const Griddy = React.memo(function Grid(props) {
   const ringRef = useRef();
 
   // Randomize Lightformer Colors
