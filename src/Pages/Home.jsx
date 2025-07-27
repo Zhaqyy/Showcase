@@ -1,33 +1,19 @@
 import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
-import showcaseData from "../Data/showcaseData";
+import { useShowcase } from "../Context/ShowcaseContext";
+import { useUI } from "../Context/UIContext";
 import OverviewSidebar from "./HomeComp/OverviewSidebar";
 import MainContent from "./HomeComp/MainContent";
 import FullscreenShowcase from "./HomeComp/FullscreenShowcase";
 import "../Style/Home.scss";
-import useIsMobile from "../Util/isMobile";
 
 function Home() {
-  const [selectedFilters, setSelectedFilters] = useState(["All"]);
-  const [selectedShowcase, setSelectedShowcase] = useState(null);
-  const [backgroundIndex, setBackgroundIndex] = useState(0);
-  const [currentShowcaseIndex, setCurrentShowcaseIndex] = useState(null);
+  const { filteredShowcases, currentShowcase, currentIndex, navigateToShowcase, closeShowcase } = useShowcase();
+
+  const { isMobile } = useUI();
+
   const showcaseRefs = useRef([]);
   const mainBodyRef = useRef([]);
-  const isMobile = useIsMobile(700);
-
-  // Filter showcases
-  const filteredShowcases = showcaseData.filter(
-    item => selectedFilters.includes("All") || selectedFilters.some(filter => item.category.includes(filter))
-  );
-
-  // Background cycling
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setBackgroundIndex(prev => (prev + 1) % showcaseData.length);
-  //   }, 5000);
-  //   return () => clearInterval(interval);
-  // }, []);
 
   // Showcase click handler
   const handleShowcaseClick = async index => {
@@ -52,8 +38,9 @@ function Home() {
       "-=0.3"
     );
     gsap.set(".hero .main", { overflowY: "hidden", height: "100vh", minHeight: 0 });
-    setSelectedShowcase(filteredShowcases[index]);
-    setCurrentShowcaseIndex(index);
+
+    // Use context to navigate to showcase
+    navigateToShowcase(index);
   };
 
   // Close showcase handler
@@ -67,38 +54,22 @@ function Home() {
       stagger: 0.1,
     });
     window.scrollTo(0, 0);
-    setSelectedShowcase(null);
+
+    // Use context to close showcase
+    closeShowcase();
   };
 
   return (
     <section className='hero' role='region' aria-label='Portfolio showcase'>
-      {/* Dynamic Background */}
-      {/* <div className='dynamic-background'>
-        {showcaseData.map((item, index) => (
-          <div
-            key={item.id}
-            className={`bg-item ${index === backgroundIndex ? "active" : ""}`}
-            style={{ backgroundImage: `url(${item.image})` }}
-          />
-        ))}
-      </div> */}
       {/* Overview Sidebar */}
-      <OverviewSidebar selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} isMobile={isMobile} />
+      <OverviewSidebar />
 
       {/* Main Content */}
       <MainContent ref={mainBodyRef} showcases={filteredShowcases} onShowcaseClick={handleShowcaseClick} showcaseRefs={showcaseRefs} />
 
       {/* Fullscreen Showcase */}
-      {selectedShowcase && (
-        <FullscreenShowcase
-          showcase={selectedShowcase}
-          allShowcases={showcaseData}
-          currentIndex={currentShowcaseIndex}
-          onClose={handleCloseShowcase}
-          setSelectedShowcase={setSelectedShowcase}
-          setCurrentIndex={setCurrentShowcaseIndex}
-          isMobile={isMobile}
-        />
+      {currentShowcase && (
+        <FullscreenShowcase showcase={currentShowcase} currentIndex={currentIndex} onClose={handleCloseShowcase} isMobile={isMobile} />
       )}
     </section>
   );

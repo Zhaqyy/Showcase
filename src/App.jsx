@@ -4,6 +4,8 @@ import { ReactLenis } from "lenis/react";
 import gsap from "gsap";
 
 import Router from "./Routes/Router";
+import { ShowcaseProvider } from "./Context/ShowcaseContext";
+import { UIProvider } from "./Context/UIContext";
 
 const App = () => {
   const lenisRef = useRef();
@@ -21,23 +23,24 @@ const App = () => {
   });
 
   return (
-    <>
-      <ReactLenis
-        root
-        ref={lenisRef}
-        autoRaf={false}
-        options={{
-          // orientation: "horizontal",
-          //  gestureOrientataion: "both",
-          duration: 1.6,
-          syncTouch: true,
-          touchMultiplier: 0,
-        }}
-      >
- 
-        <Router />
-      </ReactLenis>
-    </>
+    <UIProvider>
+      <ShowcaseProvider>
+        <ReactLenis
+          root
+          ref={lenisRef}
+          autoRaf={false}
+          options={{
+            // orientation: "horizontal",
+            //  gestureOrientataion: "both",
+            duration: 1.6,
+            syncTouch: true,
+            touchMultiplier: 0,
+          }}
+        >
+          <Router />
+        </ReactLenis>
+      </ShowcaseProvider>
+    </UIProvider>
   );
 };
 
