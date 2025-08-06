@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect } from "react";
+import Accordion from "../../Component/Accordion";
 import "../../Style/Home.scss";
 
 const ShowcaseSidebarContent = forwardRef(({ showcase, isOpen, isMobile, onToggle }, ref) => {
@@ -9,16 +10,6 @@ const ShowcaseSidebarContent = forwardRef(({ showcase, isOpen, isMobile, onToggl
     if (isMobile) {
       // Add mobile class
       ref.current.classList.add('mobile-sidebar');
-
-      // Collapsible sections behavior
-      const sections = ref.current.querySelectorAll("details");
-      sections.forEach(section => {
-        section.addEventListener("toggle", e => {
-          if (e.target.open) {
-            sections.forEach(s => s !== e.target && (s.open = false));
-          }
-        });
-      });
     }
 
     return () => {
@@ -27,6 +18,67 @@ const ShowcaseSidebarContent = forwardRef(({ showcase, isOpen, isMobile, onToggl
       }
     };
   }, [ref, isMobile]);
+
+  // Prepare accordion items from showcase data
+  const accordionItems = [
+    {
+      heading: 'Side Commentary',
+      description: showcase.commentary
+    },
+    {
+      heading: 'How to Use',
+      description: (
+        <div className="showcase-details">
+          <div className="detail">
+            <span className="detail-label">Soundtrack</span>
+            <span>{showcase.soundtrack}</span>
+          </div>
+          <div className="detail">
+            <span className="detail-label">Best Viewed With</span>
+            <span>{showcase.bestViewedWith}</span>
+          </div>
+          <div className="detail">
+            <span className="detail-label">Secret</span>
+            <span className="easter-egg">{showcase.secretInteraction}</span>
+          </div>
+        </div>
+      )
+    },
+    {
+      heading: 'Behind the Scenes',
+      description: (
+        <div className="showcase-details">
+          <div className="detail">
+            <span className="detail-label">Build Time</span>
+            <span>{showcase.timeToBuild}</span>
+          </div>
+          <div className="detail">
+            <span className="detail-label">Difficulty</span>
+            <span>{showcase.difficulty}</span>
+          </div>
+          <div className="detail">
+            <span className="detail-label">Inspiration</span>
+            <span>{showcase.inspiration}</span>
+          </div>
+        </div>
+      )
+    },
+    {
+      heading: 'Technical',
+      description: (
+        <div className="showcase-details">
+          <div className="detail">
+            <span className="detail-label">Tech</span>
+            <span>{showcase.tech.join(", ")}</span>
+          </div>
+          <div className="detail">
+            <span className="detail-label">Warning</span>
+            <span className="warning">{showcase.warning}</span>
+          </div>
+        </div>
+      )
+    }
+  ];
 
   return (
     <div className={`scSidebar ${isMobile ? "mobile" : ""}`} ref={ref}>
@@ -70,68 +122,15 @@ const ShowcaseSidebarContent = forwardRef(({ showcase, isOpen, isMobile, onToggl
         </div>
       </div>
 
-      {/* Collapsible: Extra Information */}
-      <details className='collapsible-section' open>
-        <summary className='section-title'>Side Commentary</summary>
-        <div className='section-content'>
-          <div className='detail'>
-            <p>{showcase.commentary}</p>
-          </div>
-        </div>
-      </details>
-
-      {/* Collapsible: How to Use */}
-      <details className='collapsible-section'>
-        <summary className='section-title'>How to Use</summary>
-        <div className='section-content'>
-          <div className='detail'>
-            <span className='detail-label'>Soundtrack</span>
-            <span>{showcase.soundtrack}</span>
-          </div>
-          <div className='detail'>
-            <span className='detail-label'>Best Viewed With</span>
-            <span>{showcase.bestViewedWith}</span>
-          </div>
-          <div className='detail'>
-            <span className='detail-label'>Secret</span>
-            <span className='easter-egg'>{showcase.secretInteraction}</span>
-          </div>
-        </div>
-      </details>
-
-      {/* Collapsible: Behind the Scenes */}
-      <details className='collapsible-section'>
-        <summary className='section-title'>Behind the Scenes</summary>
-        <div className='section-content'>
-          <div className='detail'>
-            <span className='detail-label'>Build Time</span>
-            <span>{showcase.timeToBuild}</span>
-          </div>
-          <div className='detail'>
-            <span className='detail-label'>Difficulty</span>
-            <span>{showcase.difficulty}</span>
-          </div>
-          <div className='detail'>
-            <span className='detail-label'>Inspiration</span>
-            <span>{showcase.inspiration}</span>
-          </div>
-        </div>
-      </details>
-
-      {/* Collapsible: Technical */}
-      <details className='collapsible-section'>
-        <summary className='section-title'>Technical</summary>
-        <div className='section-content'>
-          <div className='detail'>
-            <span className='detail-label'>Tech</span>
-            <span>{showcase.tech.join(", ")}</span>
-          </div>
-          <div className='detail'>
-            <span className='detail-label'>Warning</span>
-            <span className='warning'>{showcase.warning}</span>
-          </div>
-        </div>
-      </details>
+      {/* Collapsible Sections using Accordion */}
+      <Accordion
+        items={accordionItems}
+        variant="sidebar"
+        showBorders={false}
+        defaultActiveIndex={0}
+        allowMultiple={false}
+        accordionClass="showcase-accordion"
+      />
     </div>
   );
 });

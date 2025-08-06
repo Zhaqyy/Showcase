@@ -601,51 +601,8 @@
         }
       }
 
-      // Collapsible Sections
-      .collapsible-section {
-        border-top: 1px solid rgba(white, 0.1);
-        padding: $section-padding 0;
-        &:last-child {
-          border-bottom: 1px solid rgba(white, 0.1);
-        }
-        .section-title {
-          font-weight: bold;
-          cursor: pointer;
-          list-style: none; // Hide default arrow
-          &::-webkit-details-marker {
-            display: none;
-          }
-          &::after {
-            content: "▼";
-            float: right;
-            transition: transform 0.2s;
-            opacity: 0.6;
-          }
-        }
-        &[open] .section-title::after {
-          transform: rotate(180deg);
-        }
-        .section-content {
-          padding-top: 0.8rem;
-          // overflow: hidden; // Required for height animation
-          .detail {
-            margin-bottom: 0.6rem;
-            font-size: 0.9rem;
-            .detail-label {
-              display: block;
-              font-size: 0.7rem;
-              opacity: 0.7;
-            }
-            .easter-egg {
-              color: $accent-color;
-              font-family: monospace;
-            }
-            .warning {
-              color: $warning;
-            }
-          }
-        }
-      }
+      // Accordion component is now used for collapsible sections
+      // See Accordion.scss for styling
     }
 
     .scSidebar.mobile {
@@ -654,7 +611,7 @@
       top: unset;
       bottom: 0;
       overflow-y: auto;
-      touch-action: none;
+      // touch-action: none;
       -ms-scroll-chaining: none;
       overscroll-behavior: contain;
     }
@@ -758,13 +715,14 @@
           bottom: 0;
           left: 0;
           right: 0;
-          height: auto;
+          height: 90dvh;
           max-height: 90dvh;
           border-radius: 20px 20px 0 0;
           padding: 20px;
           box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.3);
           z-index: 100;
           transform: translateY(100%);
+          overflow-y: auto;
         }
       }
 

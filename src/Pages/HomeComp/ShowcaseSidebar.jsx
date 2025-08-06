@@ -114,7 +114,7 @@ const ShowcaseSidebar = ({ showcase }) => {
         displayElement.removeChild(drawerTriggerRef.current);
       }
     };
-  }, [isMobile, showcase, toggleDrawer]);
+  }, [isMobile, showcase, showcase.id]);
 
   // Animate drawer trigger visibility
   useEffect(() => {
