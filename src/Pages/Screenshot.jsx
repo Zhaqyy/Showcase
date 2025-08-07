@@ -1,6 +1,6 @@
 import React from "react";
-import Pool from "../Showcase/Pool";
-import Backroom from "../Showcase/Backroom";
+// import Pool from "../Showcase/Pool";
+// import Backroom from "../Showcase/Backroom";
 // import Piano from "../Showcase/Piano";
 // import Ribbons from "../Showcase/Ribbons";
 // import ContactCard from "../Showcase/ContactCard";
@@ -32,7 +32,7 @@ const Screenshot = () => {
       {/* <CanYouSeeMe></CanYouSeeMe> */}
       {/* <HypnoticLoader/> */}
       {/* <RubberStrings></RubberStrings> */}
-      <Backroom/>
+      {/* <Backroom/> */}
     </div>
   );
 };

@@ -20,6 +20,12 @@ export default defineConfig({
       'three',
       'gsap',
       'lenis'
+    ],
+    exclude: [
+      // Exclude heavy 3D components from pre-bundling
+      '@src/Showcase/BallPress.jsx',
+      '@src/Showcase/Ribbons.jsx',
+      '@src/Showcase/InfinityWall.jsx'
     ]
   },
   build: {
@@ -27,33 +33,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          // Vendor chunks
+          // Vendor chunks only - let Vite handle component splitting automatically
           'react-vendor': ['react', 'react-dom'],
           'three-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
           'animation-vendor': ['gsap'],
-          'ui-vendor': ['lenis'],
-          
-          // Feature chunks
-          'showcase-components': [
-            './src/Showcase/BallPress.jsx',
-            './src/Showcase/Ribbons.jsx',
-            './src/Showcase/InfinityWall.jsx',
-            './src/Showcase/Smiley.jsx',
-            './src/Showcase/Grid.jsx',
-            './src/Showcase/Pool.jsx',
-            './src/Showcase/ScaredFace.jsx',
-            './src/Showcase/HypnoticLoader.jsx',
-            './src/Showcase/AnybodyHome.jsx',
-            './src/Showcase/CanYouSeeMe.jsx',
-            './src/Showcase/RubberStrings.jsx',
-            './src/Showcase/Backroom.jsx'
-          ],
-          'ui-components': [
-            './src/Component/Accordion.jsx',
-            './src/Component/Drawer.jsx',
-            './src/Component/Filter.jsx',
-            './src/Component/QuickNav.jsx'
-          ]
+          'ui-vendor': ['lenis']
         }
       }
     },
