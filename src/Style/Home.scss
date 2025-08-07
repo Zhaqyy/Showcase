@@ -311,9 +311,6 @@
       position: absolute;
       top: 0;
       right: 0;
-      // width: 30px;
-      // height: 25px;
-      // background: transparent;
       width: 3rem;
       height: 3rem;
       background: $bg-color;
@@ -323,56 +320,21 @@
       margin: 1.25rem;
       border-radius: 50%;
       cursor: pointer;
-      z-index: 1000;
+      z-index: 3;
       transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-      &-line {
-        position: absolute;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background: var(--secAccent);
-        scale: 0.5;
-        margin-left: 0.75rem;
-        transition: all 0.3s ease;
-
-        &:first-child {
-          top: 35%;
-          transform: translateY(0);
-          transform-origin: left;
-        }
-        &:nth-child(2) {
-          // top: 2px;
-          // transform: translateY(0);
-          width: 70%;
-          transform-origin: left;
-        }
-
-        &:last-child {
-          top: 65%;
-          transform: translateY(0);
-          transform-origin: left;
-        }
+      .hamburger-icon {
+        font-size: 1.2rem;
+        color: var(--secAccent);
+        transition: all 0.2s ease;
       }
 
       &.active {
-        scale: 0.5;
-        top: -0.6rem;
-
-        .hamburger-line {
-          &:first-child {
-            transform: rotate(45deg);
-            top: 30%;
-          }
-          &:nth-child(2) {
-            opacity: 0;
-            visibility: hidden;
-            //  display: none;
-          }
-          &:last-child {
-            transform: rotate(-45deg);
-          }
-        }
+        scale: 0.9;
+        top: -0.2rem;
       }
     }
 
@@ -386,7 +348,7 @@
       background: $bg-color;
       padding: 0.5rem;
       border-radius: 10px;
-      z-index: 1001;
+      z-index: 1;
       visibility: visible;
 
       .nav-button,
@@ -474,14 +436,14 @@
       translate: 50% 0;
       z-index: 99;
       padding: 10px 20px;
-      background: rgb(41, 65, 34);
-      color: rgb(241, 204, 186);
+      background: var(--light-green);
+      color: rgb(241, 186, 186);
       border-radius: 1rem;
       cursor: pointer;
       // width: calc(100% - 1.25rem);
       width: max-content;
-      opacity: 0;
-      visibility: hidden;
+      // opacity: 0;
+      // visibility: hidden;
       touch-action: none;
       align-content: center;
       text-align: left;
@@ -538,7 +500,7 @@
       height: 100vh;
       min-height: 100vh;
       max-width: 350px;
-      opacity: 0;
+      opacity: 1;
       display: none;
       border-radius: 10px;
       padding: 1.25rem;
@@ -546,12 +508,7 @@
       top: 0;
       right: 0;
       background: $bg-color;
-      transition: all 0.5s ease-in-out;
       z-index: 2;
-      // display: flex;
-      // flex-direction: column;
-      // justify-content: space-evenly;
-      // gap: 2rem;
       overflow-y: auto;
       scrollbar-width: none;
 
@@ -602,16 +559,7 @@
       }
     }
 
-    .scSidebar.mobile {
-      min-height: 80vh;
-      max-width: unset;
-      top: unset;
-      bottom: 0;
-      overflow-y: auto;
-      // touch-action: none;
-      -ms-scroll-chaining: none;
-      overscroll-behavior: contain;
-    }
+
 
     // Mobile Responsiveness
     @media (max-width: 768px) {
@@ -701,26 +649,6 @@
       .navigation-controls {
         visibility: hidden;
         display: none;
-      }
-      .scSidebar {
-        opacity: 0;
-        display: none;
-        &.mobile {
-          display: block;
-          opacity: 1;
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          height: 90dvh;
-          max-height: 90dvh;
-          border-radius: 20px 20px 0 0;
-          padding: 20px;
-          box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.3);
-          z-index: 100;
-          transform: translateY(100%);
-          overflow-y: auto;
-        }
       }
 
       .hamburger {

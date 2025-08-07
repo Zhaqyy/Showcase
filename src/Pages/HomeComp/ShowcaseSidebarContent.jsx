@@ -4,7 +4,7 @@ import "../../Style/Home.scss";
 
 const ShowcaseSidebarContent = forwardRef(({ showcase, isOpen, isMobile, onToggle }, ref) => {
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref || !ref.current) return;
 
     // Mobile-specific setup
     if (isMobile) {
@@ -13,7 +13,7 @@ const ShowcaseSidebarContent = forwardRef(({ showcase, isOpen, isMobile, onToggl
     }
 
     return () => {
-      if (ref.current) {
+      if (ref && ref.current) {
         ref.current.classList.remove('mobile-sidebar');
       }
     };
@@ -81,14 +81,10 @@ const ShowcaseSidebarContent = forwardRef(({ showcase, isOpen, isMobile, onToggl
   ];
 
   return (
-    <div className={`scSidebar ${isMobile ? "mobile" : ""}`} ref={ref}>
-      {/* Drawer handle */}
-      {isMobile && (
-        <div className='drawer-header' onClick={() => onToggle && onToggle()}>
-          <div className='drag-handle'></div>
-        </div>
-      )}
-
+    <div 
+      className={isMobile ? "scSidebar-mobile" : `scSidebar ${isMobile ? "mobile" : ""}`} 
+      ref={ref}
+    >
       {/* Header Section */}
       <div className='sidebar-header'>
         <h3>{showcase.title}</h3>
@@ -125,8 +121,8 @@ const ShowcaseSidebarContent = forwardRef(({ showcase, isOpen, isMobile, onToggl
       {/* Collapsible Sections using Accordion */}
       <Accordion
         items={accordionItems}
-        variant="sidebar"
-        showBorders={false}
+        variant="minimal"
+        showBorders={true}
         defaultActiveIndex={0}
         allowMultiple={false}
         accordionClass="showcase-accordion"

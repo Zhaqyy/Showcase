@@ -183,26 +183,13 @@ const Accordion = ({
           >
             {/* Content Area */}
             <div className="accordion__content">
+              <div className='accordion__headWrap' onClick={() => toggleItem(index)}>
               <h3
                 className={`accordion__heading ${headingClass}`}
-                onClick={() => toggleItem(index)}
               >
                 {item.heading}
               </h3>
-              <div
-                id={`accordion-content-${index}`}
-                ref={(el) => (descriptionRefs.current[index] = el)}
-                className={`accordion__description ${contentClass}`}
-              >
-                {typeof item.description === 'string' ? (
-                  <p className="accordion__text">{item.description}</p>
-                ) : (
-                  item.description
-                )}
-              </div>
-            </div>
-
-            {/* Expand/Collapse Button */}
+               {/* Expand/Collapse Button */}
             <button
               onClick={() => toggleItem(index)}
               className="accordion__toggle"
@@ -218,6 +205,21 @@ const Accordion = ({
                 <DefaultIcon index={index} />
               )}
             </button>
+              </div>
+              <div
+                id={`accordion-content-${index}`}
+                ref={(el) => (descriptionRefs.current[index] = el)}
+                className={`accordion__description ${contentClass}`}
+              >
+                {typeof item.description === 'string' ? (
+                  <p className="accordion__text">{item.description}</p>
+                ) : (
+                  item.description
+                )}
+              </div>
+            </div>
+
+           
           </div>
         ))}
       </div>

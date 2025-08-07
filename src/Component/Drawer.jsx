@@ -87,13 +87,13 @@ const Drawer = ({
 
     const tl = gsap.timeline()
 
-    // Set initial positions
+    // Set initial positions - ensure drawer is hidden initially
     if (position === 'bottom') {
-      gsap.set(drawerRef.current, { y: '100%' })
+      gsap.set(drawerRef.current, { y: '100%', visibility: 'visible' })
     } else if (position === 'left') {
-      gsap.set(drawerRef.current, { x: '-100%' })
+      gsap.set(drawerRef.current, { x: '-100%', visibility: 'visible' })
     } else {
-      gsap.set(drawerRef.current, { x: '100%' })
+      gsap.set(drawerRef.current, { x: '100%', visibility: 'visible' })
     }
 
     gsap.set(overlayRef.current, { opacity: 0 })
@@ -127,14 +127,14 @@ const Drawer = ({
     }
 
     // Animate content with stagger
-    tl.fromTo(contentRef.current?.children || [], {
+    tl.fromTo(contentRef.current?.children[0].children || [], {
       opacity: 0,
       y: 20
     }, {
       opacity: 1,
       y: 0,
-      duration: 0.3,
-      stagger: 0.05,
+      duration: 0.5,
+      stagger: 0.1,
       ease: 'power2.out'
     }, '-=0.2')
   }, [position])
@@ -146,12 +146,28 @@ const Drawer = ({
     const drawer = drawerRef.current
     const handle = handleRef.current
 
+    // Kill any existing draggable instance
+    if (draggableInstance.current) {
+      draggableInstance.current.kill()
+    }
+
     draggableInstance.current = Draggable.create(drawer, {
       type: 'y',
-      bounds: { minY: 0, maxY: window.innerHeight },
+      bounds: { minY: 0, maxY: window.innerHeight * 0.8 },
       inertia: true,
-      onDragStart: () => {
-        setIsDragging(true)
+      onDragStart: function(e) {
+        // Only allow drag if starting on handle or outside drawer content
+        const target = e.target;
+        const isHandle = target.closest('.drawer-handle');
+        const isContent = target.closest('.drawer-content');
+        
+        if (!isHandle && isContent) {
+          // Prevent drag if starting on content
+          this.endDrag();
+          return false;
+        }
+        
+        setIsDragging(true);
       },
       onDrag: function() {
         const progress = this.y / (window.innerHeight * 0.7)
@@ -161,7 +177,10 @@ const Drawer = ({
       },
       onDragEnd: function() {
         setIsDragging(false)
-        const threshold = window.innerHeight * 0.3
+        
+        // Calculate threshold based on drawer height (35% of drawer height)
+        const drawerHeight = drawer.offsetHeight;
+        const threshold = drawerHeight * 0.35;
         
         if (this.y > threshold) {
           closeDrawer()
@@ -185,7 +204,7 @@ const Drawer = ({
         draggableInstance.current.kill()
       }
     }
-  }, [closeDrawer, position])
+  }, [closeDrawer, position, isOpen])
 
   // Handle touch events for better gesture support
   useEffect(() => {
@@ -216,8 +235,16 @@ const Drawer = ({
       }
       
       // Only prevent default for vertical swipes on the handle or when dragging
-      if (isVerticalSwipe && (isDragging || e.target.closest('.drawer-handle'))) {
+      // Allow scrolling inside drawer content
+      const target = e.target;
+      const isHandle = target.closest('.drawer-handle');
+      const isContent = target.closest('.drawer-content');
+      
+      if (isVerticalSwipe && isHandle) {
         e.preventDefault()
+      } else if (isContent) {
+        // Allow scrolling inside content
+        return
       }
       
       // Update state for drag detection
@@ -255,8 +282,16 @@ const Drawer = ({
   useEffect(() => {
     if (isOpen) {
       openDrawer()
+    } else {
+      // Ensure drawer is hidden when closed
+      if (drawerRef.current) {
+        gsap.set(drawerRef.current, { 
+          y: position === 'bottom' ? '100%' : position === 'left' ? '-100%' : '100%',
+          visibility: 'hidden'
+        })
+      }
     }
-  }, [isOpen, openDrawer])
+  }, [isOpen, openDrawer, position])
 
   // Prevent body scroll when drawer is open
   useEffect(() => {
@@ -306,7 +341,13 @@ const Drawer = ({
           </div>
         )}
 
-        <div ref={contentRef} className="drawer-content">
+        <div 
+          ref={contentRef} 
+          className="drawer-content"
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+        >
           {children}
         </div>
       </div>
