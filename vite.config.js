@@ -49,8 +49,8 @@ export default defineConfig({
             './src/Showcase/Backroom.jsx'
           ],
           'ui-components': [
-            './src/Component/Header.jsx',
-            './src/Component/Logo.jsx',
+            './src/Component/Accordion.jsx',
+            './src/Component/Drawer.jsx',
             './src/Component/Filter.jsx',
             './src/Component/QuickNav.jsx'
           ]

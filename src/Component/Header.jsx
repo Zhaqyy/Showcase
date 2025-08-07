@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import "../Style/Component.css";
 import { Link } from "react-router-dom";
-import { useSoundEffects } from "./SoundEffects";
+import { useSoundEffects } from "../Util/SoundEffects";
 import {
   animateBars,
   animateHeader,
