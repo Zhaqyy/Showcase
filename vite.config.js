@@ -19,7 +19,7 @@ export default defineConfig({
       '@react-three/drei',
       'three',
       'gsap',
-      'react-lenis'
+      'lenis'
     ]
   },
   build: {
@@ -31,7 +31,7 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom'],
           'three-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
           'animation-vendor': ['gsap'],
-          'ui-vendor': ['react-lenis'],
+          'ui-vendor': ['lenis'],
           
           // Feature chunks
           'showcase-components': [
