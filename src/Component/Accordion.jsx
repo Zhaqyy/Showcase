@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
-import '../Style/Accordion.scss';
+import '../Style/Component.scss';
 
 // ============================================
 // // Please let me know before editing component or its style

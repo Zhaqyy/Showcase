@@ -6,6 +6,7 @@ import Transitioner from "../Util/Transition";
 
 import Home from "../Pages/Home";
 import Screenshot from "../Pages/Screenshot";
+import DrawerExample from "../Component/DrawerExample";
 
 // import Header from "../Component/Header";
 
@@ -36,6 +37,14 @@ const Router = () => {
               element={
                 // <Transitioner>
                   <Screenshot />
+                // </Transitioner>
+              }
+            />
+            <Route
+              path='/draw'
+              element={
+                // <Transitioner>
+                  <DrawerExample />
                 // </Transitioner>
               }
             />

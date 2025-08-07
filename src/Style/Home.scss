@@ -479,7 +479,7 @@
       border-radius: 1rem;
       cursor: pointer;
       // width: calc(100% - 1.25rem);
-      width: auto;
+      width: max-content;
       opacity: 0;
       visibility: hidden;
       touch-action: none;
@@ -600,9 +600,6 @@
           }
         }
       }
-
-      // Accordion component is now used for collapsible sections
-      // See Accordion.scss for styling
     }
 
     .scSidebar.mobile {

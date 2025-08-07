@@ -21,13 +21,13 @@ html.lenis body {
 }
 
 ::-moz-selection {
-  background: #294122;
+  background: var(--light-green);
   color: #f1ccba;
   -webkit-text-fill-color: #f1ccba;
 }
 
 ::selection {
-  background: #294122;
+  background: var(--light-green);
   color: #f1ccba;
   -webkit-text-fill-color: #f1ccba;
 }
@@ -101,6 +101,11 @@ body,
   --secAccent: #f1ccba;
   --dot: #3c3c3c;
   --bg: #0d0d0d;
+  --deep-green: #162114;
+  --light-green: #294122;
+  --text: #f5f5f5;
+  --warning: #ff9b00;
+  --bg-color: #294122;
   --border: rgba(128, 128, 128, 0.25);
   --bRadius: 24px;
   background-color: var(--bg);
