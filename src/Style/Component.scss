@@ -274,6 +274,9 @@
     &:not(.selected) {
       color: #9a9a9a;
       border: 1px solid rgba(255, 255, 255, 0.06);
+      .svg-icon {
+        opacity: 0;
+      }
     }
   }
 
@@ -1486,7 +1489,11 @@ $accordion-warning-color: #ff9b00;
         &::-webkit-scrollbar {
           display: none;
         }
-
+        .identity-section {
+          .title {
+            margin-bottom: 1rem;
+          }
+        }
         .contact-section {
           margin-top: auto;
     
