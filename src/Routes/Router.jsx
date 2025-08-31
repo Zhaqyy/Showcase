@@ -6,7 +6,6 @@ import Transitioner from "../Util/Transition";
 
 import Home from "../Pages/Home";
 import Screenshot from "../Pages/Screenshot";
-import DrawerExample from "../Component/DrawerExample";
 
 // import Header from "../Component/Header";
 
@@ -19,36 +18,28 @@ const Router = () => {
 
       {/* Render routes only after the loader signals completion */}
       {/* {loaderFinished && ( */}
-        <>
-          {/* <Header /> */}
+      <>
+        {/* <Header /> */}
 
-          <Routes>
-            <Route
-              index
-              path='/'
-              element={
-                <Transitioner>
-                  <Home />
-                </Transitioner>
-              }
-            />
-            <Route
-              path='/screenshot'
-              element={
-                // <Transitioner>
-                  <Screenshot />
-                // </Transitioner>
-              }
-            />
-            <Route
-              path='/draw'
-              element={
-                // <Transitioner>
-                  <DrawerExample />
-                // </Transitioner>
-              }
-            />
-            {/* <Route
+        <Routes>
+          <Route
+            index
+            path='/'
+            element={
+              <Transitioner>
+                <Home />
+              </Transitioner>
+            }
+          />
+          <Route
+            path='/screenshot'
+            element={
+              // <Transitioner>
+              <Screenshot />
+              // </Transitioner>
+            }
+          />
+          {/* <Route
               path='/Project/:id'
               element={
                 <Transitioner>
@@ -56,10 +47,9 @@ const Router = () => {
                 </Transitioner>
               }
             /> */}
-          </Routes>
-        </>
+        </Routes>
+      </>
       {/* )} */}
-
     </>
   );
 };

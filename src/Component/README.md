@@ -157,39 +157,84 @@ import Icon from './Component/icon'
 
 ## QuickNav
 
-A quick navigation component for showcase projects.
+A smooth horizontal carousel component for showcase projects with advanced interaction capabilities.
 
 ### Features
-- ✅ Keyboard navigation
-- ✅ Touch/swipe support
-- ✅ Smooth transitions
-- ✅ Responsive design
+- ✅ Smooth horizontal carousel with infinite scrolling
+- ✅ Draggable interaction with inertia and momentum
+- ✅ Touch and mouse gesture support
+- ✅ Fade masks on both ends for smooth visual transition
+- ✅ Staggered animations for opening/closing
+- ✅ Responsive design for all screen sizes
+- ✅ GSAP-powered smooth animations
+- ✅ Keyboard navigation (ESC to close)
+- ✅ Active item highlighting
+- ✅ Hover effects with overlay information
+- ✅ Blur backdrop with underlay effect
 
 ### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `items` | `Array` | - | Navigation items |
-| `currentIndex` | `number` | - | Currently active item |
-| `onNavigate` | `function` | - | Navigation callback |
-| `className` | `string` | `''` | Additional CSS classes |
+| `showcases` | `Array` | - | Array of showcase objects with thumbnail, title, category |
+| `currentIndex` | `number` | - | Currently active showcase index |
+| `onSelect` | `function` | - | Callback when showcase is selected |
+| `onClose` | `function` | - | Callback when modal is closed |
+
+### Showcase Object Structure
+
+```javascript
+{
+  id: number,
+  title: string,
+  category: string,
+  thumbnail: string,
+  description: string
+}
+```
 
 ### Usage
 
 ```jsx
 import QuickNav from './Component/QuickNav'
 
-const items = [
-  { id: 1, title: 'Project 1' },
-  { id: 2, title: 'Project 2' }
+const showcases = [
+  {
+    id: 1,
+    title: 'BallPress',
+    category: 'WebGL',
+    thumbnail: '/Thumbnail/ballpress.webp',
+    description: 'Interactive ball physics'
+  },
+  {
+    id: 2,
+    title: 'Ribbons',
+    category: 'WebGL',
+    thumbnail: '/Thumbnail/ribbon.webp',
+    description: 'Touch-responsive ribbons'
+  }
 ]
 
 <QuickNav 
-  items={items}
+  showcases={showcases}
   currentIndex={0}
-  onNavigate={(index) => setCurrentIndex(index)}
+  onSelect={(index) => setCurrentIndex(index)}
+  onClose={() => setIsQuickNavOpen(false)}
 />
 ```
+
+### Interaction Features
+
+- **Drag to Scroll**: Click and drag horizontally to scroll through showcases
+- **Touch Support**: Swipe gestures work seamlessly on mobile devices
+- **Infinite Scroll**: Carousel wraps around when reaching the end
+- **Snap to Item**: Automatically snaps to the nearest showcase item
+- **Smooth Animations**: All transitions use GSAP for buttery smooth motion
+- **Responsive**: Adapts to different screen sizes with appropriate item sizes
+
+### Dependencies
+- `gsap` - For animations and Draggable functionality
+- `gsap/Draggable` - For drag interaction support
 
 ---
 

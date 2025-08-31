@@ -7,6 +7,7 @@ const ShowcaseNavigation = ({ onClose }) => {
   const { 
     navigateToNext, 
     navigateToPrev, 
+    navigateToShowcase,
     toggleQuickNav, 
     showQuickNav, 
     allShowcases, 
@@ -94,11 +95,9 @@ const ShowcaseNavigation = ({ onClose }) => {
           showcases={allShowcases}
           currentIndex={currentIndex}
           onSelect={(index) => {
-            // This will be handled by the context
-            toggleQuickNav();
+            navigateToShowcase(index);
           }}
           onClose={toggleQuickNav}
-          isMobile={isMobile}
         />
       )}
 

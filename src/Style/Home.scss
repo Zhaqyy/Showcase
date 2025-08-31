@@ -115,7 +115,7 @@
         text-transform: uppercase;
         margin-top: 1rem;
         padding: 0.5rem 0;
-        border-top: 1px solid rgba($accent-color, 0.5);
+        border-top: 1px solid var(--secAccent);
         line-height: 0;
 
         &::before {
@@ -231,9 +231,9 @@
           position: relative;
           padding: 1.5rem;
           height:100%;
+          width: 100%;
           min-height: 250px;
           aspect-ratio: 16 / 9;
-          // min-height: 130%;
           background: rgba(0, 0, 0, 0.6);
           z-index: 1;
 

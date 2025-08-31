@@ -362,18 +362,21 @@
   z-index: 2000;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
 
   .quick-nav-content {
-    background: #162114;
-    padding: 2rem;
+    // background: #162114;
+    // padding: 2rem;
     border-radius: 8px;
-    max-width: 90vw;
+    width: 100%;
+    max-width: 100vw;
     max-height: 90vh;
-    overflow-y: auto;
+    overflow: hidden;
     position: relative;
+    margin-bottom: 10vh;
+    // border: 1px solid var(--border);
 
     .close-modal {
       position: absolute;
@@ -384,52 +387,301 @@
       color: white;
       font-size: 1.5rem;
       cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: var(--secAccent);
+        transform: scale(1.1);
+      }
     }
 
     h3 {
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
       color: #f5f5f5;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
     }
 
-    .showcase-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    // Carousel Container
+    .carousel-container {
+      width: 100vw;
+      height: 100%;
       gap: 1rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      display: flex;
+      -webkit-overflow-scrolling: touch;
+      will-change: transform;
 
-      .showcase-thumb {
-        cursor: pointer;
-        transition: all 0.5s ease;
-        outline: 1px solid transparent;
-        border-radius: 5px;
+      &:active {
+        cursor: grabbing;
+      }
 
-        &:hover {
-          // transform: scale(1.05);
-          outline: 1px solid var(--secAccent);
-        }
+      &.dragging {
+        cursor: grabbing;
+      }
+
+      // Ensure smooth infinite scroll
+      &:hover {
+        cursor: grab;
+      }
+
+      // Carousel Items
+      .carousel-item {
+
+        position: relative;
+        height: 250px;
+        flex: 0 0 25%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+        color: white;
+        scroll-snap-align: center;
+        overflow: hidden;
+        will-change: transform;
 
         &.active {
-          outline: 1px solid var(--secAccent);
+          img {
+            filter: brightness(0.8) contrast(1.2);
+          }
         }
 
-        img {
+        .carousel-item-content {
+          position: absolute;
           width: 100%;
-          aspect-ratio: 16/9;
-          -o-object-fit: cover;
-          object-fit: cover;
-          border-radius: 5px;
+          height: 100%;
+          left: 0;
+          top: 0;
+          overflow: hidden;
+          will-change: transform;
+
+          img {
+            position: absolute;
+            width: 150%;
+            height: 100%;
+            object-fit: cover;
+            will-change: transform;
+
+            &.current-showcase {
+              filter: brightness(1.0) contrast(1.2);
+            }
+          }
+
+          // Current showcase indicator
+          .current-indicator {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 24px;
+            height: 24px;
+            background: rgba(241, 204, 186, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #162114;
+            z-index: 10;
+            animation: pulse 2s infinite;
+
+            svg {
+              width: 16px;
+              height: 16px;
+            }
+          }
+
+          .carousel-item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            padding: 1.5rem 2rem 1rem;
+            color: white;
+            scale: 1.05;
+            // transition: all 0.3s ease;
+
+            .carousel-item-title {
+              display: block;
+              font-size: 1.1rem;
+              font-weight: 600;
+              margin-bottom: 0.25rem;
+            }
+
+            .carousel-item-category {
+              display: block;
+              font-size: 0.9rem;
+              opacity: 0.8;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+          }
         }
 
-        span {
-          display: block;
-          margin-top: 0.5rem;
-          color: #f5f5f5;
-          font-size: 0.9rem;
-          text-align: center;
+        &:hover img {
+          transform: scale(1.05);
+        }
+      }
+
+      // Pulse animation for current indicator
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.1);
+          opacity: 0.7;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      // }
+    }
+  }
+
+  // Carousel Navigation
+  // .carousel-nav {
+  //   display: none; // Hidden by default, shown in JS
+  //   position: absolute;
+  //   width: 100%;
+  //   top: 50%;
+  //   transform: translateY(-50%);
+  //   pointer-events: none;
+  //   z-index: 10;
+
+  //   // button {
+  //   //   cursor: pointer;
+  //   //   border: none;
+  //   //   font-size: 3rem;
+  //   //   position: absolute;
+  //   //   aspect-ratio: 1.5;
+  //   //   width: 7vw;
+  //   //   max-width: 75px;
+  //   //   height: auto;
+  //   //   max-height: 3.7vh;
+  //   //   background-color: transparent;
+  //   //   background-size: cover;
+  //   //   overflow: visible;
+  //   //   background-image: url("data:image/svg+xml,%3Csvg stroke='%23fff' fill='none' xmlns='http://www.w3.org/2000/svg' viewBox='0 1 22 15'%3E%3Cpath d='M2,11 11,2 20,11'/%3E%3C/svg%3E");
+  //   //   pointer-events: auto;
+  //   //   transition: opacity 0.3s ease;
+
+  //   //   // &.prev {
+  //   //   //   transform: translateY(-50%) rotate(-90deg);
+  //   //   //   left: 1rem;
+  //   //   // }
+
+  //   //   // &.next {
+  //   //   //   transform: translateY(-50%) rotate(90deg);
+  //   //   //   right: 1rem;
+  //   //   // }
+  //   // }
+
+  //   div {
+  //     position: absolute;
+  //     bottom: -3rem;
+  //     width: 100%;
+  //     text-align: center;
+  //     color: #fff;
+  //     font-weight: 200;
+  //     opacity: 0.5;
+  //     letter-spacing: 0.25rem;
+  //     font-size: clamp(14px, 2vw, 24px);
+  //     pointer-events: none;
+  //   }
+  // }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .quick-nav-modal {
+    .quick-nav-content {
+      padding: 1.5rem;
+      max-width: 98vw;
+
+      h3 {
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .carousel-container {
+
+          .carousel-item {
+            flex: 0 0 30%;
+
+            .carousel-item-content {
+              .current-indicator {
+                top: 8px;
+                right: 8px;
+                width: 20px;
+                height: 20px;
+
+                svg {
+                  width: 12px;
+                  height: 12px;
+                }
+              }
+
+              .carousel-item-overlay {
+                padding: 1rem 0.75rem 0.75rem;
+
+                .carousel-item-title {
+                  font-size: 1rem;
+                }
+
+                .carousel-item-category {
+                  font-size: 0.8rem;
+                }
+              }
+            }
+          }
         }
       }
     }
   }
-}
+
+@media (max-width: 480px) {
+  .quick-nav-modal {
+    .quick-nav-content {
+      padding: 1rem;
+
+      .carousel-container {
+  
+            .carousel-item-content {
+              .current-indicator {
+                top: 6px;
+                right: 6px;
+                width: 18px;
+                height: 18px;
+
+                svg {
+                  width: 10px;
+                  height: 10px;
+                }
+              }
+
+              .carousel-item-overlay {
+                padding: 0.75rem 0.5rem 0.5rem;
+
+                .carousel-item-title {
+                  font-size: 0.9rem;
+                }
+
+                .carousel-item-category {
+                  font-size: 0.75rem;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
 
 @media (width <= 800px) {
   .loaderText {
@@ -628,8 +880,6 @@
   opacity: 0;
 }
 
-
-
 // Drawer Component
 
 .drawer-container {
@@ -780,8 +1030,8 @@
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;  /* Firefox, Safari 18.2+, Chromium 121+ */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox, Safari 18.2+, Chromium 121+ */
   position: relative;
 
   &::-webkit-scrollbar {
@@ -798,7 +1048,7 @@
 
   // Scroll indicator - subtle gradient fade
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 0;
@@ -1048,7 +1298,6 @@ $accordion-warning-color: #ff9b00;
     margin: 0;
     transition: $accordion-transition;
 
-
     @media (max-width: 640px) {
       font-size: 1.125rem;
     }
@@ -1280,10 +1529,10 @@ $accordion-warning-color: #ff9b00;
     border-radius: 20px 20px 0 0;
     max-height: 90dvh;
     height: 90dvh;
-    
+
     .drawer-content {
       padding: 0;
-      
+
       .scSidebar-mobile {
         background: transparent;
         border-radius: 0;
@@ -1297,35 +1546,35 @@ $accordion-warning-color: #ff9b00;
         display: block;
         overflow-y: auto;
         touch-action: pan-y; // Explicitly allow vertical scrolling
-        
+
         // Hide scrollbar for mobile
         scrollbar-width: none;
         &::-webkit-scrollbar {
           display: none;
         }
-        
+
         // Ensure proper spacing
         .sidebar-header {
           margin-bottom: 1.5rem;
-          
+
           h3 {
             color: var(--accent-color, #f1ccba);
             font-size: 1.8rem;
             margin: 0;
           }
-          
+
           .description {
             font-style: italic;
             opacity: 0.8;
             margin: 0.5rem 0;
           }
-          
+
           .tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
             margin-top: 0.8rem;
-            
+
             .tag {
               background: rgba(241, 204, 186, 0.2);
               padding: 0.3rem 0.6rem;
@@ -1334,13 +1583,13 @@ $accordion-warning-color: #ff9b00;
             }
           }
         }
-        
+
         .quick-stats {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 1rem;
           margin-bottom: 1.5rem;
-          
+
           .stat {
             .label {
               display: block;
@@ -1348,7 +1597,7 @@ $accordion-warning-color: #ff9b00;
               opacity: 0.7;
               text-transform: uppercase;
             }
-            
+
             .value {
               font-size: 0.9rem;
             }
@@ -1357,15 +1606,15 @@ $accordion-warning-color: #ff9b00;
       }
     }
   }
-  
+
   // Custom handle styling for showcase drawer
   .drawer-handle {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 20px 20px 0 0;
-    
+
     .drawer-handle-bar {
       background: rgba(255, 255, 255, 0.3);
-      
+
       &:hover {
         background: rgba(255, 255, 255, 0.5);
       }
@@ -1384,10 +1633,10 @@ $accordion-warning-color: #ff9b00;
     height: 100vh;
     top: 0;
     right: 0;
-    
+
     .drawer-content {
       padding: 0;
-      
+
       .scSidebar {
         background: transparent;
         border-radius: 0;
@@ -1400,29 +1649,29 @@ $accordion-warning-color: #ff9b00;
         right: auto;
         display: block;
         overflow-y: auto;
-        
+
         // Ensure proper spacing
         .sidebar-header {
           margin-bottom: 1.5rem;
-          
+
           h3 {
             color: var(--accent-color, #f1ccba);
             font-size: 1.8rem;
             margin: 0;
           }
-          
+
           .description {
             font-style: italic;
             opacity: 0.8;
             margin: 0.5rem 0;
           }
-          
+
           .tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
             margin-top: 0.8rem;
-            
+
             .tag {
               background: rgba(241, 204, 186, 0.2);
               padding: 0.3rem 0.6rem;
@@ -1431,13 +1680,13 @@ $accordion-warning-color: #ff9b00;
             }
           }
         }
-        
+
         .quick-stats {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 1rem;
           margin-bottom: 1.5rem;
-          
+
           .stat {
             .label {
               display: block;
@@ -1445,7 +1694,7 @@ $accordion-warning-color: #ff9b00;
               opacity: 0.7;
               text-transform: uppercase;
             }
-            
+
             .value {
               font-size: 0.9rem;
             }
@@ -1463,10 +1712,10 @@ $accordion-warning-color: #ff9b00;
     border-radius: 20px 20px 0 0;
     max-height: 90dvh;
     height: auto;
-    
+
     .drawer-content {
       padding: 0;
-      
+
       .overview-content {
         background: transparent;
         border-radius: 0;
@@ -1483,7 +1732,7 @@ $accordion-warning-color: #ff9b00;
         gap: 2rem;
         overflow-y: auto;
         touch-action: pan-y; // Explicitly allow vertical scrolling
-        
+
         // Hide scrollbar
         scrollbar-width: none;
         &::-webkit-scrollbar {
@@ -1496,27 +1745,28 @@ $accordion-warning-color: #ff9b00;
         }
         .contact-section {
           margin-top: auto;
-    
+
           ul {
             display: flex;
             gap: 1rem;
             margin: 1rem 0;
             flex-wrap: wrap;
           }
-    
+
           .availability {
             font-size: 0.7rem;
             opacity: 0.8;
             text-transform: uppercase;
             margin-top: 1rem;
-            padding: 0.5rem 0;
-            border-top: 1px solid var(--accent-color);
+            padding: 1.5rem 0 0.5rem 0;
+
+            border-top: 2px solid rgb(241 204 186 / 25%);
             line-height: 0;
-    
+
             &::before {
               content: "";
               display: inline-block;
-    
+
               width: 0.6rem;
               height: 0.6rem;
               aspect-ratio: 1;
@@ -1529,15 +1779,15 @@ $accordion-warning-color: #ff9b00;
       }
     }
   }
-  
+
   // Custom handle styling for overview drawer
   .drawer-handle {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 20px 20px 0 0;
-    
+
     .drawer-handle-bar {
       background: rgba(255, 255, 255, 0.3);
-      
+
       &:hover {
         background: rgba(255, 255, 255, 0.5);
       }
