@@ -1,14 +1,14 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Text, Line, ContactShadows, Environment, SoftShadows,  useGLTF, useAnimations, Shadow  } from "@react-three/drei";
+import { OrbitControls, Text, Line, ContactShadows, Environment, SoftShadows, useGLTF, useAnimations, Shadow } from "@react-three/drei";
 import * as THREE from "three";
-import { useRef, useMemo, useEffect } from "react";
+import { useRef, useMemo, useEffect, Suspense } from "react";
 import { EffectComposer, TiltShift2 } from "@react-three/postprocessing";
 import { Perf } from "r3f-perf";
 
 function ClockFace({ margin = 0.5 }) {
   const { viewport } = useThree();
   // Dynamic radius: fit width with margin
-//   const radius = Math.min(viewport.width, viewport.height) / 2 - margin;
+  //   const radius = Math.min(viewport.width, viewport.height) / 2 - margin;
   const radius = 5;
   const numeralRadius = radius * 1.15;
 
@@ -22,15 +22,21 @@ function ClockFace({ margin = 0.5 }) {
         const x = Math.sin(a) * radius;
         const z = Math.cos(a) * radius;
         return (
-          <Line
-            key={`tick-${i}`}
-            points={[
-              [0, 0.001, 0],
-              [x, 0.001, z],
-            ]}
-            color={"#555"}
-            lineWidth={1.5}
-          />
+          <group key={`tick-${i}`}>
+            <Line
+              points={[
+                [0, 0.001, 0],
+                [x, 0.001, z],
+              ]}
+              color={"#555"}
+              lineWidth={1.5}
+            />
+            {/* Decorative end cap */}
+            <mesh position={[x, 0.002, z]} rotation={[Math.PI / 2, 0, 0]}>
+              <circleGeometry args={[0.08, 12]} />
+              <meshBasicMaterial color="#333" />
+            </mesh>
+          </group>
         );
       })}
 
@@ -40,7 +46,16 @@ function ClockFace({ margin = 0.5 }) {
         const x = Math.sin(a) * numeralRadius;
         const z = Math.cos(a) * numeralRadius;
         return (
-          <Text position={[x, 0, z]} rotation={[Math.PI / 2, 0, 0]} fontSize={0.6} font='http://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf' color='#333' anchorX='center' anchorY='middle'>
+          <Text
+            key={`numeral-${i}`}
+            position={[x, 0, z]}
+            rotation={[Math.PI / 2, 0, 0]}
+            fontSize={0.6}
+            font='http://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
+            color='#333'
+            anchorX='center'
+            anchorY='middle'
+          >
             {t}
           </Text>
         );
@@ -50,103 +65,103 @@ function ClockFace({ margin = 0.5 }) {
 }
 
 export function Model(props) {
-  const group = useRef()
-  const { nodes, materials, animations } = useGLTF('/Model/stand.glb')
-  const { actions } = useAnimations(animations, group)
-  
+  const group = useRef();
+  const { nodes, materials, animations } = useGLTF("/Model/stand.glb");
+  const { actions } = useAnimations(animations, group);
+
   useEffect(() => {
     // Play standUp animation first
-    actions.standUp.reset().play()
-    
+    actions.standUp.reset().play();
+
     // Get the duration of standUp animation for dynamic timeout
-    const standUpDuration = actions.standUp.getClip().duration * 1000 // Convert to milliseconds
-    
+    const standUpDuration = actions.standUp.getClip().duration * 1000; // Convert to milliseconds
+
     // After standUp animation duration, crossfade to idle
     const timer = setTimeout(() => {
-      actions.idle.reset().setLoop(THREE.LoopRepeat, Infinity).play()
-      actions.standUp.crossFadeTo(actions.idle, 0.5)
-    }, standUpDuration-1000)
-    
+      actions.idle.reset().setLoop(THREE.LoopRepeat, Infinity).play();
+      actions.standUp.crossFadeTo(actions.idle, 0.5);
+    }, standUpDuration - 1000);
+
     // Cleanup
     return () => {
-      clearTimeout(timer)
-      actions.standUp.fadeOut(0.5)
-      actions.idle.fadeOut(0.5)
-    }
-  }, [actions])
-  
+      clearTimeout(timer);
+      if (actions.standUp) actions.standUp.fadeOut(0.5);
+      if (actions.idle) actions.idle.fadeOut(0.5);
+    };
+  }, [actions]);
+
   return (
     <group ref={group} {...props} dispose={null}>
-      <group name="Scene">
-        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
+      <group name='Scene'>
+        <group name='Armature' rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
           <primitive object={nodes.mixamorig7Hips} />
         </group>
         <skinnedMesh
-        // castShadow
-          name="Ch08_Beard"
+          // castShadow
+          name='Ch08_Beard'
           geometry={nodes.Ch08_Beard.geometry}
-          material={materials['Ch08_hair.001']}
+          material={materials["Ch08_hair.001"]}
           skeleton={nodes.Ch08_Beard.skeleton}
           rotation={[Math.PI / 2, 0, 0]}
           scale={0.01}
         />
         <skinnedMesh
-        castShadow
-          name="Ch08_Body"
+          castShadow
+          name='Ch08_Body'
           geometry={nodes.Ch08_Body.geometry}
-          material={materials['Ch08_body.001']}
+          material={materials["Ch08_body.001"]}
           skeleton={nodes.Ch08_Body.skeleton}
           rotation={[Math.PI / 2, 0, 0]}
           scale={0.01}
         />
         <skinnedMesh
-        // castShadow
-          name="Ch08_Eyelashes"
+          // castShadow
+          name='Ch08_Eyelashes'
           geometry={nodes.Ch08_Eyelashes.geometry}
-          material={materials['Ch08_hair.001']}
+          material={materials["Ch08_hair.001"]}
           skeleton={nodes.Ch08_Eyelashes.skeleton}
           rotation={[Math.PI / 2, 0, 0]}
           scale={0.01}
         />
         <skinnedMesh
-        // castShadow
-          name="Ch08_Hair"
+          // castShadow
+          name='Ch08_Hair'
           geometry={nodes.Ch08_Hair.geometry}
-          material={materials['Ch08_hair.001']}
+          material={materials["Ch08_hair.001"]}
           skeleton={nodes.Ch08_Hair.skeleton}
           rotation={[Math.PI / 2, 0, 0]}
           scale={0.01}
         />
         <skinnedMesh
-        castShadow
-          name="Ch08_Hoodie"
+          castShadow
+          name='Ch08_Hoodie'
           geometry={nodes.Ch08_Hoodie.geometry}
-          material={materials['Ch08_body1.001']}
+          material={materials["Ch08_body1.001"]}
           skeleton={nodes.Ch08_Hoodie.skeleton}
           rotation={[Math.PI / 2, 0, 0]}
           scale={0.01}
         />
         <skinnedMesh
-        castShadow
-          name="Ch08_Pants"
+          castShadow
+          name='Ch08_Pants'
           geometry={nodes.Ch08_Pants.geometry}
-          material={materials['Ch08_body1.001']}
+          material={materials["Ch08_body1.001"]}
           skeleton={nodes.Ch08_Pants.skeleton}
           rotation={[Math.PI / 2, 0, 0]}
           scale={0.01}
         />
         <skinnedMesh
-        // castShadow
-          name="Ch08_Sneakers"
+          // castShadow
+          name='Ch08_Sneakers'
           geometry={nodes.Ch08_Sneakers.geometry}
-          material={materials['Ch08_body1.001']}
+          material={materials["Ch08_body1.001"]}
           skeleton={nodes.Ch08_Sneakers.skeleton}
           rotation={[Math.PI / 2, 0, 0]}
           scale={0.01}
         />
       </group>
     </group>
-  )
+  );
 }
 
 function ClockHands() {
@@ -199,13 +214,7 @@ function ClockHands() {
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]}>
         <planeGeometry args={[80, 80]} />
         {/* <shadowMaterial transparent opacity={0.75} /> */}
-        <meshStandardMaterial 
-          color="#d7e9fa" 
-          roughness={0.75}
-          metalness={0.35}
-          transparent
-          opacity={0.65}
-        />
+        <meshStandardMaterial color='#d7e9fa' roughness={0.75} metalness={0.35} transparent opacity={0.65} />
       </mesh>
 
       {/* Printed clock face */}
@@ -217,7 +226,9 @@ function ClockHands() {
           <cylinderGeometry args={[0.35, 0.35, 0.05, 48]} />
           <meshStandardMaterial color='#e7e9ec' roughness={0.95} />
         </mesh>
-        <Model />
+        <Suspense fallback={null}>
+          <Model />
+        </Suspense>
       </group>
 
       {/* Directional lights as "hands" */}
@@ -230,7 +241,7 @@ function ClockHands() {
         // shadow-mapSize-height={2048}
         // shadow-bias={-0.0001}
       />
-      
+
       <directionalLight
         ref={minuteLight}
         castShadow
@@ -239,7 +250,6 @@ function ClockHands() {
         // shadow-mapSize-width={2048}
         // shadow-mapSize-height={2048}
         // shadow-bias={-0.0001}
-
       />
 
       <directionalLight
@@ -251,13 +261,11 @@ function ClockHands() {
         // shadow-mapSize-height={2048}
         // shadow-bias={-0.0001}
       />
-
     </group>
   );
 }
 
-
-useGLTF.preload('/Model/stand.glb')
+useGLTF.preload("/Model/stand.glb");
 
 
 export default function Sundial() {
@@ -265,7 +273,7 @@ export default function Sundial() {
     <Canvas
       dpr={[1, 2]}
       shadows
-    orthographic
+      orthographic
       camera={{ position: [-7, 7, 9], fov: 40, near: 0.1, far: 100, zoom: 100 }}
       gl={{ antialias: true }}
       onCreated={({ gl }) => {
@@ -274,18 +282,17 @@ export default function Sundial() {
         gl.toneMappingExposure = 1.0;
       }}
     >
-        {/* Performance Monitor */}
-      <Perf position="top-left" minimal={false} />
+      {/* Performance Monitor */}
+      <Perf position='top-left' minimal={false} />
 
       <color attach='background' args={["#e9ecef"]} />
       {/* <fog attach='fog' args={["#edf0f3", 0, 100]} /> */}
-      <Environment preset='night' background={false} blur={0.19} environmentIntensity={3.5} backgroundIntensity={3.5} backgroundBlurriness={0} />
-      
+      {/* <Environment preset='night' background={false} blur={0.19} environmentIntensity={3.5} backgroundIntensity={3.5} backgroundBlurriness={0} /> */}
 
       {/* <SoftShadows size={24} samples={64} focus={0.9} /> */}
 
       <ClockHands />
-      <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
+      {/* <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} /> */}
       {/* <OrbitControls minPolarAngle={Math.PI / 3} maxPolarAngle={Math.PI / 3} /> */}
     </Canvas>
   );
