@@ -1,4 +1,5 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
+import gsap from "gsap";
 import { useShowcase } from "../../Context/ShowcaseContext";
 import { useUI } from "../../Context/UIContext";
 import QuickNav from "../../Component/QuickNav";
@@ -15,6 +16,27 @@ const ShowcaseNavigation = ({ onClose }) => {
   } = useShowcase();
   
   const { isMobile } = useUI();
+  const navigationRef = useRef();
+
+  // Fade transition when showcase changes
+  useEffect(() => {
+    if (navigationRef.current) {
+      // Fade out current navigation
+      gsap.to(navigationRef.current, {
+        opacity: 0,
+        duration: 0.2,
+        ease: "power2.out",
+        onComplete: () => {
+          // Fade in new navigation
+          gsap.to(navigationRef.current, {
+            opacity: 1,
+            duration: 0.2,
+            ease: "power2.in"
+          });
+        }
+      });
+    }
+  }, [currentIndex]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -58,7 +80,7 @@ const ShowcaseNavigation = ({ onClose }) => {
   return (
     <>
       {/* Navigation Controls */}
-      <div className='navigation-controls'>
+      <div className='navigation-controls' ref={navigationRef}>
         <button 
           className='nav-button prev' 
           onClick={navigateToPrev} 

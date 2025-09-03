@@ -48,7 +48,28 @@ const ShowcaseSidebar = ({ showcase }) => {
   const { navigateToShowcase, allShowcases, currentIndex } = useShowcase();
 
   const hamburgerRef = useRef();
+  const sidebarRef = useRef();
   const initialScrollY = useRef(0);
+
+  // Fade transition when showcase changes
+  useEffect(() => {
+    if (sidebarRef.current) {
+      // Fade out current sidebar content
+      gsap.to(sidebarRef.current, {
+        opacity: 0,
+        duration: 0.2,
+        ease: "power2.out",
+        onComplete: () => {
+          // Fade in new sidebar content
+          gsap.to(sidebarRef.current, {
+            opacity: 1,
+            duration: 0.2,
+            ease: "power2.in"
+          });
+        }
+      });
+    }
+  }, [showcase.id]);
 
   // Proper close function that waits for animation
   const handleCloseShowcaseDrawer = useCallback(() => {
@@ -183,6 +204,7 @@ const ShowcaseSidebar = ({ showcase }) => {
           className="showcase-sidebar-desktop"
         >
           <ShowcaseSidebarContent 
+            ref={sidebarRef}
             showcase={showcase} 
             isOpen={isMenuOpen} 
           />
@@ -201,6 +223,7 @@ const ShowcaseSidebar = ({ showcase }) => {
           className="showcase-drawer"
         >
           <ShowcaseSidebarContent 
+            ref={sidebarRef}
             showcase={showcase} 
             isOpen={showcaseDrawerOpen} 
             isMobile={true}

@@ -123,12 +123,12 @@ const QuickNav = ({ showcases, currentIndex, onSelect, onClose }) => {
       // Force a reflow to ensure proper positioning
       carouselRef.current?.offsetHeight;
     }, 100);
-    
+
     // Also center immediately if this is the first run
     if (firstRun) {
       loop.toIndex(currentIndex, { duration: 0 });
     }
-    
+
     // Set firstRun to false after all initialization is complete
     firstRun = false;
 
@@ -143,7 +143,6 @@ const QuickNav = ({ showcases, currentIndex, onSelect, onClose }) => {
         });
       });
     }
-
 
     // tween active/inactive slide states
     function showActive() {
@@ -411,8 +410,8 @@ const QuickNav = ({ showcases, currentIndex, onSelect, onClose }) => {
   // Initialize backdrop filter values when component mounts
   useEffect(() => {
     if (modalRef.current) {
-      modalRef.current.style.setProperty('--backdrop-blur', '5px');
-      modalRef.current.style.setProperty('--webkit-backdrop-blur', '5px');
+      modalRef.current.style.setProperty("--backdrop-blur", "5px");
+      modalRef.current.style.setProperty("--webkit-backdrop-blur", "5px");
     }
   }, []);
 
@@ -420,142 +419,195 @@ const QuickNav = ({ showcases, currentIndex, onSelect, onClose }) => {
   useEffect(() => {
     if (modalRef.current && contentRef.current && !isAnimating.current) {
       isAnimating.current = true;
-      
+
       // Set initial states
-      gsap.set(modalRef.current, { 
-        opacity: 0
+      gsap.set(modalRef.current, {
+        opacity: 0,
       });
-      
+
       // Set backdrop filter via CSS custom properties for better GSAP compatibility
-      modalRef.current.style.setProperty('--backdrop-blur', '0px');
-      modalRef.current.style.setProperty('--webkit-backdrop-blur', '0px');
-      
-      gsap.set(contentRef.current, { 
+      modalRef.current.style.setProperty("--backdrop-blur", "0px");
+      modalRef.current.style.setProperty("--webkit-backdrop-blur", "0px");
+
+      gsap.set(contentRef.current, {
         y: "100%",
         scale: 0.8,
-        opacity: 0
-      });
-      
-      gsap.set(".carousel-item", { 
-        y: 50,
         opacity: 0,
-        scale: 0.9
       });
-      
-      // Entry animation timeline
-      const tl = gsap.timeline({ 
+
+      gsap.set(".carousel-item", {
+        y: 30,
+        opacity: 0,
+        scale: 0.9,
+      });
+
+      gsap.set(["h3", ".close-modal"], {
+        opacity: 0,
+        y: -20,
+        // scale: 0.8
+      });
+
+      // Entry animation timeline with precise positioning
+      const tl = gsap.timeline({
         ease: "power3.out",
         onComplete: () => {
           isAnimating.current = false;
-        }
+        },
       });
-      
-      // Backdrop fade in
+
+      // Backdrop fade in (0s)
       tl.to(modalRef.current, {
         opacity: 1,
-        duration: 0.6,
-        ease: "power2.out"
-      }, 0);
-      
-      // Backdrop blur in
-      tl.to(modalRef.current, {
-        '--backdrop-blur': '8px',
-        '--webkit-backdrop-blur': '8px',
-        duration: 0.8,
-        ease: "power2.out"
-      }, 0);
-      
-      // Content slide up and scale
-      tl.to(contentRef.current, {
-        y: "0%",
-        scale: 1,
-        opacity: 1,
-        duration: 0.8,
-        ease: "power3.out"
-      }, 0.2);
-      
-      // Carousel items stagger in
-      tl.to(".carousel-item", {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 0.6,
-        stagger: 0.05,
-        ease: "power2.out"
-      }, 0.4);
-      
-      // Close button fade in
-      tl.to(".close-modal", {
-        opacity: 1,
-        scale: 1,
-        duration: 0.4,
-        ease: "back.out(1.7)"
-      }, 0.6);
-      
-      // Title fade in
-      tl.to("h3", {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: "power2.out"
-      }, 0.5);
+        duration: 0.2,
+        ease: "power2.out",
+      });
+
+      // Backdrop blur in (0s - parallel with fade)
+      tl.to(
+        modalRef.current,
+        {
+          "--backdrop-blur": "8px",
+          "--webkit-backdrop-blur": "8px",
+          "duration": 0.3,
+          "ease": "power2.out",
+        },
+        "<"
+      );
+
+      // Content slide up and scale (0.2s)
+      tl.to(
+        contentRef.current,
+        {
+          y: "0%",
+          scale: 1,
+          opacity: 1,
+          duration: 0.3,
+          ease: "power3.out",
+        },
+        "<"
+      );
+
+      // Title fade in (0.4s)
+      tl.to(
+        "h3",
+        {
+          opacity: 1,
+          y: 0,
+          // scale: 1,
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        ">"
+      );
+
+      // Carousel items stagger in (0.5s)
+      tl.to(
+        ".carousel-item",
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.4,
+          stagger: 0.05,
+          ease: "power2.out",
+        },
+        "<0.1"
+      );
+
+      // Close button fade in (0.6s)
+      tl.to(
+        ".close-modal",
+        {
+          opacity: 1,
+          // y: 0,
+          // scale: 1,
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        "<"
+      );
     }
   }, []);
 
   // Exit animation when QuickNav closes
   const handleClose = useCallback(() => {
     if (isAnimating.current) return;
-    
+
     isAnimating.current = true;
-    
-    const tl = gsap.timeline({ 
+
+    const tl = gsap.timeline({
       ease: "power3.in",
       onComplete: () => {
         onClose();
-      }
+      },
     });
-    
-    // Close button and title fade out
-    tl.to([".close-modal", "h3"], {
+
+    // Close button and title fade out (0s)
+    tl.to([".close-modal"], {
       opacity: 0,
-      y: -20,
-      duration: 0.3,
-      ease: "power2.in"
-    }, 0);
-    
-    // Carousel items stagger out
-    tl.to(".carousel-item", {
-      y: 30,
-      opacity: 0,
-      scale: 0.9,
-      duration: 0.4,
-      stagger: 0.03,
-      ease: "power2.in"
-    }, 0.1);
-    
-    // Content slide down and scale
-    tl.to(contentRef.current, {
-      y: "100%",
+      // y: -20,
       scale: 0.8,
+      duration: 0.3,
+      ease: "power2.in",
+    });
+
+    tl.to(["h3"], {
       opacity: 0,
-      duration: 0.6,
-      ease: "power3.in"
-    }, 0.2);
-    
-    // Backdrop fade out
-    tl.to(modalRef.current, {
-      opacity: 0,
-      duration: 0.5,
-      ease: "power2.in"
-    }, 0.3);
-    
-    // Backdrop blur out
-    tl.to(modalRef.current, {
-      '--backdrop-blur': '0px',
-      '--webkit-backdrop-blur': '0px',
-      duration: 0.4,
-      ease: "power2.in"
-    }, 0.3);
+      // y: -20,
+      // scale: 0.8,
+      duration: 0.3,
+      ease: "power2.in",
+    });
+
+    // Carousel items stagger out (0.1s)
+    tl.to(
+      ".carousel-item",
+      {
+        y: 30,
+        opacity: 0,
+        scale: 0.9,
+        duration: 0.4,
+        stagger: 0.05,
+        ease: "power2.in",
+      },
+      "<0.1"
+    );
+
+    // Content slide down and scale (0.3s)
+    tl.to(
+      contentRef.current,
+      {
+        y: "100%",
+        scale: 0.8,
+        opacity: 0,
+        duration: 0.3,
+        ease: "power3.in",
+      },
+      ">"
+    );
+
+    // Backdrop fade out (0.4s)
+    tl.to(
+      modalRef.current,
+      {
+        opacity: 0,
+        duration: 0.2,
+        ease: "power2.in",
+      },
+      ">"
+    );
+
+    // Backdrop blur out (0.4s - parallel with fade)
+    tl.to(
+      modalRef.current,
+      {
+        "--backdrop-blur": "0px",
+        "--webkit-backdrop-blur": "0px",
+        "duration": 0.3,
+        "ease": "power2.in",
+      },
+      "<"
+    );
   }, [onClose]);
 
   // Close on ESC / resize

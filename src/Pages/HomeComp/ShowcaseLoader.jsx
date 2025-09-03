@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import gsap from "gsap";
 import { useUI } from "../../Context/UIContext";
 
 const ShowcaseLoader = ({ showcase, onComponentLoaded }) => {
@@ -12,10 +13,21 @@ const ShowcaseLoader = ({ showcase, onComponentLoaded }) => {
   const isMounted = useRef(true);
   const loadingStartTime = useRef(0);
   const minDisplayTime = 0; // Minimum display time in ms
+  const loaderRef = useRef(null);
 
   // Stable reference for the showcase to prevent effect re-triggers
   const currentShowcase = useRef(showcase);
   currentShowcase.current = showcase;
+
+  // Fade in animation when loader mounts
+  useEffect(() => {
+    if (loaderRef.current) {
+      gsap.fromTo(loaderRef.current, 
+        { opacity: 0 },
+        { opacity: 1, duration: 0.3, ease: "power2.out" }
+      );
+    }
+  }, [showcase.id]);
 
   useEffect(() => {
     isMounted.current = true;
@@ -75,7 +87,7 @@ const ShowcaseLoader = ({ showcase, onComponentLoaded }) => {
   switch (displayState.status) {
     case 'error':
       return (
-        <div style={styles.container}>
+        <div ref={loaderRef} style={styles.container}>
           <div style={styles.content}>
             <h3>Failed to load {currentShowcase.current.title}</h3>
             <p>{displayState.error || 'Unknown error occurred'}</p>
@@ -91,7 +103,7 @@ const ShowcaseLoader = ({ showcase, onComponentLoaded }) => {
     
     case 'loading':
       return (
-        <div style={styles.container}>
+        <div ref={loaderRef} style={styles.container}>
           <div style={styles.content}>
             <h3>Loading {currentShowcase.current.title}...</h3>
             <p>Please wait while we prepare the experience.</p>

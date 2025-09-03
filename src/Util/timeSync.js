@@ -65,15 +65,15 @@ class TimeSync {
       this.timeOffset = serverTimeAdjusted - localTime;
       this.lastSync = Date.now();
       
-      console.log('Time sync successful:', {
-        offset: this.timeOffset,
-        latency: roundTripTime,
-        serverTime: serverTime.toISOString()
-      });
+      // console.log('Time sync successful:', {
+      //   offset: this.timeOffset,
+      //   latency: roundTripTime,
+      //   serverTime: serverTime.toISOString()
+      // });
       
       return true;
     } catch (error) {
-      console.warn('Time sync failed, using fallback:', error.message);
+      // console.warn('Time sync failed, using fallback:', error.message);
       this.enableFallback();
       return false;
     }
@@ -85,7 +85,7 @@ class TimeSync {
   enableFallback() {
     this.fallbackEnabled = true;
     this.timeOffset = 0;
-    console.log('Using system clock fallback');
+    // console.log('Using system clock fallback');
   }
 
   /**
