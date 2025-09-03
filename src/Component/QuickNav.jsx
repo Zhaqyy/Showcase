@@ -103,7 +103,7 @@ const QuickNav = ({ showcases, currentIndex, onSelect, onClose }) => {
     });
 
     // set initial opacity for slides
-    gsap.set(".carousel-item", { opacity: i => (i === 0 ? 1 : 0.3) });
+    // gsap.set(".carousel-item", { opacity: i => (i === 0 ? 1 : 0.3) });
 
     // center on initial slide
     loop.toIndex(0, { duration: 0 });
@@ -127,7 +127,7 @@ const QuickNav = ({ showcases, currentIndex, onSelect, onClose }) => {
       gsap
         .timeline({ defaults: { overwrite: "auto", ease: "power1.inOut" } })
         .to(".carousel-container, .carousel-item-content, .carousel-item img", { scale: 1, ease: "expo" }, 0)
-        .to(".carousel-item", { opacity: (i, t) => (t.classList.contains("active") ? 1 : 0.2) }, 0)
+        // .to(".carousel-item", { opacity: (i, t) => (t.classList.contains("active") ? 1 : 0.2) }, 0)
         .progress(firstRun ? 1 : 0); // skip active slide animation on first run
     }
 

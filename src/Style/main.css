@@ -20,6 +20,76 @@ html.lenis body {
   pointer-events: none;
 }
 
+
+/* kufam-regular */
+@font-face {
+  font-display: swap;
+  font-family: "Kufam";
+  font-style: normal;
+  /* // font-weight: 400; */
+  src: url("/Font/kufam.woff2") format("woff2");
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --accent: #141414;
+  --secAccent: #f1ccba;
+  --dot: #3c3c3c;
+  --bg: #0d0d0d;
+  --deep-green: #162114;
+  --light-green: #294122;
+  --text: #f5f5f5;
+  --warning: #ff9b00;
+  --bg-color: #294122;
+  --border: rgba(128, 128, 128, 0.25);
+  --bRadius: 24px;
+}
+
+html,
+body,
+#root {
+  min-width: 100%;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+    /* Safari and Chrome */
+  }
+
+  overscroll-behavior-x: none;
+}
+
+#root {
+  background-position: center;
+  background-size: cover;
+  height: auto;
+  min-height: 100vh;
+}
+
+body {
+  font-family: "kufam", helvetica neue, helvetica, arial, sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
+  color: white;
+  -webkit-font-smoothing: antialiased;
+}
+
+
 ::-moz-selection {
   background: var(--light-green);
   color: #f1ccba;
@@ -51,93 +121,6 @@ html.lenis body {
   opacity: 0;
 }
 
-
-
-/* kufam-regular */
-@font-face {
-  font-display: swap;
-  font-family: "Kufam";
-  font-style: normal;
-  /* // font-weight: 400; */
-  src: url("/Font/kufam.woff2") format("woff2");
-}
-
-/* //   @font-face {
-//     font-family: 'Kufam';
-//     src:
-//       url('./Font/kufam.woff2')
-//       format(‘woff2 supports variations’),
-//       url('./Font/kufamVar.woff2')
-//       format('woff2-variations');
-//     // font-stretch: 25% 150%;
-//     // font-style: oblique 0deg 10deg;
-//     font-weight: 100 900;
-//     font-display: swap;
-//   }
-/* krona-one-regular */
-/* // @font-face {
-//     font-display: swap;
-//     font-family: 'Krona One';
-//     font-style: normal;
-//     font-weight: 400;
-//     src: url('./Font/krona.woff2') format('woff2');
-//   } */
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html,
-body,
-#root {
-  min-width: 100%;
-  width: auto;
-  height: auto;
-  margin: 0;
-  padding: 0;
-  --accent: #141414;
-  --secAccent: #f1ccba;
-  --dot: #3c3c3c;
-  --bg: #0d0d0d;
-  --deep-green: #162114;
-  --light-green: #294122;
-  --text: #f5f5f5;
-  --warning: #ff9b00;
-  --bg-color: #294122;
-  --border: rgba(128, 128, 128, 0.25);
-  --bRadius: 24px;
-  background-color: var(--bg);
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-    /* Safari and Chrome */
-  }
-
-  overscroll-behavior-x: none;
-}
-
-#root {
-  background-position: center;
-  background-size: cover;
-  height: auto;
-  min-height: 100vh;
-}
-
-body {
-  font-family: "kufam", helvetica neue, helvetica, arial, sans-serif;
-  font-weight: 400;
-  font-synthesis: none;
-  color: white;
-  -webkit-font-smoothing: antialiased;
-}
 
 ul {
   list-style: none;

@@ -6,6 +6,7 @@ import Transitioner from "../Util/Transition";
 
 import Home from "../Pages/Home";
 import Screenshot from "../Pages/Screenshot";
+import ShowcasePage from "../Pages/ShowcasePage";
 
 // import Header from "../Component/Header";
 
@@ -38,6 +39,10 @@ const Router = () => {
               <Screenshot />
               // </Transitioner>
             }
+          />
+          <Route
+            path='/showcase/:id'
+            element={<ShowcasePage />}
           />
           {/* <Route
               path='/Project/:id'
