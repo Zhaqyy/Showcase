@@ -297,7 +297,7 @@ function ClockHands() {
           anchorX='center'
           anchorY='middle'
         >
-          {`${currentTime.hours % 12 || 12}:${currentTime.minutes.toString().padStart(2, '0')}:${currentTime.seconds.toString().padStart(2, '0')} ${currentTime.hours >= 12 ? 'PM' : 'AM'}`}
+          {`${currentTime.hours % 12 === 0 ? 12 : currentTime.hours % 12}:${currentTime.minutes.toString().padStart(2, '0')}:${currentTime.seconds.toString().padStart(2, '0')} ${currentTime.hours >= 12 ? 'PM' : 'AM'}`}
         </Text>
         <Text
           position={[0, -0.6, 0]}
@@ -410,9 +410,7 @@ export default function Sundial() {
         gl.toneMappingExposure = 1.0;
       }}
     >
-      {/* Performance Monitor */}
-      <Perf position='top-left' minimal={false} />
-
+ 
       <color attach='background' args={["#e9ecef"]} />
       {/* <fog attach='fog' args={["#edf0f3", 0, 100]} /> */}
       <Environment
@@ -428,7 +426,11 @@ export default function Sundial() {
 
       <Bounds fit clip observe damping={6} margin={0.1}>
         <ClockHands />
-      </Bounds>
+      </Bounds> 
+      
+      {/* Development Tests */}
+      {/* <Perf position='top-left' minimal={false} /> */}
+
       {/* <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} /> */}
       {/* <OrbitControls minPolarAngle={Math.PI / 3} maxPolarAngle={Math.PI / 3} /> */}
     </Canvas>

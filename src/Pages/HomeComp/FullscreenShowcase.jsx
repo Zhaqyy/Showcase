@@ -6,6 +6,7 @@ import ShowcaseContent from "./ShowcaseContent";
 import ShowcaseSidebar from "./ShowcaseSidebar";
 import ShowcaseWrapper from "./ShowcaseWrapper";
 import "../../Style/Home.scss";
+import { Leva } from "leva";
 
 const FullscreenShowcase = ({ showcase, currentIndex, onClose, isMobile }) => {
   const { isMobile: contextIsMobile } = useUI();
@@ -18,7 +19,7 @@ const FullscreenShowcase = ({ showcase, currentIndex, onClose, isMobile }) => {
   const mobileState = isMobile !== undefined ? isMobile : contextIsMobile;
 
   // Handle component loaded callback
-  const handleComponentLoaded = (loadedComponent) => {
+  const handleComponentLoaded = loadedComponent => {
     setComponent(() => loadedComponent);
     setIsLoading(false);
   };
@@ -51,6 +52,9 @@ const FullscreenShowcase = ({ showcase, currentIndex, onClose, isMobile }) => {
       aria-label={`Showcase: ${showcase.title}`}
       tabIndex={-1}
     >
+      <div className='leva-root'>
+        <Leva collapsed />
+      </div>
       {/* Navigation Controls */}
       <ShowcaseNavigation onClose={onClose} />
 
@@ -61,9 +65,7 @@ const FullscreenShowcase = ({ showcase, currentIndex, onClose, isMobile }) => {
       <ShowcaseSidebar showcase={showcase} />
 
       {/* Component rendering */}
-      {Component && !isLoading && !loadError && (
-        <ShowcaseWrapper component={Component} {...showcase.props} />
-      )}
+      {Component && !isLoading && !loadError && <ShowcaseWrapper component={Component} {...showcase.props} />}
     </div>
   );
 };

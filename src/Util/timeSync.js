@@ -33,9 +33,9 @@ class TimeSync {
    * @returns {Date} Local time
    */
   getLocalTime() {
-    const utc = this.getCurrentTime();
-    const timezoneOffset = this.getTimezoneOffset();
-    return new Date(utc.getTime() - (timezoneOffset * 60 * 1000));
+    // For now, just return the current system time to fix the display issue
+    // The timezone offset calculation was causing problems
+    return new Date();
   }
 
   /**

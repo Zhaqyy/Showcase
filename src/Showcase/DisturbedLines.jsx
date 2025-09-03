@@ -1,9 +1,10 @@
 // DisturbedLines3D.jsx
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { OrbitControls } from "@react-three/drei";
-import { useControls } from "leva";
+import { useControls, button } from "leva";
+import { useShowcase } from "../Context/ShowcaseContext";
 
 const vertexShader = /* glsl */ `
   precision highp float;
@@ -187,23 +188,72 @@ function DisturbedLinesMesh() {
   const meshRef = useRef();
   const matRef = useRef();
   const { size, viewport, camera, pointer } = useThree();
+  const { currentShowcase } = useShowcase();
 
   // Leva controls
-  const controls = useControls("Disturbed Lines 3D", {
+  const [controls, set] = useControls("Disturbed Lines 3D", () => ({
     lineFreq: { value: 100, min: 20, max: 150, step: 1 },
     thickness: { value: 0.35, min: 0.01, max: 0.8, step: 0.01 },
     warpAmp: { value: 0.5, min: 0, max: 2.0, step: 0.01 },
     sinkDepth: { value: 3.0, min: 0.0, max: 6.0, step: 0.05 },
-    sinkRadius: { value: 3.0, min: 0.1, max: 5.0, step: 0.01 },
+    sinkRadius: { value: 3.0, min: 1.0, max: 5.0, step: 0.01 },
     bumpHeight: { value: 0.0, min: 0.0, max: 3.0, step: 0.01 },
     rippleAmp: { value: 0.0, min: 0, max: 0.1, step: 0.001 },
     rippleFreq: { value: 0.0, min: 0.1, max: 5, step: 0.1 },
     flowSpeed: { value: 0.01, min: 0, max: 0.2, step: 0.001 },
     mouseLerp: { value: 0.05, min: 0.01, max: 0.3, step: 0.01 },
     voidThreshold: { value: -1.5, min: -5.0, max: 0.0, step: 0.1 },
-    subdivisions: { value: 512, min: 8, max: 512, step: 2 },
-    tiltDeg: { value: 45, min: 0, max: 70, step: 1 },
-  });
+    reset: button(() => {
+      set({
+        lineFreq: 100,
+        thickness: 0.35,
+        warpAmp: 0.5,
+        sinkDepth: 3.0,
+        sinkRadius: 3.0,
+        bumpHeight: 0.0,
+        rippleAmp: 0.0,
+        rippleFreq: 0.0,
+        flowSpeed: 0.01,
+        mouseLerp: 0.05,
+        voidThreshold: -1.5,
+      });
+    }),
+  }));
+
+  // Auto-reset controls when showcase changes or component unmounts
+  useEffect(() => {
+    // Reset to default values when showcase changes
+    set({
+      lineFreq: 100,
+      thickness: 0.35,
+      warpAmp: 0.5,
+      sinkDepth: 3.0,
+      sinkRadius: 3.0,
+      bumpHeight: 0.0,
+      rippleAmp: 0.0,
+      rippleFreq: 0.0,
+      flowSpeed: 0.01,
+      mouseLerp: 0.05,
+      voidThreshold: -1.5,
+    });
+
+    // Cleanup function to reset when component unmounts
+    return () => {
+      set({
+        lineFreq: 100,
+        thickness: 0.35,
+        warpAmp: 0.5,
+        sinkDepth: 3.0,
+        sinkRadius: 3.0,
+        bumpHeight: 0.0,
+        rippleAmp: 0.0,
+        rippleFreq: 0.0,
+        flowSpeed: 0.01,
+        mouseLerp: 0.05,
+        voidThreshold: -1.5,
+      });
+    };
+  }, [currentShowcase?.id, set]);
 
   // Geometry created in useMemo but without controls dependency to prevent freezing
   const geometry = useMemo(() => {
@@ -211,7 +261,7 @@ function DisturbedLinesMesh() {
     // Make it much larger to accommodate the depression without showing edges
     const width = viewport.width * 3;
     const height = viewport.height * 3;
-    const seg = Math.max(8, Math.floor(controls.subdivisions));
+    const seg = Math.max(8, Math.floor(512));
     return new THREE.PlaneGeometry(width, height, seg, seg);
   }, [viewport.width, viewport.height]); // Removed controls.subdivisions dependency
 
@@ -284,7 +334,7 @@ function DisturbedLinesMesh() {
   });
 
   // rotate the mesh to a tilt so camera sees it from side
-  const tiltRad = (controls.tiltDeg * Math.PI) / 180;
+  const tiltRad = (45 * Math.PI) / 180;
 
   return (
     <mesh
@@ -310,7 +360,7 @@ export default function DisturbedLines() {
       {/* ambient to lift whites slightly */}
       <ambientLight intensity={0.6} />
       <DisturbedLinesMesh />
-      <OrbitControls enablePan={true} enableRotate={false} enableZoom={true} />
+      {/* <OrbitControls enablePan={true} enableRotate={false} enableZoom={true} /> */}
     </Canvas>
   );
 }

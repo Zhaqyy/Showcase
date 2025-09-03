@@ -92,6 +92,7 @@ const ShowcaseNavigation = ({ onClose }) => {
       {/* Quick Nav Modal */}
       {showQuickNav && allShowcases && (
         <QuickNav
+          key={`quicknav-${currentIndex}`}
           showcases={allShowcases}
           currentIndex={currentIndex}
           onSelect={(index) => {

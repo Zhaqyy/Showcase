@@ -11,6 +11,8 @@ gsap.registerPlugin(Draggable, InertiaPlugin, Observer);
 const QuickNav = ({ showcases, currentIndex, onSelect, onClose }) => {
   const modalRef = useRef(null);
   const carouselRef = useRef(null);
+  const contentRef = useRef(null);
+  const isAnimating = useRef(false);
 
   useEffect(() => {
     // Wait for the DOM to be ready
@@ -87,7 +89,7 @@ const QuickNav = ({ showcases, currentIndex, onSelect, onClose }) => {
     observer = Observer.create({
       target: window,
       type: "wheel,touch,pointer",
-      wheelSpeed: -1,
+      wheelSpeed: 1,
       onDown: () => {
         if (!pointerDown) {
           loop.next({ duration: 0.25, ease: "power2.out" });
@@ -105,8 +107,29 @@ const QuickNav = ({ showcases, currentIndex, onSelect, onClose }) => {
     // set initial opacity for slides
     // gsap.set(".carousel-item", { opacity: i => (i === 0 ? 1 : 0.3) });
 
-    // center on initial slide
-    loop.toIndex(0, { duration: 0 });
+    // center on current showcase
+    // Use a small delay to ensure DOM is fully rendered
+    setTimeout(() => {
+      loop.toIndex(currentIndex, { duration: 0 });
+      // Also update the active slide class
+      if (activeSlide) {
+        activeSlide.classList.remove("active");
+      }
+      const currentSlide = slides[currentIndex];
+      if (currentSlide) {
+        currentSlide.classList.add("active");
+        activeSlide = currentSlide;
+      }
+      // Force a reflow to ensure proper positioning
+      carouselRef.current?.offsetHeight;
+    }, 100);
+    
+    // Also center immediately if this is the first run
+    if (firstRun) {
+      loop.toIndex(currentIndex, { duration: 0 });
+    }
+    
+    // Set firstRun to false after all initialization is complete
     firstRun = false;
 
     // image parallax, horizontalLoop() was customized to call this function onUpdate of the carousel timeline
@@ -385,13 +408,163 @@ const QuickNav = ({ showcases, currentIndex, onSelect, onClose }) => {
     };
   }, [showcases, currentIndex, onSelect]);
 
+  // Initialize backdrop filter values when component mounts
+  useEffect(() => {
+    if (modalRef.current) {
+      modalRef.current.style.setProperty('--backdrop-blur', '5px');
+      modalRef.current.style.setProperty('--webkit-backdrop-blur', '5px');
+    }
+  }, []);
+
+  // Entry animation when QuickNav opens
+  useEffect(() => {
+    if (modalRef.current && contentRef.current && !isAnimating.current) {
+      isAnimating.current = true;
+      
+      // Set initial states
+      gsap.set(modalRef.current, { 
+        opacity: 0
+      });
+      
+      // Set backdrop filter via CSS custom properties for better GSAP compatibility
+      modalRef.current.style.setProperty('--backdrop-blur', '0px');
+      modalRef.current.style.setProperty('--webkit-backdrop-blur', '0px');
+      
+      gsap.set(contentRef.current, { 
+        y: "100%",
+        scale: 0.8,
+        opacity: 0
+      });
+      
+      gsap.set(".carousel-item", { 
+        y: 50,
+        opacity: 0,
+        scale: 0.9
+      });
+      
+      // Entry animation timeline
+      const tl = gsap.timeline({ 
+        ease: "power3.out",
+        onComplete: () => {
+          isAnimating.current = false;
+        }
+      });
+      
+      // Backdrop fade in
+      tl.to(modalRef.current, {
+        opacity: 1,
+        duration: 0.6,
+        ease: "power2.out"
+      }, 0);
+      
+      // Backdrop blur in
+      tl.to(modalRef.current, {
+        '--backdrop-blur': '8px',
+        '--webkit-backdrop-blur': '8px',
+        duration: 0.8,
+        ease: "power2.out"
+      }, 0);
+      
+      // Content slide up and scale
+      tl.to(contentRef.current, {
+        y: "0%",
+        scale: 1,
+        opacity: 1,
+        duration: 0.8,
+        ease: "power3.out"
+      }, 0.2);
+      
+      // Carousel items stagger in
+      tl.to(".carousel-item", {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 0.6,
+        stagger: 0.05,
+        ease: "power2.out"
+      }, 0.4);
+      
+      // Close button fade in
+      tl.to(".close-modal", {
+        opacity: 1,
+        scale: 1,
+        duration: 0.4,
+        ease: "back.out(1.7)"
+      }, 0.6);
+      
+      // Title fade in
+      tl.to("h3", {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: "power2.out"
+      }, 0.5);
+    }
+  }, []);
+
+  // Exit animation when QuickNav closes
+  const handleClose = useCallback(() => {
+    if (isAnimating.current) return;
+    
+    isAnimating.current = true;
+    
+    const tl = gsap.timeline({ 
+      ease: "power3.in",
+      onComplete: () => {
+        onClose();
+      }
+    });
+    
+    // Close button and title fade out
+    tl.to([".close-modal", "h3"], {
+      opacity: 0,
+      y: -20,
+      duration: 0.3,
+      ease: "power2.in"
+    }, 0);
+    
+    // Carousel items stagger out
+    tl.to(".carousel-item", {
+      y: 30,
+      opacity: 0,
+      scale: 0.9,
+      duration: 0.4,
+      stagger: 0.03,
+      ease: "power2.in"
+    }, 0.1);
+    
+    // Content slide down and scale
+    tl.to(contentRef.current, {
+      y: "100%",
+      scale: 0.8,
+      opacity: 0,
+      duration: 0.6,
+      ease: "power3.in"
+    }, 0.2);
+    
+    // Backdrop fade out
+    tl.to(modalRef.current, {
+      opacity: 0,
+      duration: 0.5,
+      ease: "power2.in"
+    }, 0.3);
+    
+    // Backdrop blur out
+    tl.to(modalRef.current, {
+      '--backdrop-blur': '0px',
+      '--webkit-backdrop-blur': '0px',
+      duration: 0.4,
+      ease: "power2.in"
+    }, 0.3);
+  }, [onClose]);
+
   // Close on ESC / resize
   useEffect(() => {
     const handleKeyDown = e => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
     };
     const handleResize = () => {
-      onClose();
+      handleClose();
     };
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("resize", handleResize);
@@ -399,18 +572,18 @@ const QuickNav = ({ showcases, currentIndex, onSelect, onClose }) => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("resize", handleResize);
     };
-  }, [onClose]);
+  }, [handleClose]);
 
   return (
-    <div className='quick-nav-modal' ref={modalRef} onClick={e => e.target === modalRef.current && onClose()}>
-      <div className='quick-nav-content' ref={carouselRef}>
-        <button className='close-modal' onClick={onClose} aria-label='Close'>
+    <div className='quick-nav-modal' ref={modalRef} onClick={e => e.target === modalRef.current && handleClose()}>
+      <div className='quick-nav-content' ref={contentRef}>
+        <button className='close-modal' onClick={handleClose} aria-label='Close'>
           ✕
         </button>
 
         <h3>All Showcases</h3>
 
-        <div className='carousel-container'>
+        <div className='carousel-container' ref={carouselRef}>
           {showcases.map((showcase, index) => {
             const isCurrentShowcase = index === currentIndex;
             return (
