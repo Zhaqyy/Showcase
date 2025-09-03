@@ -1,16 +1,52 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Text, Line, ContactShadows, Environment, SoftShadows, useGLTF, useAnimations, Shadow } from "@react-three/drei";
+import { OrbitControls, Text, Line, ContactShadows, Environment, SoftShadows, useGLTF, useAnimations, Shadow, Bounds, useBounds } from "@react-three/drei";
 import * as THREE from "three";
-import { useRef, useMemo, useEffect, Suspense } from "react";
+import { useRef, useMemo, useEffect, Suspense, useState } from "react";
 import { EffectComposer, TiltShift2 } from "@react-three/postprocessing";
 import { Perf } from "r3f-perf";
+import timeSync from "../Util/timeSync";
+import viewportManager from "../Util/viewportUtils";
 
 function ClockFace({ margin = 0.5 }) {
   const { viewport } = useThree();
-  // Dynamic radius: fit width with margin
-  //   const radius = Math.min(viewport.width, viewport.height) / 2 - margin;
-  const radius = 5;
-  const numeralRadius = radius * 1.15;
+  const [viewportData, setViewportData] = useState(viewportManager.getViewport());
+  
+  // Subscribe to viewport changes
+  useEffect(() => {
+    const unsubscribe = viewportManager.subscribe((newViewport) => {
+      setViewportData(newViewport);
+    });
+    
+    return unsubscribe;
+  }, []);
+
+  // Dynamic radius: fit width with margin, responsive to viewport
+  const radius = useMemo(() => {
+    const { width, height } = viewportData;
+    const smallerDimension = Math.min(width, height);
+    const baseRadius = viewportManager.isMobile() ? 3 : 5;
+    
+    // Enhanced mobile scaling
+    if (viewportManager.isMobile()) {
+      return Math.max(4, Math.min(6, baseRadius * 1.2)); // Larger for mobile
+    }
+    
+    const responsiveScale = viewportManager.getResponsiveScale(1, 0.7, 1.5);
+    return Math.max(3, Math.min(8, baseRadius * responsiveScale));
+  }, [viewportData]);
+
+  const numeralRadius = radius * 1.35;
+
+  // Responsive font size based on viewport
+  const fontSize = useMemo(() => {
+    const { width } = viewportData;
+    
+    // Enhanced mobile scaling for better readability
+    if (viewportManager.isMobile()) {
+      return Math.max(0.6, Math.min(1.0, 0.8 * 1.3)); // 30% larger for mobile
+    }
+    
+  }, [viewportData]);
 
   const numerals = useMemo(() => ["XII", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI"], []);
 
@@ -32,9 +68,9 @@ function ClockFace({ margin = 0.5 }) {
               lineWidth={1.5}
             />
             {/* Decorative end cap */}
-            <mesh position={[x, 0.002, z]} rotation={[Math.PI / 2, 0, 0]}>
+            <mesh position={[x, 0.001, z]} rotation={[Math.PI / 2, 0, 0]}>
               <circleGeometry args={[0.08, 12]} />
-              <meshBasicMaterial color="#333" />
+              <meshBasicMaterial color='#222' />
             </mesh>
           </group>
         );
@@ -50,7 +86,7 @@ function ClockFace({ margin = 0.5 }) {
             key={`numeral-${i}`}
             position={[x, 0, z]}
             rotation={[Math.PI / 2, 0, 0]}
-            fontSize={0.6}
+            fontSize={fontSize}
             font='http://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
             color='#333'
             anchorX='center'
@@ -168,12 +204,32 @@ function ClockHands() {
   const hourLight = useRef();
   const minuteLight = useRef();
   const secondLight = useRef();
+  const [syncStatus, setSyncStatus] = useState(timeSync.getSyncStatus());
+  const [currentTime, setCurrentTime] = useState(timeSync.getTimeComponents());
+
+  // Initialize time synchronization
+  useEffect(() => {
+    timeSync.startAutoSync();
+    
+    // Update sync status every minute
+    const statusInterval = setInterval(() => {
+      setSyncStatus(timeSync.getSyncStatus());
+    }, 60000);
+    
+    return () => clearInterval(statusInterval);
+  }, []);
 
   useFrame(() => {
-    const now = new Date();
-    const h = now.getHours() % 12;
-    const m = now.getMinutes();
-    const s = now.getSeconds() + now.getMilliseconds() / 1000;
+    // Use synchronized time instead of system time
+    const timeComponents = timeSync.getTimeComponents();
+    const h = timeComponents.hours % 12;
+    const m = timeComponents.minutes;
+    const s = timeComponents.seconds + timeComponents.milliseconds / 1000;
+
+    // Update time display only when seconds change (performance optimization)
+    if (timeComponents.seconds !== currentTime.seconds) {
+      setCurrentTime(timeComponents);
+    }
 
     // Smooth, continuous angles (radians)
     const hourAngle = ((h + m / 60 + s / 3600) / 12) * -Math.PI * 2;
@@ -214,7 +270,7 @@ function ClockHands() {
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]}>
         <planeGeometry args={[80, 80]} />
         {/* <shadowMaterial transparent opacity={0.75} /> */}
-        <meshStandardMaterial color='#d7e9fa' roughness={0.75} metalness={0.35} transparent opacity={0.65} />
+        <meshStandardMaterial color='#a4afba' roughness={0.75} metalness={0.35} transparent opacity={0.75} />
       </mesh>
 
       {/* Printed clock face */}
@@ -227,8 +283,42 @@ function ClockHands() {
           <meshStandardMaterial color='#e7e9ec' roughness={0.95} />
         </mesh>
         <Suspense fallback={null}>
-          <Model />
+          <Model scale={viewportManager.isMobile() ? 1.5 : 1} />
         </Suspense>
+      </group>
+
+      {/* Time Display Overlay */}
+      <group position={[0, 0, 2]} rotation={[-Math.PI / 2, 0, 0]} scale={viewportManager.isMobile() ? 0.75 : 1}>
+        <Text
+          position={[0, 0, 0]}
+          fontSize={viewportManager.isMobile() ? 0.7 : 0.5}
+          font='http://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
+          color='#333'
+          anchorX='center'
+          anchorY='middle'
+        >
+          {`${currentTime.hours % 12 || 12}:${currentTime.minutes.toString().padStart(2, '0')}:${currentTime.seconds.toString().padStart(2, '0')} ${currentTime.hours >= 12 ? 'PM' : 'AM'}`}
+        </Text>
+        <Text
+          position={[0, -0.6, 0]}
+          fontSize={viewportManager.isMobile() ? 0.6 : 0.4}
+          font='http://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
+          color='#555'
+          anchorX='center'
+          anchorY='middle'
+        >
+          {timeSync.getFormattedDate()}
+        </Text>
+        <Text
+          position={[0, -1.1, 0]}
+          fontSize={viewportManager.isMobile() ? 0.3 : 0.2}
+          font='http://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
+          color={syncStatus.fallbackEnabled ? "#630e0e" : "#19591c"}
+          anchorX='center'
+          anchorY='middle'
+        >
+          • {syncStatus.fallbackEnabled ? "System Time" : "Network Sync"} •
+        </Text>
       </group>
 
       {/* Directional lights as "hands" */}
@@ -267,14 +357,52 @@ function ClockHands() {
 
 useGLTF.preload("/Model/stand.glb");
 
-
 export default function Sundial() {
+  const [viewportData, setViewportData] = useState(viewportManager.getViewport());
+
+  // Subscribe to viewport changes for responsive camera
+  useEffect(() => {
+    const unsubscribe = viewportManager.subscribe(newViewport => {
+      setViewportData(newViewport);
+    });
+
+    return () => {
+      unsubscribe();
+      // Note: Not destroying viewportManager here as it's a singleton used across components
+    };
+  }, []);
+
+  // Responsive camera positioning based on viewport
+  const cameraConfig = useMemo(() => {
+    const { width, height } = viewportData;
+    const aspectRatio = width / height;
+
+    // Adjust camera position based on aspect ratio
+    let cameraX = -5;
+    let cameraY = 5;
+    let cameraZ = 7;
+    let zoom = 90;
+
+    if (aspectRatio < 1) {
+      // Portrait orientation - adjust for taller viewport
+      cameraY = 5;
+      cameraZ = 7;
+      zoom = 120;
+    } else if (aspectRatio > 1.5) {
+      // Ultra-wide - adjust for wider viewport
+      cameraX = -6;
+      zoom = 100;
+    }
+
+    return { position: [cameraX, cameraY, cameraZ], fov: 40, near: 0.1, far: 100, zoom };
+  }, [viewportData]);
+
   return (
     <Canvas
       dpr={[1, 2]}
       shadows
       orthographic
-      camera={{ position: [-7, 7, 9], fov: 40, near: 0.1, far: 100, zoom: 100 }}
+      camera={cameraConfig}
       gl={{ antialias: true }}
       onCreated={({ gl }) => {
         gl.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -287,11 +415,20 @@ export default function Sundial() {
 
       <color attach='background' args={["#e9ecef"]} />
       {/* <fog attach='fog' args={["#edf0f3", 0, 100]} /> */}
-      {/* <Environment preset='night' background={false} blur={0.19} environmentIntensity={3.5} backgroundIntensity={3.5} backgroundBlurriness={0} /> */}
-
+      <Environment
+        preset='night'
+        background={false}
+        blur={0.19}
+        environmentIntensity={3.5}
+        backgroundIntensity={3.5}
+        backgroundBlurriness={0}
+      />
+      {/* <ambientLight intensity={-0.5} /> */}
       {/* <SoftShadows size={24} samples={64} focus={0.9} /> */}
 
-      <ClockHands />
+      <Bounds fit clip observe damping={6} margin={0.1}>
+        <ClockHands />
+      </Bounds>
       {/* <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} /> */}
       {/* <OrbitControls minPolarAngle={Math.PI / 3} maxPolarAngle={Math.PI / 3} /> */}
     </Canvas>
