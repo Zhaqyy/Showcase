@@ -19,6 +19,9 @@ export const UIProvider = ({ children }) => {
   const isMobile = useIsMobile(700);
   const isTablet = useIsMobile(1024);
   
+  // View mode state - default to list for mobile, grid for desktop
+  const [viewMode, setViewMode] = useState('grid');
+  
   // Drawer states
   const [overviewDrawerOpen, setOverviewDrawerOpen] = useState(false);
   const [showcaseDrawerOpen, setShowcaseDrawerOpen] = useState(false);
@@ -33,6 +36,11 @@ export const UIProvider = ({ children }) => {
   // Menu states
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Set default view mode based on device type
+  useEffect(() => {
+    setViewMode(isMobile ? 'list' : 'grid');
+  }, [isMobile]);
+
   // Reset drawer states when switching between mobile/desktop
   useEffect(() => {
     if (!isMobile) {
@@ -40,6 +48,19 @@ export const UIProvider = ({ children }) => {
       setShowcaseDrawerOpen(false);
     }
   }, [isMobile]);
+
+  // View mode control functions
+  const toggleViewMode = useCallback(() => {
+    setViewMode(prev => prev === 'grid' ? 'list' : 'grid');
+  }, []);
+
+  const setViewModeGrid = useCallback(() => {
+    setViewMode('grid');
+  }, []);
+
+  const setViewModeList = useCallback(() => {
+    setViewMode('list');
+  }, []);
 
   // Drawer control functions
   const toggleOverviewDrawer = useCallback(() => {
@@ -97,6 +118,7 @@ export const UIProvider = ({ children }) => {
     loadingMessage,
     isAnimating,
     isMenuOpen,
+    viewMode,
     
     // Actions
     setOverviewDrawerOpen,
@@ -105,6 +127,7 @@ export const UIProvider = ({ children }) => {
     setLoadingMessage,
     setIsAnimating,
     setIsMenuOpen,
+    setViewMode,
     
     // Drawer controls
     toggleOverviewDrawer,
@@ -123,6 +146,11 @@ export const UIProvider = ({ children }) => {
     // Menu controls
     toggleMenu,
     closeMenu,
+    
+    // View mode controls
+    toggleViewMode,
+    setViewModeGrid,
+    setViewModeList,
   };
 
   return (

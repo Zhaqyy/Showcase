@@ -2,7 +2,7 @@
   --border-radius: 10px;
   --section-padding: 1rem;
   --dark-bg: #111;
-  --card-bg: #1a1a1a;
+  --card-bg: rgba(39, 39, 42, 0.5);
   --success-green: #36b37e;
   --hover-light: #f7dfd3;
 }
@@ -47,7 +47,7 @@
     font-size: 1.25rem;
     z-index: 101;
     background: var(--light-green);
-    color: var(--accent);
+    color: var(--secAccent);
     border-radius: 50px;
     cursor: pointer;
     aspect-ratio: 1 / 1;
@@ -83,6 +83,7 @@
     // background: $deep-green;
     color: var(--text);
     padding: 1.25rem;
+    gap: 1rem;
 
     &.mobile {
       // Legacy mobile styles no longer used (drawer handled by Component/Drawer)
@@ -127,6 +128,11 @@
           margin-right: 0.5rem;
         }
       }
+    }
+    
+    // View Toggle spacing
+    .view-toggle-container {
+      margin: 1rem 0;
     }
   }
 
@@ -434,7 +440,7 @@
     h3 {
       margin: 0;
       font-size: 1rem;
-      color: var(--accent);
+      color: var(--secAccent);
     }
     .label {
       display: block;
@@ -448,7 +454,7 @@
       gap: 0.5rem;
     }
           .tags .tag {
-        background: color-mix(in srgb, var(--accent) 20%, transparent);
+        background: color-mix(in srgb, var(--secAccent) 20%, transparent);
         padding: 0.3rem 0.6rem;
         border-radius: 20px;
         font-size: 0.8rem;
@@ -497,6 +503,193 @@
   }
 }
 
+// View Toggle Container
+.view-toggle-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  
+  .view-toggle-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0.8;
+    margin: 0;
+    text-align: center;
+  }
+  
+  .toggle-switch {
+    position: relative;
+    display: flex;
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: 0.25rem;
+    gap: 0.25rem;
+    
+    .toggle-option {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.5rem;
+      background: transparent;
+      border: none;
+      border-radius: calc(var(--border-radius) - 0.25rem);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.8rem;
+      position: relative;
+      z-index: 2;
+      
+      &:hover {
+        color: var(--secAccent);
+      }
+      
+      &.active {
+        color: var(--secAccent);
+      }
+      
+      .toggle-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        svg{
+          height: 1.5rem;
+        }
+      }
+      
+      span {
+        font-weight: 500;
+        font-size: 0.85rem;
+      }
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      top: 0.25rem;
+      left: 0.25rem;
+      width: calc(50% - 0.25rem);
+      height: calc(100% - 0.5rem);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: calc(var(--border-radius) - 0.25rem);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1;
+      
+      &[data-active="list"] {
+        transform: translateX(100%);
+      }
+    }
+  }
+}
+
+// List Layout Styles
+.hero .main .mainBody.list-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  
+  .showcaseItem.list-view {
+    display: flex;
+    flex-direction: row;
+    min-height: 120px;
+    aspect-ratio: unset;
+    background: unset;
+    border-radius: unset;
+    transition: all 0.3s ease;
+    
+    // Default state - grayscale and dimmed
+    filter: grayscale(0.3) brightness(0.7);
+    
+    &:hover {
+      box-shadow: unset;
+      filter: grayscale(0) brightness(1);
+      
+      // Animate the divider before this item
+      & + .list-divider .gradient-shine {
+        opacity: 1;
+      }
+    }
+    
+    .thumbnail-container {
+      position: relative;
+      width: 30%;
+      max-width: 250px;
+      background: unset;
+      // height: 120px;
+      min-height: unset;
+      // aspect-ratio: unset;
+      flex-shrink: 0;
+    }
+    
+    .item-content {
+      flex: 1;
+      height: auto;
+      min-height: unset;
+      background: unset;
+      aspect-ratio: unset;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      
+      h3 {
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+      }
+      
+      .hover-details {
+        position: static;
+        opacity: 1;
+        background: none;
+        padding: 0;
+        
+        p {
+          margin-bottom: 0.5rem;
+          font-size: 0.9rem;
+          opacity: 0.8;
+        }
+        
+        .tags {
+          margin-top: 0.5rem;
+          
+          span {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.25rem;
+          }
+        }
+      }
+    }
+  }
+  
+  // List dividers
+  .list-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    margin: 0.5rem 0;
+    position: relative;
+    overflow: hidden;
+    
+    .gradient-shine {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 300px;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, var(--secAccent), transparent);
+      opacity: 0;
+      transform: translateX(-100px);
+      transition: opacity 0.35s ease;
+    }
+    
+    &:hover .gradient-shine {
+      opacity: 1;
+    }
+  }
+}
+
 // Media sizing
 
 @media (width <= 1125px) {
@@ -529,6 +722,27 @@
       .mainBody .showcaseItem .thumbnail-container .showcase-thumbnail {
         width: 100%;
         height: 100%;
+      }
+      
+      // Mobile list layout adjustments
+      .mainBody.list-layout .showcaseItem.list-view {
+        // flex-direction: column;
+        
+        .thumbnail-container {
+          width: 30%;
+          height: 150px;
+          // min-height: 150px;
+        }
+        
+        .item-content {
+          min-height: auto;
+          padding: 1rem;
+        }
+      }
+      
+      // Mobile list dividers
+      .mainBody.list-layout .list-divider {
+        margin: 0.25rem 0;
       }
     }
   }

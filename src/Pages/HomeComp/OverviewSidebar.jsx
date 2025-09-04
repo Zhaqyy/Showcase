@@ -4,6 +4,7 @@ import gsap from "gsap";
 import IdentitySection from "./IdentitySection";
 import FilterManager from "./FilterManager";
 import ContactSection from "./ContactSection";
+import ViewToggle from "../../Component/ViewToggle";
 import Drawer from "../../Component/Drawer";
 import "../../Style/Home.scss";
 
@@ -59,6 +60,9 @@ const OverviewSidebar = () => {
           {/* Filter section */}
           <FilterManager />
 
+          {/* View Toggle */}
+          <ViewToggle />
+
           {/* Contact section */}
           <ContactSection />
         </div>
@@ -81,6 +85,9 @@ const OverviewSidebar = () => {
 
             {/* Filter section */}
             <FilterManager />
+
+            {/* View Toggle */}
+            <ViewToggle />
 
             {/* Contact section */}
             <ContactSection />

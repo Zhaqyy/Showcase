@@ -1844,6 +1844,20 @@ $accordion-warning-color: #ff9b00;
             }
           }
         }
+        
+        // View Toggle in mobile drawer
+        .view-toggle-container {
+          margin: 1rem 0;
+          
+          .toggle-switch {
+            background: rgba(39, 39, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            
+            .toggle-slider {
+              background: rgba(255, 255, 255, 0.1);
+            }
+          }
+        }
       }
     }
   }

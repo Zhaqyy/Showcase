@@ -1,4 +1,5 @@
 import React from "react";
+import Sundial from "../Showcase/Sundial";
 // import Pool from "../Showcase/Pool";
 // import Backroom from "../Showcase/Backroom";
 // import Piano from "../Showcase/Piano";
@@ -33,6 +34,7 @@ const Screenshot = () => {
       {/* <HypnoticLoader/> */}
       {/* <RubberStrings></RubberStrings> */}
       {/* <Backroom/> */}
+      <Sundial/>
     </div>
   );
 };

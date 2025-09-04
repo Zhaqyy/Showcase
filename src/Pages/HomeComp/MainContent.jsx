@@ -1,7 +1,58 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useState, useEffect, useRef } from "react";
+import { useUI } from "../../Context/UIContext";
+import gsap from "gsap";
 import "../../Style/Home.scss";
 
 const MainContent = forwardRef(({ showcases, onShowcaseClick, showcaseRefs }, ref) => {
+  const { viewMode } = useUI();
+  const dividerRefs = useRef([]);
+  const mouseTarget = useRef({ x: 0 });
+  const animationRef = useRef(null);
+
+  // GSAP animation for divider gradients with lerp
+  useEffect(() => {
+    if (viewMode !== 'list') return;
+
+    const handleMouseMove = (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      mouseTarget.current.x = x;
+    };
+
+    // Smooth lerp animation loop
+    const animateGradient = () => {
+      dividerRefs.current.forEach((dividerRef) => {
+        if (dividerRef) {
+          const gradient = dividerRef.querySelector('.gradient-shine');
+          if (gradient) {
+            // Lerp the current position towards the target
+            const currentX = gsap.getProperty(gradient, "x") || 0;
+            const targetX = mouseTarget.current.x;
+            const lerpedX = currentX + (targetX - currentX) * 0.05; // 0.1 = lerp factor (lower = smoother)
+            
+            gsap.set(gradient, { x: lerpedX });
+          }
+        }
+      });
+      animationRef.current = requestAnimationFrame(animateGradient);
+    };
+
+    const mainBody = document.querySelector('.mainBody');
+    if (mainBody) {
+      mainBody.addEventListener('mousemove', handleMouseMove);
+      animateGradient();
+    }
+
+    return () => {
+      if (mainBody) {
+        mainBody.removeEventListener('mousemove', handleMouseMove);
+      }
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [viewMode]);
+
   // Memoized ShowcaseItem for performance
   const ShowcaseItem = React.memo(({ item, index, onShowcaseClick, showcaseRefs }) => {
     // Keyboard handler for accessibility
@@ -14,7 +65,7 @@ const MainContent = forwardRef(({ showcases, onShowcaseClick, showcaseRefs }, re
     return (
       <div
         key={item.id}
-        className={`showcaseItem`}
+        className={`showcaseItem ${viewMode === 'list' ? 'list-view' : 'grid-view'}`}
         ref={el => (showcaseRefs.current[index] = el)}
         onClick={() => onShowcaseClick(index)}
         tabIndex={0}
@@ -72,15 +123,25 @@ const MainContent = forwardRef(({ showcases, onShowcaseClick, showcaseRefs }, re
         </div>
       </div>
 
-      <div className='mainBody' role='grid' aria-label='Showcase items'>
+      <div className={`mainBody ${viewMode === 'list' ? 'list-layout' : 'grid-layout'}`} role='grid' aria-label='Showcase items'>
         {showcases.map((item, index) => (
-          <ShowcaseItem
-            key={item.id}
-            item={item}
-            index={index}
-            onShowcaseClick={onShowcaseClick}
-            showcaseRefs={showcaseRefs}
-          />
+          <React.Fragment key={item.id}>
+            <ShowcaseItem
+              item={item}
+              index={index}
+              onShowcaseClick={onShowcaseClick}
+              showcaseRefs={showcaseRefs}
+            />
+            {viewMode === 'list' && index < showcases.length - 1 && (
+              <div 
+                className="list-divider" 
+                data-index={index}
+                ref={el => (dividerRefs.current[index] = el)}
+              >
+                <div className="gradient-shine"></div>
+              </div>
+            )}
+          </React.Fragment>
         ))}
       </div>
     </div>

@@ -247,7 +247,7 @@ const showcaseData = [
       id: 11,
       title: "CanYouSeeMe?",
       category: "CSS Art",
-      description: "Stare at this long enough, and your brain might short-circuit. Or maybe it's just me. 🤷‍♂️",
+      description: "Stare at this long enough, and your brain might short-circuit. Or maybe it's just me.",
       tags: ["CSS Sorcery", "Retinal Assault"],
       thumbnail: "/Thumbnail/eyefuckery.webp",
       commentary: "A trippy CSS illusion that messes with your eyes—no JavaScript, just ✨ bad decisions ✨. The kind of project that makes designers question their life choices.",
