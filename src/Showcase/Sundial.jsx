@@ -32,7 +32,7 @@ function ClockFace({ margin = 0.5 }) {
     }
     
     const responsiveScale = viewportManager.getResponsiveScale(1, 0.7, 1.5);
-    return Math.max(3, Math.min(8, baseRadius * responsiveScale));
+    return Math.max(3, Math.min(3.5, baseRadius * responsiveScale));
   }, [viewportData]);
 
   const numeralRadius = radius * 1.35;

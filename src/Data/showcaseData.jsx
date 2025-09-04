@@ -319,7 +319,7 @@ const showcaseData = [
       description: "GLSL-powered lines that dance and distort to your mouse movements in a psychedelic display.",
       tags: ["GLSL", "Shaders", "Interactive"],
       thumbnail: "/Thumbnail/disturbedlines.webp",
-      commentary: "Lines that can't sit still - like a nervous system on caffeine. The GLSL shaders create these organic disturbances that make you question if your mouse is haunted. Each line has its own personality disorder.",
+      commentary: "Lines that can't sit still - like a nervous system on caffeine. The GLSL shaders create these organic disturbances.",
       component: () => import("../Showcase/DisturbedLines"),
       tech: ["Three.js", "GLSL", "React"],
       date: "2024-12-19",
