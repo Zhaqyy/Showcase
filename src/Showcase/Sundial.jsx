@@ -87,7 +87,7 @@ function ClockFace({ margin = 0.5 }) {
             position={[x, 0, z]}
             rotation={[Math.PI / 2, 0, 0]}
             fontSize={fontSize}
-            font='http://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
+            font='https://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
             color='#333'
             anchorX='center'
             anchorY='middle'
@@ -292,7 +292,7 @@ function ClockHands() {
         <Text
           position={[0, 0, 0]}
           fontSize={viewportManager.isMobile() ? 0.7 : 0.5}
-          font='http://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
+          font='https://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
           color='#333'
           anchorX='center'
           anchorY='middle'
@@ -302,7 +302,7 @@ function ClockHands() {
         <Text
           position={[0, -0.6, 0]}
           fontSize={viewportManager.isMobile() ? 0.6 : 0.4}
-          font='http://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
+          font='https://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
           color='#555'
           anchorX='center'
           anchorY='middle'
@@ -312,7 +312,7 @@ function ClockHands() {
         <Text
           position={[0, -1.1, 0]}
           fontSize={viewportManager.isMobile() ? 0.3 : 0.2}
-          font='http://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
+          font='https://fonts.gstatic.com/s/oldstandardtt/v7/QQT_AUSp4AV4dpJfIN7U5PWrQzeMtsHf8QsWQ2cZg3c.ttf'
           color={syncStatus.fallbackEnabled ? "#630e0e" : "#19591c"}
           anchorX='center'
           anchorY='middle'
